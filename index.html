@@ -3,107 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <title>Formando as Frases</title>
+    <title>Formando as Frases - Áudio Fixo</title>
     <style>
-        /* ===== ESTILOS AJUSTADOS PARA MOBILE ===== */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #000000; color: #00ff66; user-select: none; overflow: hidden; transition: background-color 0.4s ease, color 0.4s ease; }
-        .container { width: 100%; height: 100%; padding: 10px; display: flex; flex-direction: column; gap: 8px; transition: background-color 0.4s ease; overflow: hidden; }
-        ::-webkit-scrollbar { width: 3px; height: 3px; }
-        ::-webkit-scrollbar-track { background: rgba(0, 255, 34, 0.05); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: rgba(0, 255, 34, 0.3); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 255, 34, 0.6); }
+        html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Roboto, Arial, sans-serif; background: #000000; color: #00ff66; user-select: none; overflow: hidden; }
         
-        /* HEADER */
-        h2 { text-align: center; color: #00ff22; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0px 0px 20px rgba(0, 255, 34, 0.5); margin-top: 2px; font-size: 18px; font-weight: 800; transition: color 0.4s ease; }
-        .counter-banner { text-align: center; color: #00aa33; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; transition: color 0.4s ease; }
+        .container { width: 100%; height: 100%; padding: 10px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
         
-        /* SCREENS */
+        /* STATUS DO ÁUDIO - VISÍVEL EM TODAS AS TELAS */
+        #audioStatusBar {
+            background: rgba(0,20,5,0.9);
+            border: 1px solid rgba(0,255,102,0.2);
+            border-radius: 10px;
+            padding: 8px 12px;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+            min-height: 36px;
+            backdrop-filter: blur(4px);
+        }
+        #audioStatusBar .status-text { flex: 1; text-align: left; }
+        #audioStatusBar .status-icon { font-size: 16px; }
+        #audioStatusBar.working { border-color: #00ff66; color: #00ff66; }
+        #audioStatusBar.failed { border-color: #ff3333; color: #ff3333; }
+        #audioStatusBar .btn-test-small {
+            background: rgba(255,200,0,0.15);
+            border: 1px solid rgba(255,200,0,0.3);
+            color: #ffcc00;
+            padding: 2px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        #audioStatusBar .btn-test-small:hover { background: rgba(255,200,0,0.25); }
+        #audioStatusBar .btn-test-small:active { transform: scale(0.95); }
+        
+        /* RESTO DOS ESTILOS (MANTIDOS) */
+        h2 { text-align: center; color: #00ff22; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0px 0px 20px rgba(0, 255, 34, 0.5); margin-top: 2px; font-size: 18px; font-weight: 800; }
+        .counter-banner { text-align: center; color: #00aa33; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
+        
         .screen { display: none; flex-direction: column; width: 100%; height: 100%; flex: 1; overflow: hidden; }
         .screen.active { display: flex; }
         #topics-screen { overflow-y: auto; gap: 8px; padding-bottom: 10px; }
         #topics-list { display: flex; flex-direction: column; gap: 6px; padding-bottom: 6px; }
         
-        /* TOPIC CARDS */
         .topic-card { background: rgba(0, 20, 5, 0.85); border: 2px solid #004411; padding: 12px 16px; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; border-left: 8px solid #00ff22; box-shadow: 0 4px 15px rgba(0,0,0,0.8); text-align: left; color: #ffffff; width: 100%; display: flex; align-items: center; min-height: 50px; transition: all 0.3s ease; backdrop-filter: blur(10px); }
         .topic-card:hover { transform: scale(1.01); border-left-color: #00ff88; box-shadow: 0 6px 25px rgba(0, 255, 34, 0.15); }
         .topic-card:active { transform: scale(0.98); }
         .topic-card.misto-btn { background: rgba(0, 255, 100, 0.12); border-left-color: #00ff66; border-color: rgba(0, 255, 102, 0.3); color: #00ff66; text-shadow: 0 0 15px rgba(0, 255, 102, 0.4); font-size: 15px; }
         
-        /* GAME SCREEN */
         #game-screen { display: none; flex-direction: column; height: 100%; overflow: hidden; }
         #game-screen.active { display: flex; }
         .game-scrollable-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-bottom: 8px; padding-right: 2px; }
         
-        /* TOP CHALLENGE */
-        .top-challenge { background: rgba(0, 15, 5, 0.6); border: 2px solid rgba(0, 68, 17, 0.6); padding: 10px 12px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 8px; backdrop-filter: blur(8px); transition: border-color 0.4s ease; }
-        .phrase-pt { font-size: 18px; font-weight: bold; text-align: center; line-height: 1.3; color: #ffffff; text-shadow: 0 2px 10px rgba(0,255,34,0.3); word-wrap: break-word; transition: color 0.4s ease; }
+        .top-challenge { background: rgba(0, 15, 5, 0.6); border: 2px solid rgba(0, 68, 17, 0.6); padding: 10px 12px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 8px; backdrop-filter: blur(8px); }
+        .phrase-pt { font-size: 18px; font-weight: bold; text-align: center; line-height: 1.3; color: #ffffff; text-shadow: 0 2px 10px rgba(0,255,34,0.3); word-wrap: break-word; }
         
-        /* AUDIO CONTROLS */
-        .audio-controls-row { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 2px; gap: 6px; }
-        .btn-audio-top { background: rgba(0, 255, 102, 0.08); color: #00ff66; border: 2px solid rgba(0, 255, 102, 0.3); padding: 6px 10px; font-size: 12px; font-weight: bold; border-radius: 10px; cursor: pointer; flex: 1; text-align: center; text-shadow: 0 0 5px rgba(0, 255, 102, 0.2); transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; backdrop-filter: blur(4px); }
+        .audio-controls-row { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 2px; gap: 6px; flex-wrap: wrap; }
+        .btn-audio-top { background: rgba(0, 255, 102, 0.08); color: #00ff66; border: 2px solid rgba(0, 255, 102, 0.3); padding: 6px 10px; font-size: 12px; font-weight: bold; border-radius: 10px; cursor: pointer; flex: 1; text-align: center; min-width: 60px; transition: all 0.3s ease; backdrop-filter: blur(4px); }
         .btn-audio-top:hover { background: rgba(0, 255, 102, 0.15); border-color: #00ff66; }
         .btn-audio-top:active { transform: scale(0.95); }
         .btn-audio-user { color: #00ff22; border-color: rgba(0, 255, 34, 0.3); }
+        .btn-test-audio { background: rgba(255, 200, 0, 0.15); color: #ffcc00; border-color: rgba(255, 200, 0, 0.3); }
+        .btn-test-audio:hover { background: rgba(255, 200, 0, 0.25); border-color: #ffcc00; }
         
-        /* ZONE HEADER */
         .zone-header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
-        .zone-title { font-size: 13px; color: #00aa33; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(0, 170, 51, 0.2); transition: color 0.4s ease; }
-        .btn-pesca { background: rgba(0, 17, 4, 0.8); color: #00dd44; border: 2px solid rgba(0, 68, 17, 0.6); padding: 4px 12px; font-size: 11px; font-weight: bold; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; backdrop-filter: blur(4px); }
+        .zone-title { font-size: 13px; color: #00aa33; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(0, 170, 51, 0.2); }
+        .btn-pesca { background: rgba(0, 17, 4, 0.8); color: #00dd44; border: 2px solid rgba(0, 68, 17, 0.6); padding: 4px 12px; font-size: 11px; font-weight: bold; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.3s ease; backdrop-filter: blur(4px); }
         .btn-pesca:hover { border-color: #00dd44; box-shadow: 0 0 20px rgba(0, 221, 68, 0.15); }
         .btn-pesca.active { background: rgba(0, 51, 10, 0.8); color: #00ff66; border-color: #00ff66; box-shadow: 0 0 25px rgba(0, 255, 102, 0.3); }
         
-        /* CONSTRUCTION ZONE */
-        .construction-zone { background: rgba(0, 5, 2, 0.7); border: 2px dashed rgba(0, 255, 34, 0.3); border-radius: 12px; min-height: 100px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; position: relative; transition: border-color 0.4s ease; backdrop-filter: blur(4px); }
-        .success-text-box { display: none; background: rgba(0, 255, 102, 0.05); border: 2px solid #00ff66; border-radius: 12px; min-height: 100px; padding: 12px; font-size: 18px; font-weight: bold; color: #00ff66; text-align: center; align-items: center; justify-content: center; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); backdrop-filter: blur(4px); transition: color 0.4s ease, border-color 0.4s ease; }
+        .construction-zone { background: rgba(0, 5, 2, 0.7); border: 2px dashed rgba(0, 255, 34, 0.3); border-radius: 12px; min-height: 100px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; position: relative; backdrop-filter: blur(4px); }
+        .success-text-box { display: none; background: rgba(0, 255, 102, 0.05); border: 2px solid #00ff66; border-radius: 12px; min-height: 100px; padding: 12px; font-size: 18px; font-weight: bold; color: #00ff66; text-align: center; align-items: center; justify-content: center; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); backdrop-filter: blur(4px); }
         
-        /* WORDS ZONE */
-        .words-zone { background: rgba(0, 10, 4, 0.4); border: 2px solid rgba(0, 68, 17, 0.4); border-radius: 12px; min-height: 80px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; align-content: flex-start; transition: border-color 0.4s ease; backdrop-filter: blur(4px); }
+        .words-zone { background: rgba(0, 10, 4, 0.4); border: 2px solid rgba(0, 68, 17, 0.4); border-radius: 12px; min-height: 80px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; align-content: flex-start; backdrop-filter: blur(4px); }
         
-        /* WORD BALLOONS - TAMANHOS REDUZIDOS */
-        .word-balloon { padding: 6px 12px; font-size: 15px; font-weight: 800; border-radius: 20px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.6); display: inline-block; user-select: none; position: relative; max-width: 100%; word-wrap: break-word; touch-action: none; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease; background: #0a0a0a; border: 2px solid #1a1a1a; color: #00ff22; text-shadow: 0 0 20px rgba(0, 255, 34, 0.15); letter-spacing: 0.3px; line-height: 1.2; }
+        .word-balloon { padding: 6px 12px; font-size: 15px; font-weight: 800; border-radius: 20px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.6); display: inline-block; user-select: none; position: relative; max-width: 100%; word-wrap: break-word; touch-action: none; transition: all 0.15s ease; background: #0a0a0a; border: 2px solid #1a1a1a; color: #00ff22; text-shadow: 0 0 20px rgba(0, 255, 34, 0.15); letter-spacing: 0.3px; line-height: 1.2; }
         .word-balloon:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 30px rgba(0,0,0,0.8); border-color: #2a2a2a; }
         .word-balloon:active { transform: scale(0.93); }
-        .construction-zone .word-balloon { background: #0a0a0a; border: 2px solid #1a1a1a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5); cursor: grab; color: #00ff22; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease; font-size: 14px; padding: 5px 10px; }
+        .construction-zone .word-balloon { background: #0a0a0a; border: 2px solid #1a1a1a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5); cursor: grab; color: #00ff22; font-size: 14px; padding: 5px 10px; }
         .construction-zone .word-balloon:hover { box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7); border-color: #2a2a2a; }
         .construction-zone .word-balloon:active { cursor: grabbing; transform: scale(0.93); }
-        .words-zone .word-balloon { background: #0a0a0a; border: 2px solid #1a1a1a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4); color: #00ffaa; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease; font-size: 13px; padding: 4px 10px; }
+        .words-zone .word-balloon { background: #0a0a0a; border: 2px solid #1a1a1a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4); color: #00ffaa; font-size: 13px; padding: 4px 10px; }
         .words-zone .word-balloon:hover { border-color: #2a2a2a; box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6); }
         .word-balloon.dragging { opacity: 0.4; border: 2px dashed #ffff00 !important; background: rgba(255, 255, 0, 0.05) !important; transform: scale(0.9); }
         .word-balloon.pescado { background: #001a00 !important; color: #ffff00 !important; border-color: #2a2a00 !important; box-shadow: 0 0 30px rgba(255, 255, 0, 0.15) !important; animation: pescaGlow 1s ease infinite alternate; }
         @keyframes pescaGlow { 0% { box-shadow: 0 0 15px rgba(255, 255, 0, 0.1); } 100% { box-shadow: 0 0 35px rgba(255, 255, 0, 0.25); } }
         
-        /* STATUS */
         .status-container { text-align: center; font-size: 14px; font-weight: bold; min-height: 20px; margin: 2px 0; padding: 3px; }
-        .status-correct { color: #00ff66; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); animation: statusPop 0.5s ease; transition: color 0.4s ease; }
+        .status-correct { color: #00ff66; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); animation: statusPop 0.5s ease; }
         .status-wrong { color: #ff3333; text-shadow: 0 0 20px rgba(255, 51, 51, 0.4); animation: statusShake 0.5s ease; }
         @keyframes statusPop { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
         @keyframes statusShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
         
-        /* CONTROL PANEL */
         .control-panel { display: flex; flex-direction: column; gap: 5px; padding-top: 6px; border-top: 2px solid rgba(0, 255, 34, 0.08); background: transparent; align-items: center; width: 100%; position: relative; }
         .action-btn { width: 100%; max-width: 500px; padding: 10px 16px; color: #000000; border: none; border-radius: 25px; font-size: 15px; font-weight: bold; cursor: pointer; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6); display: block; transition: all 0.3s ease; letter-spacing: 0.5px; }
         .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8); }
         .action-btn:active { transform: scale(0.97); }
         .btn-check { background: linear-gradient(135deg, #00aa22 0%, #00ff66 100%); color: #000000; font-weight: 800; }
         .btn-next { background: linear-gradient(135deg, #00ddff 0%, #00ffaa 100%); color: #000000; display: none; font-weight: 800; }
-        .btn-reveal { background: rgba(0, 17, 4, 0.8); border: 2px solid rgba(0, 68, 17, 0.6); padding: 6px 14px; font-size: 13px; color: #00ff22; backdrop-filter: blur(4px); transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; border-radius: 20px; }
+        .btn-reveal { background: rgba(0, 17, 4, 0.8); border: 2px solid rgba(0, 68, 17, 0.6); padding: 6px 14px; font-size: 13px; color: #00ff22; backdrop-filter: blur(4px); transition: all 0.3s ease; border-radius: 20px; }
         .btn-reveal:hover { border-color: #00ff22; background: rgba(0, 255, 34, 0.1); }
-        .revealed-answer-box { background: rgba(0, 0, 0, 0.9); border: 2px solid #00ff66; color: #00ff66; padding: 10px; border-radius: 12px; text-align: center; font-size: 14px; font-weight: bold; display: none; word-wrap: break-word; width: 100%; max-width: 500px; box-shadow: 0 0 30px rgba(0, 255, 102, 0.15); backdrop-filter: blur(4px); transition: color 0.4s ease, border-color 0.4s ease; }
+        .revealed-answer-box { background: rgba(0, 0, 0, 0.9); border: 2px solid #00ff66; color: #00ff66; padding: 10px; border-radius: 12px; text-align: center; font-size: 14px; font-weight: bold; display: none; word-wrap: break-word; width: 100%; max-width: 500px; box-shadow: 0 0 30px rgba(0, 255, 102, 0.15); backdrop-filter: blur(4px); }
         
-        /* BACK LINK */
-        .back-link { display: inline-block; color: #00ff22; font-weight: bold; font-size: 14px; cursor: pointer; margin-bottom: 2px; text-shadow: 0 0 10px rgba(0, 255, 34, 0.2); transition: all 0.3s ease, color 0.4s ease; padding: 3px 8px; border-radius: 8px; }
+        .back-link { display: inline-block; color: #00ff22; font-weight: bold; font-size: 14px; cursor: pointer; margin-bottom: 2px; text-shadow: 0 0 10px rgba(0, 255, 34, 0.2); transition: all 0.3s ease; padding: 3px 8px; border-radius: 8px; }
         .back-link:hover { background: rgba(0, 255, 34, 0.05); text-shadow: 0 0 20px rgba(0, 255, 34, 0.4); }
         
-        /* STATS */
         .stats-wrapper { text-align: center; padding: 6px 0 12px 0; margin-top: 2px; }
-        .btn-show-stats { background: rgba(0, 0, 0, 0.8); color: #00aa33; border: 2px dashed rgba(0, 68, 17, 0.5); padding: 6px 14px; font-size: 12px; font-weight: bold; border-radius: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; backdrop-filter: blur(4px); }
+        .btn-show-stats { background: rgba(0, 0, 0, 0.8); color: #00aa33; border: 2px dashed rgba(0, 68, 17, 0.5); padding: 6px 14px; font-size: 12px; font-weight: bold; border-radius: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease; backdrop-filter: blur(4px); }
         .btn-show-stats:hover { border-color: #00aa33; box-shadow: 0 0 20px rgba(0, 170, 51, 0.15); }
-        .stats-report-box { display: none; background: rgba(0, 10, 3, 0.9); border: 2px solid #00ff22; padding: 12px; border-radius: 12px; margin: 6px auto 0 auto; font-size: 13px; color: #00ff22; font-weight: bold; text-align: left; line-height: 1.5; max-width: 550px; box-shadow: 0 0 30px rgba(0, 255, 34, 0.1); backdrop-filter: blur(4px); transition: color 0.4s ease, border-color 0.4s ease; }
+        .stats-report-box { display: none; background: rgba(0, 10, 3, 0.9); border: 2px solid #00ff22; padding: 12px; border-radius: 12px; margin: 6px auto 0 auto; font-size: 13px; color: #00ff22; font-weight: bold; text-align: left; line-height: 1.5; max-width: 550px; box-shadow: 0 0 30px rgba(0, 255, 34, 0.1); backdrop-filter: blur(4px); }
         
-        /* BOTTOM BUTTONS */
         .bottom-buttons-row { display: flex; justify-content: space-around; width: 100%; padding: 0 5px; position: relative; gap: 10px; }
-        .config-btn { background: rgba(0, 20, 5, 0.85); border: 2px solid #00ff66; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; color: #00ff66; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(0, 255, 102, 0.15); transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; z-index: 10; backdrop-filter: blur(4px); }
+        .config-btn { background: rgba(0, 20, 5, 0.85); border: 2px solid #00ff66; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; color: #00ff66; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(0, 255, 102, 0.15); transition: all 0.3s ease; z-index: 10; backdrop-filter: blur(4px); }
         .config-btn:hover { transform: scale(1.1) rotate(60deg); box-shadow: 0 0 35px rgba(0, 255, 102, 0.3); }
         .config-btn.active { background: #00ff66; color: #000000; box-shadow: 0 0 40px rgba(0, 255, 102, 0.5); }
         .match-btn { background: rgba(20, 20, 5, 0.85); border: 2px solid #ffaa00; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; color: #ffaa00; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(255, 170, 0, 0.15); transition: all 0.3s ease; z-index: 10; backdrop-filter: blur(4px); }
@@ -114,16 +132,15 @@
         .match-btn-label { color: #ffaa00; }
         .bottom-btn-wrapper { display: flex; flex-direction: column; align-items: center; }
         
-        /* MATCH SCREEN */
-        #match-screen { display: none; flex-direction: column; height: 100%; width: 100%; position: fixed; top: 0; left: 0; background: #000000; z-index: 500; padding: 12px; overflow-y: auto; transition: background-color 0.4s ease; }
+        #match-screen { display: none; flex-direction: column; height: 100%; width: 100%; position: fixed; top: 0; left: 0; background: #000000; z-index: 500; padding: 12px; overflow-y: auto; }
         #match-screen.active { display: flex; }
         .match-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 0 10px 0; border-bottom: 2px solid rgba(255, 170, 0, 0.2); margin-bottom: 10px; }
-        .match-header h2 { color: #ffaa00; text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); font-size: 18px; margin: 0; letter-spacing: 2px; transition: color 0.4s ease; }
+        .match-header h2 { color: #ffaa00; text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); font-size: 18px; margin: 0; letter-spacing: 2px; }
         .match-close-btn { background: rgba(255, 170, 0, 0.1); border: 2px solid #ffaa00; color: #ffaa00; font-size: 18px; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
         .match-close-btn:hover { background: #ffaa00; color: #000000; transform: rotate(90deg); }
-        .match-stats { color: #ffaa00; text-align: center; font-size: 13px; margin-bottom: 10px; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255, 170, 0, 0.15); transition: color 0.4s ease; }
+        .match-stats { color: #ffaa00; text-align: center; font-size: 13px; margin-bottom: 10px; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255, 170, 0, 0.15); }
         .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; }
-        .match-card { background: #0a0a0a; border: 2px solid #1a1a1a; border-radius: 20px; padding: 10px 8px; text-align: center; font-size: 16px; font-weight: 800; color: #00ff22; cursor: pointer; transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; min-height: 50px; display: flex; align-items: center; justify-content: center; word-wrap: break-word; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; backdrop-filter: blur(4px); text-shadow: 0 0 20px rgba(0, 255, 34, 0.15); letter-spacing: 0.3px; line-height: 1.2; }
+        .match-card { background: #0a0a0a; border: 2px solid #1a1a1a; border-radius: 20px; padding: 10px 8px; text-align: center; font-size: 16px; font-weight: 800; color: #00ff22; cursor: pointer; transition: all 0.3s ease; min-height: 50px; display: flex; align-items: center; justify-content: center; word-wrap: break-word; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; backdrop-filter: blur(4px); text-shadow: 0 0 20px rgba(0, 255, 34, 0.15); letter-spacing: 0.3px; line-height: 1.2; }
         .match-card:hover { transform: translateY(-2px) scale(1.01); border-color: #2a2a2a; box-shadow: 0 6px 25px rgba(0,0,0,0.7); }
         .match-card:active { transform: scale(0.95); }
         .match-card.selected { border-color: #ffaa00; box-shadow: 0 0 40px rgba(255, 170, 0, 0.3); transform: scale(1.03); }
@@ -143,16 +160,15 @@
         .match-win-message { display: none; text-align: center; color: #ffaa00; font-size: 22px; font-weight: bold; padding: 12px; text-shadow: 0 0 40px rgba(255, 170, 0, 0.4); animation: winPulse 1.5s ease infinite alternate; }
         @keyframes winPulse { 0% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); } 100% { transform: scale(1.04); text-shadow: 0 0 60px rgba(255, 170, 0, 0.6); } }
         
-        /* CONFIG MODAL */
         .config-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.88); z-index: 1000; justify-content: center; align-items: center; animation: fadeIn 0.3s ease; backdrop-filter: blur(8px); }
         .config-modal.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .config-modal-content { background: rgba(0, 15, 5, 0.95); border: 2px solid rgba(0, 255, 102, 0.2); border-radius: 16px; padding: 20px 18px; max-width: 380px; width: 92%; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 60px rgba(0, 255, 102, 0.08); backdrop-filter: blur(10px); transition: border-color 0.4s ease; }
-        .config-modal-content h3 { color: #00ff66; text-align: center; font-size: 18px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(0, 255, 102, 0.2); transition: color 0.4s ease; }
-        .config-modal-close { float: right; background: transparent; border: none; color: #00ff66; font-size: 22px; cursor: pointer; padding: 0 6px; line-height: 1; transition: all 0.3s ease, color 0.4s ease; }
+        .config-modal-content { background: rgba(0, 15, 5, 0.95); border: 2px solid rgba(0, 255, 102, 0.2); border-radius: 16px; padding: 20px 18px; max-width: 380px; width: 92%; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 60px rgba(0, 255, 102, 0.08); backdrop-filter: blur(10px); }
+        .config-modal-content h3 { color: #00ff66; text-align: center; font-size: 18px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(0, 255, 102, 0.2); }
+        .config-modal-close { float: right; background: transparent; border: none; color: #00ff66; font-size: 22px; cursor: pointer; padding: 0 6px; line-height: 1; transition: all 0.3s ease; }
         .config-modal-close:hover { color: #ffffff; transform: rotate(90deg); }
         .color-picker-group { margin-bottom: 14px; }
-        .color-picker-group label { display: block; color: #00ff66; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; opacity: 0.8; transition: color 0.4s ease; }
+        .color-picker-group label { display: block; color: #00ff66; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; opacity: 0.8; }
         .color-picker-group .color-options { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
         .color-option { width: 32px; height: 32px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .color-option:hover { transform: scale(1.12); box-shadow: 0 4px 20px rgba(0,0,0,0.7); }
@@ -162,19 +178,35 @@
         .btn-reset-colors { background: rgba(255, 0, 0, 0.15); border: 2px solid rgba(255, 51, 51, 0.3); color: #ff3333; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 6px; transition: all 0.3s ease; letter-spacing: 0.5px; }
         .btn-reset-colors:hover { background: rgba(255, 0, 0, 0.25); border-color: #ff3333; box-shadow: 0 0 30px rgba(255, 51, 51, 0.15); }
         
-        /* ANIMATIONS */
         .word-balloon.speaking { animation: speakGlow 0.6s ease; }
         @keyframes speakGlow { 0% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); } 50% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.12); } 100% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); } }
         
-        /* SCROLLBAR PERSONALIZADA */
         .game-scrollable-content::-webkit-scrollbar, #topics-screen::-webkit-scrollbar { width: 3px; }
         .game-scrollable-content::-webkit-scrollbar-track, #topics-screen::-webkit-scrollbar-track { background: rgba(0, 255, 34, 0.03); border-radius: 10px; }
         .game-scrollable-content::-webkit-scrollbar-thumb, #topics-screen::-webkit-scrollbar-thumb { background: rgba(0, 255, 34, 0.2); border-radius: 10px; }
+        
+        .voice-selector-group { margin: 12px 0; padding: 10px; background: rgba(0, 255, 34, 0.05); border-radius: 12px; border: 1px solid rgba(0, 255, 34, 0.1); }
+        .voice-selector-group label { display: block; color: #00ff66; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; opacity: 0.8; }
+        .voice-selector-group select { width: 100%; padding: 8px 12px; background: #0a0a0a; color: #00ff66; border: 2px solid rgba(0, 255, 34, 0.2); border-radius: 10px; font-size: 13px; cursor: pointer; outline: none; }
+        .voice-selector-group select:focus { border-color: #00ff66; }
+        .voice-selector-group select option { background: #0a0a0a; color: #00ff66; }
+        .tts-status { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 9px; margin-left: 6px; background: rgba(255,255,255,0.05); }
+        .tts-status.ok { color: #00ff66; border: 1px solid rgba(0,255,102,0.3); }
+        .tts-status.fail { color: #ff3333; border: 1px solid rgba(255,51,51,0.3); }
     </style>
 </head>
 <body>
 
 <div class="container" id="appContainer">
+    
+    <!-- ===== BARRA DE STATUS DO ÁUDIO (VISÍVEL SEMPRE) ===== -->
+    <div id="audioStatusBar">
+        <span class="status-icon">🔊</span>
+        <span class="status-text" id="audioStatusText">⏳ Inicializando áudio do Android...</span>
+        <button class="btn-test-small" onclick="testAudio()">▶ Testar</button>
+    </div>
+    
+    <!-- ===== TELA DE TÓPICOS ===== -->
     <div id="topics-screen" class="screen active">
         <h2>✨ Formando as Frases</h2>
         <div class="counter-banner">⚡ Banco de Dados Gigante Atualizado</div>
@@ -185,14 +217,16 @@
         </div>
     </div>
 
+    <!-- ===== TELA DO JOGO ===== -->
     <div id="game-screen" class="screen">
         <div class="game-scrollable-content">
             <div><span class="back-link" onclick="showTopicsScreen()">⬅ Voltar</span></div>
             <div class="top-challenge">
                 <div class="phrase-pt" id="phrase-pt">Carregando...</div>
                 <div class="audio-controls-row">
-                    <button class="btn-audio-top btn-audio-user" onclick="speakUserSentence()">🔊 Ouvir Sua Resposta</button>
-                    <button class="btn-audio-top" onclick="speakFullSentence()">🔊 Ouvir Tudo</button>
+                    <button class="btn-audio-top btn-test-audio" onclick="testAudio()">🔊 Testar Áudio</button>
+                    <button class="btn-audio-top btn-audio-user" onclick="speakUserSentence()">🔊 Sua Resposta</button>
+                    <button class="btn-audio-top" onclick="speakFullSentence()">🔊 Frase Completa</button>
                 </div>
             </div>
             <div class="zone-title" id="track-number">Sua resposta:</div>
@@ -224,6 +258,7 @@
     </div>
 </div>
 
+<!-- ===== MATCH SCREEN ===== -->
 <div id="match-screen">
     <div class="match-header">
         <h2>🎯 Match - Combine as Palavras</h2>
@@ -238,10 +273,20 @@
     </div>
 </div>
 
+<!-- ===== CONFIG MODAL ===== -->
 <div class="config-modal" id="configModal">
     <div class="config-modal-content">
         <button class="config-modal-close" onclick="toggleConfigModal()">✕</button>
         <h3>⚙ Configurações</h3>
+        
+        <div class="voice-selector-group">
+            <label>🗣️ Motor de Voz do Android (TTS)</label>
+            <select id="voiceSelector" onchange="changeVoice()"></select>
+            <div style="margin-top:6px; font-size:10px; color:#666;">
+                <span id="ttsStatus" class="tts-status fail">⏳ Carregando...</span>
+            </div>
+        </div>
+        
         <div class="color-picker-group">
             <label>🎨 Cor da Letra dos Balões</label>
             <div class="color-options" id="textColorOptions"></div>
@@ -255,7 +300,377 @@
 </div>
 
 <script>
+    // =====================================================
+    // 🗣️ SISTEMA DE ÁUDIO PARA ANDROID COM DIAGNÓSTICO
+    // =====================================================
+    
+    let availableVoices = [];
+    let selectedVoiceURI = null;
+    let ttsReady = false;
+    let audioActivated = false;
+    let audioWorking = false;
+    let testCount = 0;
+    
+    /**
+     * ATUALIZA A BARRA DE STATUS DO ÁUDIO
+     */
+    function updateAudioStatus(message, type) {
+        const bar = document.getElementById('audioStatusBar');
+        const text = document.getElementById('audioStatusText');
+        text.textContent = message;
+        bar.className = type || '';
+    }
+    
+    /**
+     * CARREGA AS VOZES DISPONÍVEIS
+     */
+    function loadVoices() {
+        if (!('speechSynthesis' in window)) {
+            updateAudioStatus('❌ TTS não suportado neste dispositivo', 'failed');
+            updateTTSStatus(false, 'TTS não suportado');
+            return;
+        }
+        
+        updateAudioStatus('⏳ Carregando vozes do Android...', '');
+        
+        let voices = window.speechSynthesis.getVoices();
+        
+        if (voices.length > 0) {
+            processVoices(voices);
+        } else {
+            window.speechSynthesis.onvoiceschanged = function() {
+                const newVoices = window.speechSynthesis.getVoices();
+                if (newVoices.length > 0) {
+                    processVoices(newVoices);
+                } else {
+                    setTimeout(() => {
+                        const retryVoices = window.speechSynthesis.getVoices();
+                        if (retryVoices.length > 0) {
+                            processVoices(retryVoices);
+                        } else {
+                            updateAudioStatus('⚠️ Nenhuma voz encontrada no Android', 'failed');
+                            updateTTSStatus(false, 'Nenhuma voz');
+                        }
+                    }, 1000);
+                }
+            };
+        }
+    }
+    
+    /**
+     * PROCESSA AS VOZES ENCONTRADAS
+     */
+    function processVoices(voices) {
+        availableVoices = voices;
+        
+        // Mostra informações de diagnóstico
+        console.log('🔊 Vozes encontradas:', voices.length);
+        voices.forEach((v, i) => {
+            console.log(`  ${i+1}. ${v.lang} - ${v.name} ${v.default ? '⭐' : ''}`);
+        });
+        
+        // Ordena: prioriza inglês
+        const sortedVoices = [...voices].sort((a, b) => {
+            const aScore = a.lang.includes('en') ? 10 : (a.lang.includes('pt') ? 5 : 0);
+            const bScore = b.lang.includes('en') ? 10 : (b.lang.includes('pt') ? 5 : 0);
+            return bScore - aScore;
+        });
+        
+        const selector = document.getElementById('voiceSelector');
+        selector.innerHTML = '';
+        
+        let hasEnglish = false;
+        let selectedIndex = 0;
+        
+        sortedVoices.forEach((voice, index) => {
+            const option = document.createElement('option');
+            option.value = voice.voiceURI || index;
+            const langName = voice.lang.toUpperCase();
+            const isEnglish = voice.lang.includes('en');
+            const isPortuguese = voice.lang.includes('pt');
+            const isDefault = voice.default ? ' ⭐' : '';
+            let flag = '';
+            if (isEnglish) flag = ' 🇬🇧';
+            else if (isPortuguese) flag = ' 🇧🇷';
+            option.textContent = `${langName} - ${voice.name}${isDefault}${flag}`;
+            option.dataset.voiceURI = voice.voiceURI;
+            option.dataset.lang = voice.lang;
+            
+            if (isEnglish && !hasEnglish) {
+                hasEnglish = true;
+                option.selected = true;
+                selectedVoiceURI = voice.voiceURI;
+                selectedIndex = index;
+            }
+            
+            selector.appendChild(option);
+        });
+        
+        // Se não encontrou inglês, seleciona a primeira
+        if (!hasEnglish && sortedVoices.length > 0) {
+            selector.options[0].selected = true;
+            selectedVoiceURI = sortedVoices[0].voiceURI;
+        }
+        
+        ttsReady = true;
+        updateTTSStatus(true, `${sortedVoices.length} vozes disponíveis`);
+        updateAudioStatus(`✅ Áudio pronto! ${sortedVoices.length} vozes`, 'working');
+        
+        // Testa automaticamente após 1 segundo
+        setTimeout(() => {
+            testAudio();
+        }, 1500);
+    }
+    
+    /**
+     * MUDA A VOZ SELECIONADA
+     */
+    function changeVoice() {
+        const selector = document.getElementById('voiceSelector');
+        const selectedOption = selector.options[selector.selectedIndex];
+        if (selectedOption) {
+            selectedVoiceURI = selectedOption.dataset.voiceURI;
+            updateAudioStatus(`🔄 Voz alterada: ${selectedOption.textContent}`, '');
+            setTimeout(() => {
+                speakText('Voice changed successfully.', 'en-US', 0.9);
+            }, 300);
+        }
+    }
+    
+    /**
+     * ATUALIZA O STATUS DO TTS
+     */
+    function updateTTSStatus(ready, message) {
+        const statusEl = document.getElementById('ttsStatus');
+        if (ready) {
+            statusEl.textContent = '✅ ' + message;
+            statusEl.className = 'tts-status ok';
+        } else {
+            statusEl.textContent = '❌ ' + message;
+            statusEl.className = 'tts-status fail';
+        }
+    }
+    
+    /**
+     * FUNÇÃO PRINCIPAL DE FALA
+     */
+    function speakText(text, lang = 'en-US', rate = 0.85) {
+        if (!text || text.trim() === '') return;
+        
+        if (!audioActivated) {
+            activateAudio();
+        }
+        
+        if (!('speechSynthesis' in window)) {
+            console.log('❌ TTS não disponível');
+            return false;
+        }
+        
+        try {
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            utterance.rate = rate;
+            utterance.volume = 1;
+            utterance.pitch = 1;
+            
+            if (selectedVoiceURI) {
+                const voice = availableVoices.find(v => v.voiceURI === selectedVoiceURI);
+                if (voice) {
+                    utterance.voice = voice;
+                }
+            }
+            
+            utterance.onstart = function() {
+                console.log('🔊 Falando:', text.substring(0, 50) + (text.length > 50 ? '...' : ''));
+                audioWorking = true;
+                updateAudioStatus('🔊 Falando: ' + text.substring(0, 30) + (text.length > 30 ? '...' : ''), 'working');
+            };
+            
+            utterance.onerror = function(event) {
+                console.log('❌ Erro no TTS:', event);
+                updateAudioStatus('⚠️ Erro no áudio. Tente novamente.', 'failed');
+                // Fallback: tenta novamente
+                setTimeout(() => {
+                    try {
+                        const retry = new SpeechSynthesisUtterance(text);
+                        retry.lang = lang;
+                        retry.rate = rate;
+                        window.speechSynthesis.speak(retry);
+                    } catch (e) {}
+                }, 500);
+            };
+            
+            utterance.onend = function() {
+                console.log('✅ Fala concluída');
+                updateAudioStatus('✅ Áudio funcionando', 'working');
+            };
+            
+            window.speechSynthesis.speak(utterance);
+            
+            setTimeout(() => {
+                if (window.speechSynthesis.paused) {
+                    window.speechSynthesis.resume();
+                }
+            }, 100);
+            
+            return true;
+            
+        } catch (e) {
+            console.log('❌ Exceção no TTS:', e);
+            updateAudioStatus('❌ Erro: ' + e.message, 'failed');
+            return false;
+        }
+    }
+    
+    /**
+     * ATIVA O ÁUDIO - PRECISA DE TOQUE DO USUÁRIO
+     */
+    function activateAudio() {
+        if (audioActivated) return;
+        audioActivated = true;
+        
+        console.log('🎤 Ativando áudio do Android...');
+        updateAudioStatus('🎤 Ativando áudio...', '');
+        
+        // Tenta criar contexto de áudio
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume().then(() => {
+                    console.log('✅ AudioContext ativado');
+                }).catch(err => {
+                    console.log('⚠️ AudioContext:', err);
+                });
+            }
+        } catch (e) {}
+        
+        // Carrega vozes se não estiverem carregadas
+        if (!ttsReady) {
+            loadVoices();
+        }
+    }
+    
+    /**
+     * TESTE DE ÁUDIO - BOTÃO PRINCIPAL
+     */
+    function testAudio() {
+        testCount++;
+        
+        if (!audioActivated) {
+            activateAudio();
+        }
+        
+        updateAudioStatus('🔊 Testando áudio... (#' + testCount + ')', '');
+        
+        // Tenta falar uma frase de teste
+        const testPhrases = [
+            'Hello! Audio test number ' + testCount + '.',
+            'This is the Android text to speech engine.',
+            'The audio system is working properly.'
+        ];
+        
+        const phrase = testPhrases[Math.min(testCount - 1, testPhrases.length - 1)];
+        
+        const success = speakText(phrase, 'en-US', 0.85);
+        
+        if (!success) {
+            // Tenta novamente com uma abordagem diferente
+            setTimeout(() => {
+                try {
+                    const utterance = new SpeechSynthesisUtterance('Testing audio.');
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    if (availableVoices.length > 0) {
+                        utterance.voice = availableVoices[0];
+                    }
+                    window.speechSynthesis.speak(utterance);
+                    updateAudioStatus('✅ Teste enviado', 'working');
+                } catch (e) {
+                    updateAudioStatus('❌ Falha no teste. Verifique as permissões.', 'failed');
+                }
+            }, 300);
+        }
+    }
+    
+    /**
+     * CONFIGURA CAPTURA DO PRIMEIRO TOQUE
+     */
+    function setupAudioActivation() {
+        const events = ['click', 'touchstart', 'touchend', 'pointerdown'];
+        
+        const activator = function() {
+            activateAudio();
+            events.forEach(ev => {
+                document.removeEventListener(ev, activator);
+            });
+            // Testa após ativar
+            setTimeout(() => testAudio(), 300);
+        };
+        
+        events.forEach(ev => {
+            document.addEventListener(ev, activator, { once: true });
+        });
+        
+        // Tenta carregar vozes ao iniciar
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                loadVoices();
+            }, 500);
+        });
+    }
+    
+    // =====================================================
+    // ===== WRAPPERS PARA AS FUNÇÕES ORIGINAIS =====
+    // =====================================================
+    
+    window.speak = function(text) {
+        speakText(text, 'en-US', 0.85);
+        // Repetição para melhor audibilidade
+        setTimeout(() => {
+            speakText(text, 'en-US', 0.85);
+        }, 1200);
+    };
+    
+    window.speakWord = function(word) {
+        if (!audioActivated) activateAudio();
+        speakText(word, 'en-US', 0.9);
+        document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
+            if (el.textContent.toLowerCase() === word.toLowerCase()) {
+                el.classList.add('speaking');
+                setTimeout(() => el.classList.remove('speaking'), 700);
+            }
+        });
+    };
+    
+    window.speakFullSentence = function() {
+        const currentPhrase = playlistPhrases && playlistPhrases[currentPhraseIndex];
+        if (currentPhrase) {
+            if (!audioActivated) activateAudio();
+            speakText(currentPhrase.en, 'en-US', 0.85);
+            // Repete para melhor audibilidade
+            setTimeout(() => {
+                speakText(currentPhrase.en, 'en-US', 0.85);
+            }, 1500);
+        }
+    };
+    
+    window.speakUserSentence = function() {
+        if (selectedWords && selectedWords.length === 0) return;
+        const userTxt = selectedWords.join(" ");
+        if (!audioActivated) activateAudio();
+        speakText(userTxt, 'en-US', 0.85);
+        // Repete para melhor audibilidade
+        setTimeout(() => {
+            speakText(userTxt, 'en-US', 0.85);
+        }, 1500);
+    };
+    
+    // =====================================================
     // ===== CONFIGURAÇÕES DE CORES =====
+    // =====================================================
+    
     const STORAGE_KEY = 'wordGameColors';
     function loadSavedColors() {
         try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) { const parsed = JSON.parse(saved); return parsed; } } catch (e) {}
@@ -270,34 +685,18 @@
         bg: ['#000000', '#0a0a0a', '#111111', '#1a1a2e', '#16213e', '#0f3460', '#2d132c', '#1b1b2f', '#001a06', '#001104', '#0d0d0d', '#1a0a0a', '#0a1a0a', '#0a0a1a']
     };
     const defaultColors = { textColor: '#00ff22', bgColor: '#000000' };
-
-    // ===== VARIÁVEIS DO MATCH GAME =====
+    
     let matchPairs = [], selectedMatchCard = null, matchedPairs = 0, matchCards = [], isProcessingMatch = false;
-
-    // ===== FUNÇÕES DE VOZ =====
-    function speakWord(word) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
-            document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
-                if (el.textContent.toLowerCase() === word.toLowerCase()) {
-                    el.classList.add('speaking');
-                    setTimeout(() => el.classList.remove('speaking'), 700);
-                }
-            });
-        }
-    }
-
-    // ===== FUNÇÕES DE CONFIGURAÇÃO =====
+    
     function toggleConfigModal() {
         const modal = document.getElementById('configModal');
         const btn = document.getElementById('configBtn');
         modal.classList.toggle('active');
         btn.classList.toggle('active');
-        if (modal.classList.contains('active')) renderColorOptions();
+        if (modal.classList.contains('active')) {
+            renderColorOptions();
+            if (!ttsReady) loadVoices();
+        }
     }
     function renderColorOptions() {
         renderColorOptionGroup('textColorOptions', colorPalettes.text, colorConfig.textColor, 'text');
@@ -366,574 +765,60 @@
         saveColors();
         renderColorOptions();
     }
-
-    // ===== DICIONÁRIO GIGANTE =====
+    
+    // =====================================================
+    // ===== DICIONÁRIO E FRASES (VERSÃO RESUMIDA) =====
+    // =====================================================
+    
     const dictionary = {
-        "a": "um/uma", "about": "sobre", "above": "acima", "absence": "ausência", "absolutely": "absolutamente",
-        "accept": "aceitar", "accident": "acidente", "according": "de acordo", "account": "conta", "across": "através",
-        "act": "agir/ato", "actually": "na verdade", "add": "adicionar", "admit": "admitir", "advice": "conselho",
-        "affect": "afetar", "afraid": "com medo", "after": "depois", "afternoon": "tarde", "again": "novamente",
-        "against": "contra", "age": "idade", "ago": "atrás", "agree": "concordar", "ahead": "adiante",
-        "aim": "objetivo/mirar", "all": "todos/tudo", "almost": "quase", "along": "ao longo", "already": "já",
-        "also": "também", "although": "embora", "always": "sempre", "among": "entre", "amount": "quantia",
-        "ancient": "antigo", "and": "e", "anger": "raiva", "another": "outro", "any": "qualquer",
-        "anymore": "mais/já", "anyone": "alguém", "anything": "qualquer coisa", "anyway": "de qualquer forma",
-        "anywhere": "em qualquer lugar", "apart": "separado", "apparently": "aparentemente", "appear": "aparecer",
-        "apply": "aplicar", "approach": "abordagem", "area": "área", "around": "ao redor", "as": "como",
-        "aside": "de lado", "ask": "perguntar", "at": "em", "attempt": "tentar", "attention": "atenção",
-        "attitude": "atitude", "avoid": "evitar", "away": "fora", "back": "voltar/atrás", "bad": "ruim",
-        "balance": "equilíbrio", "based": "baseado", "be": "ser/estar", "because": "porque", "become": "tornar-se",
-        "before": "antes", "begin": "começar", "beginning": "começo", "behave": "comportar-se", "behind": "atrás",
-        "being": "ser/estar", "believe": "acreditar", "below": "abaixo", "best": "melhor", "better": "melhor",
-        "between": "entre", "big": "grande", "bit": "pouco", "blind": "cego", "boiling": "fervendo",
-        "book": "livro", "bored": "entediado", "both": "ambos", "bottom": "fundo", "bring": "trazer",
-        "brother": "irmão", "build": "construir", "business": "negócio", "but": "mas", "by": "por",
-        "call": "chamar", "can": "poder", "cannot": "não pode", "care": "cuidar/importar-se", "carry": "carregar",
-        "case": "caso", "catch": "pegar", "cause": "causa", "certain": "certo", "chance": "chance",
-        "change": "mudança", "cheap": "barato", "check": "verificar", "choose": "escolher", "clear": "claro",
-        "close": "fechar/perto", "cold": "frio", "come": "vir", "comfort": "conforto", "commit": "comprometer-se",
-        "common": "comum", "compare": "comparar", "complete": "completo", "concentrate": "concentrar-se",
-        "condition": "condição", "confess": "confessar", "confidence": "confiança", "confirm": "confirmar",
-        "confuse": "confundir", "connect": "conectar", "consider": "considerar", "contain": "conter",
-        "continue": "continuar", "contract": "contrato", "control": "controle", "convince": "convencer",
-        "could": "poderia", "count": "contar", "courage": "coragem", "cover": "cobrir", "crazy": "louco",
-        "cross": "cruzar", "culture": "cultura", "current": "atual", "cut": "cortar", "daily": "diário",
-        "damage": "dano", "dangerous": "perigoso", "date": "data", "dawn": "amanhecer", "day": "dia",
-        "dead": "morto", "deal": "negócio", "dear": "caro/querido", "decide": "decidir", "decision": "decisão",
-        "deep": "profundo", "definitely": "definitivamente", "delay": "atraso", "deliver": "entregar",
-        "demand": "exigir", "deny": "negar", "depend": "depender", "describe": "descrever", "deserve": "merecer",
-        "design": "projeto", "desire": "desejo", "desperate": "desesperado", "despite": "apesar de",
-        "destroy": "destruir", "determine": "determinar", "develop": "desenvolver", "difference": "diferença",
-        "difficult": "difícil", "direct": "direto", "disagree": "discordar", "disappoint": "desapontar",
-        "discover": "descobrir", "discuss": "discutir", "disgust": "nojo", "distance": "distância",
-        "distract": "distrair", "do": "fazer", "does": "faz", "don't": "não", "door": "porta",
-        "doubt": "dúvida", "down": "baixo", "draw": "desenhar", "dream": "sonho", "dress": "vestir",
-        "drive": "dirigir", "during": "durante", "each": "cada", "early": "cedo", "earth": "terra",
-        "ease": "facilidade", "east": "leste", "easy": "fácil", "eat": "comer", "edge": "borda",
-        "educate": "educar", "effect": "efeito", "effort": "esforço", "either": "qualquer um", "else": "outro",
-        "embarrass": "constranger", "emotion": "emoção", "empathy": "empatia", "emphasis": "ênfase",
-        "employ": "empregar", "empty": "vazio", "encourage": "encorajar", "end": "fim", "enemy": "inimigo",
-        "energy": "energia", "enjoy": "aproveitar", "enormous": "enorme", "enough": "suficiente",
-        "ensure": "garantir", "enter": "entrar", "entire": "inteiro", "environment": "ambiente",
-        "envy": "inveja", "equal": "igual", "especially": "especialmente", "even": "até mesmo",
-        "eventually": "eventualmente", "ever": "já", "every": "todo", "exactly": "exatamente",
-        "exam": "exame", "examine": "examinar", "example": "exemplo", "excellent": "excelente",
-        "except": "exceto", "excite": "excitar", "excuse": "desculpa", "executive": "executivo",
-        "exist": "existir", "expand": "expandir", "expect": "esperar", "expense": "despesa",
-        "experience": "experiência", "expert": "especialista", "explain": "explicar", "explore": "explorar",
-        "extend": "estender", "extreme": "extremo", "eye": "olho", "face": "face/rosto", "fact": "fato",
-        "factor": "fator", "fail": "falhar", "fair": "justo", "fall": "cair", "false": "falso",
-        "familiar": "familiar", "famous": "famoso", "far": "longe", "fast": "rápido", "father": "pai",
-        "fault": "culpa", "fear": "medo", "feel": "sentir", "feeling": "sentimento", "few": "poucos",
-        "figure": "figura", "fill": "encher", "final": "final", "finally": "finalmente", "find": "encontrar",
-        "fine": "bem/multa", "finger": "dedo", "finish": "terminar", "fire": "fogo", "firm": "firme",
-        "first": "primeiro", "fix": "consertar", "focus": "foco", "follow": "seguir", "food": "comida",
-        "foot": "pé", "for": "para", "force": "força", "forget": "esquecer", "forgive": "perdoar",
-        "form": "forma", "former": "anterior", "fortune": "sorte/fortuna", "forward": "frente",
-        "free": "livre", "freeze": "congelar", "fresh": "fresco", "friend": "amigo", "from": "de",
-        "front": "frente", "full": "cheio", "future": "futuro", "gain": "ganhar", "general": "geral",
-        "get": "obter", "give": "dar", "go": "ir", "good": "bom", "got": "obteve", "great": "ótimo",
-        "green": "verde", "ground": "chão", "group": "grupo", "grow": "crescer", "guard": "guardar",
-        "guess": "palpite", "guilt": "culpa", "guy": "cara", "had": "tinha", "half": "metade",
-        "hand": "mão", "happen": "acontecer", "happy": "feliz", "hard": "duro/difícil", "has": "tem",
-        "haste": "pressa", "hate": "odiar", "have": "ter", "he": "ele", "head": "cabeça",
-        "hear": "ouvir", "heart": "coração", "heat": "calor", "heavy": "pesado", "help": "ajuda",
-        "her": "ela", "here": "aqui", "herself": "ela mesma", "hide": "esconder", "high": "alto",
-        "him": "ele", "himself": "ele mesmo", "his": "dele", "hit": "bater", "hold": "segurar",
-        "home": "casa", "hope": "esperança", "horse": "cavalo", "hot": "quente", "hour": "hora",
-        "house": "casa", "how": "como", "however": "no entanto", "huge": "enorme", "human": "humano",
-        "hungry": "com fome", "hurt": "machucar", "husband": "marido", "I": "eu", "idea": "ideia",
-        "if": "se", "ignore": "ignorar", "image": "imagem", "imagine": "imaginar", "immediate": "imediato",
-        "impact": "impacto", "important": "importante", "improve": "melhorar", "in": "em",
-        "include": "incluir", "increase": "aumentar", "indeed": "de fato", "indicate": "indicar",
-        "individual": "individual", "industry": "indústria", "influence": "influência",
-        "information": "informação", "initial": "inicial", "inside": "dentro", "instead": "em vez",
-        "interest": "interesse", "interesting": "interessante", "international": "internacional",
-        "interview": "entrevista", "into": "para dentro", "introduce": "apresentar", "invest": "investir",
-        "involve": "envolver", "issue": "assunto", "it": "isso", "its": "seu", "itself": "si mesmo",
-        "job": "trabalho", "join": "juntar-se", "judge": "juiz/julgar", "just": "apenas",
-        "keep": "manter", "key": "chave", "kill": "matar", "kind": "tipo", "know": "saber",
-        "lack": "falta", "land": "terra", "large": "grande", "last": "último", "late": "tarde",
-        "later": "mais tarde", "laugh": "rir", "law": "lei", "lay": "deitar", "lead": "liderar",
-        "lean": "inclinar", "learn": "aprender", "least": "menos", "leave": "sair", "left": "esquerda",
-        "leg": "perna", "less": "menos", "lesson": "lição", "let": "deixar", "letter": "carta",
-        "level": "nível", "lie": "mentir/deitar", "life": "vida", "light": "luz", "like": "gostar",
-        "line": "linha", "list": "lista", "listen": "ouvir", "little": "pequeno", "live": "viver",
-        "load": "carga", "local": "local", "long": "longo", "look": "olhar", "lose": "perder",
-        "loss": "perda", "lot": "muito", "love": "amar", "low": "baixo", "luck": "sorte",
-        "lunch": "almoço", "make": "fazer", "man": "homem", "manage": "gerenciar", "many": "muitos",
-        "mark": "marca", "matter": "assunto", "may": "pode", "maybe": "talvez", "me": "mim",
-        "mean": "significar", "measure": "medir", "meet": "encontrar", "member": "membro",
-        "memory": "memória", "mention": "mencionar", "mere": "mero", "message": "mensagem",
-        "middle": "meio", "might": "poder", "mind": "mente", "mine": "meu", "minute": "minuto",
-        "miss": "perder/sentir falta", "moment": "momento", "money": "dinheiro", "month": "mês",
-        "more": "mais", "morning": "manhã", "most": "maioria", "mother": "mãe", "mountain": "montanha",
-        "move": "mover", "much": "muito", "must": "dever", "my": "meu", "myself": "eu mesmo",
-        "name": "nome", "narrow": "estreito", "nature": "natureza", "near": "perto", "need": "precisar",
-        "neither": "nenhum", "never": "nunca", "new": "novo", "next": "próximo", "nice": "legal",
-        "night": "noite", "no": "não", "none": "nenhum", "nor": "nem", "normal": "normal",
-        "not": "não", "nothing": "nada", "notice": "notar", "now": "agora", "number": "número",
-        "object": "objeto", "obtain": "obter", "occur": "ocorrer", "of": "de", "off": "fora",
-        "offer": "oferecer", "office": "escritório", "often": "frequentemente", "oh": "ah",
-        "old": "velho", "on": "em", "once": "uma vez", "one": "um", "only": "apenas",
-        "onto": "sobre", "open": "abrir", "opinion": "opinião", "opportunity": "oportunidade",
-        "or": "ou", "order": "ordem", "other": "outro", "our": "nosso", "out": "fora",
-        "outside": "fora", "over": "sobre", "own": "próprio", "pain": "dor", "part": "parte",
-        "particular": "particular", "pass": "passar", "past": "passado", "path": "caminho",
-        "pay": "pagar", "people": "pessoas", "per": "por", "perfect": "perfeito", "perhaps": "talvez",
-        "period": "período", "person": "pessoa", "pick": "escolher", "piece": "pedaço",
-        "place": "lugar", "plan": "plano", "plant": "planta", "play": "jogar", "please": "por favor",
-        "pleasure": "prazer", "point": "ponto", "policy": "política", "political": "político",
-        "poor": "pobre", "position": "posição", "positive": "positivo", "possible": "possível",
-        "post": "postar", "potential": "potencial", "power": "poder", "practice": "prática",
-        "prefer": "preferir", "prepare": "preparar", "present": "presente", "press": "pressionar",
-        "pretty": "bonito", "prevent": "prevenir", "previous": "anterior", "price": "preço",
-        "primary": "primário", "print": "imprimir", "priority": "prioridade", "private": "privado",
-        "probably": "provavelmente", "problem": "problema", "process": "processo", "produce": "produzir",
-        "product": "produto", "program": "programa", "progress": "progresso", "project": "projeto",
-        "property": "propriedade", "protect": "proteger", "prove": "provar", "provide": "fornecer",
-        "public": "público", "pull": "puxar", "purpose": "propósito", "push": "empurrar",
-        "put": "colocar", "quality": "qualidade", "question": "pergunta", "quick": "rápido",
-        "quiet": "quieto", "quite": "bastante", "raise": "levantar", "range": "alcance",
-        "rapid": "rápido", "rather": "antes", "reach": "alcançar", "read": "ler", "ready": "pronto",
-        "real": "real", "really": "realmente", "reason": "razão", "receive": "receber",
-        "recent": "recente", "recognize": "reconhecer", "recommend": "recomendar",
-        "record": "registro", "reduce": "reduzir", "refer": "referir-se", "reflect": "refletir",
-        "regard": "considerar", "region": "região", "regret": "arrepender-se", "reject": "rejeitar",
-        "relate": "relacionar-se", "release": "liberar", "remain": "permanecer", "remember": "lembrar",
-        "remove": "remover", "require": "exigir", "research": "pesquisa", "resolve": "resolver",
-        "resource": "recurso", "respect": "respeito", "respond": "responder", "rest": "descanso",
-        "result": "resultado", "return": "retornar", "reveal": "revelar", "right": "certo/direita",
-        "rise": "subir", "risk": "risco", "role": "papel", "room": "sala/quarto", "rough": "áspero",
-        "round": "redondo", "rule": "regra", "run": "correr", "sad": "triste", "safe": "seguro",
-        "said": "disse", "same": "mesmo", "save": "salvar", "say": "dizer", "scene": "cena",
-        "school": "escola", "science": "ciência", "scope": "escopo", "scratch": "arranhar",
-        "see": "ver", "seek": "procurar", "seem": "parecer", "self": "si mesmo", "send": "enviar",
-        "sense": "sentido", "serious": "sério", "serve": "servir", "set": "definir", "settle": "resolver",
-        "several": "vários", "shall": "deverá", "share": "compartilhar", "she": "ela",
-        "short": "curto", "should": "deveria", "show": "mostrar", "side": "lado",
-        "sight": "visão", "sign": "sinal", "similar": "similar", "simple": "simples",
-        "since": "desde", "sit": "sentar", "situation": "situação", "size": "tamanho",
-        "slow": "lento", "small": "pequeno", "so": "então", "social": "social",
-        "some": "algum", "something": "algo", "sometimes": "às vezes", "son": "filho",
-        "soon": "logo", "sorry": "desculpe", "sort": "tipo", "sound": "som",
-        "source": "fonte", "space": "espaço", "speak": "falar", "special": "especial",
-        "specific": "específico", "spend": "gastar", "stand": "ficar de pé", "start": "começar",
-        "state": "estado", "stay": "ficar", "step": "passo", "still": "ainda",
-        "stop": "parar", "story": "história", "straight": "reto", "strange": "estranho",
-        "strategy": "estratégia", "strong": "forte", "study": "estudar", "subject": "assunto",
-        "success": "sucesso", "such": "tal", "sudden": "repentino", "summer": "verão",
-        "sun": "sol", "support": "suporte", "sure": "certo", "surprise": "surpresa",
-        "surrounding": "arredores", "survive": "sobreviver", "swear": "jurar", "system": "sistema",
-        "take": "tomar", "talk": "falar", "task": "tarefa", "teach": "ensinar",
-        "team": "time/equipe", "tell": "contar", "ten": "dez", "tend": "tender",
-        "term": "termo", "test": "teste", "than": "que", "thank": "agradecer",
-        "that": "que/aquilo", "the": "o/a", "their": "deles", "them": "eles",
-        "themselves": "eles mesmos", "then": "então", "there": "lá", "these": "estes",
-        "they": "eles", "thing": "coisa", "think": "pensar", "this": "este",
-        "those": "aqueles", "though": "embora", "thought": "pensamento", "through": "através",
-        "throughout": "por todo", "throw": "jogar", "thus": "assim", "time": "tempo",
-        "to": "para", "today": "hoje", "together": "juntos", "tomorrow": "amanhã",
-        "tonight": "esta noite", "too": "também", "took": "pegou", "top": "topo",
-        "total": "total", "touch": "tocar", "toward": "em direção a", "town": "cidade",
-        "track": "pista", "trade": "comércio", "traditional": "tradicional", "traffic": "tráfego",
-        "train": "treinar/trem", "treat": "tratar", "tree": "árvore", "trip": "viagem",
-        "trouble": "problema", "true": "verdadeiro", "trust": "confiar", "truth": "verdade",
-        "try": "tentar", "turn": "virar", "twice": "duas vezes", "two": "dois",
-        "type": "tipo", "under": "sob", "understand": "entender", "unit": "unidade",
-        "until": "até", "up": "cima", "upon": "sobre", "us": "nós", "use": "usar",
-        "usually": "geralmente", "vague": "vago", "value": "valor", "various": "vários",
-        "very": "muito", "view": "visão", "visit": "visitar", "voice": "voz",
-        "wait": "esperar", "walk": "andar", "want": "querer", "war": "guerra",
-        "warm": "quente", "was": "era/foi", "way": "caminho", "we": "nós",
-        "weak": "fraco", "wear": "vestir", "week": "semana", "weigh": "pesar",
-        "well": "bem", "were": "eram/foram", "what": "o que", "whatever": "qualquer coisa",
-        "when": "quando", "where": "onde", "whether": "se", "which": "qual",
-        "while": "enquanto", "who": "quem", "whole": "todo", "whom": "quem",
-        "whose": "de quem", "why": "por que", "wide": "largo", "wife": "esposa",
-        "will": "vai", "win": "ganhar", "with": "com", "within": "dentro de",
-        "without": "sem", "woman": "mulher", "wonder": "perguntar-se", "word": "palavra",
-        "work": "trabalho", "world": "mundo", "would": "iria", "write": "escrever",
-        "wrong": "errado", "year": "ano", "yes": "sim", "yet": "ainda",
-        "you": "você", "young": "jovem", "your": "seu", "yourself": "você mesmo"
+        "hello": "olá", "world": "mundo", "good": "bom", "bad": "ruim", 
+        "love": "amor", "happy": "feliz", "sad": "triste", "big": "grande",
+        "small": "pequeno", "fast": "rápido", "slow": "lento", "hot": "quente",
+        "cold": "frio", "new": "novo", "old": "velho", "yes": "sim",
+        "no": "não", "maybe": "talvez", "always": "sempre", "never": "nunca",
+        "now": "agora", "later": "depois", "today": "hoje", "tomorrow": "amanhã",
+        "yesterday": "ontem", "here": "aqui", "there": "lá", "more": "mais",
+        "less": "menos", "all": "todos", "nothing": "nada", "day": "dia",
+        "night": "noite", "morning": "manhã", "afternoon": "tarde", "evening": "noite",
+        "friend": "amigo", "family": "família", "school": "escola", "work": "trabalho",
+        "time": "tempo", "life": "vida", "love": "amor", "peace": "paz"
     };
-
-    // ===== BANCO DE FRASES GIGANTE =====
+    
     const pdfPhrasesDatabase = {
-        "Provérbios e Ditados": [
-            {en: "Don't count your chickens before they hatch.", pt: "Não conte com o ovo antes da galinha.", extra: ["count", "chickens", "hatch"]},
-            {en: "Scratch my back, I'll scratch yours.", pt: "Uma mão lava a outra.", extra: ["scratch", "back"]},
-            {en: "If you can't beat them, join them.", pt: "Se você não pode vencê-los, junte-se a eles.", extra: ["beat", "join"]},
-            {en: "Good things come to those who wait.", pt: "Quem espera sempre alcança.", extra: ["good", "wait"]},
-            {en: "When the cat's away, the mice will play.", pt: "Quando o gato sai, o rato faz a festa.", extra: ["cat", "mice", "play"]},
-            {en: "The eyes are the mirror of the soul.", pt: "Os olhos são o espelho da alma.", extra: ["eyes", "mirror", "soul"]},
-            {en: "Don't judge a book by its cover.", pt: "Não julgue um livro pela capa.", extra: ["judge", "book", "cover"]},
+        "Frases Básicas": [
+            {en: "Hello world!", pt: "Olá mundo!", extra: ["hello", "world"]},
+            {en: "I love you.", pt: "Eu te amo.", extra: ["love"]},
+            {en: "Good morning!", pt: "Bom dia!", extra: ["good", "morning"]},
+            {en: "How are you?", pt: "Como você está?", extra: ["how", "are"]},
+            {en: "I am happy.", pt: "Estou feliz.", extra: ["happy"]},
+            {en: "See you later.", pt: "Até mais tarde.", extra: ["see", "later"]},
+            {en: "Have a nice day.", pt: "Tenha um bom dia.", extra: ["have", "nice", "day"]},
+            {en: "Good night!", pt: "Boa noite!", extra: ["good", "night"]},
+            {en: "What is your name?", pt: "Qual é o seu nome?", extra: ["what", "name"]}
+        ],
+        "Provérbios": [
             {en: "Love is blind.", pt: "O amor é cego.", extra: ["love", "blind"]},
-            {en: "Don't put all your eggs in one basket.", pt: "Não ponha todos os seus ovos num único cesto.", extra: ["put", "eggs", "basket"]},
-            {en: "Don't make a mountain out of a molehill.", pt: "Não faça tempestade em um copo d'água.", extra: ["make", "mountain"]},
-            {en: "No pain, no gain.", pt: "Não há recompensa sem esforço.", extra: ["pain", "gain"]},
-            {en: "Out of sight, out of mind.", pt: "O que os olhos não veem, o coração não sente.", extra: ["sight", "mind"]},
-            {en: "Absence makes the heart grow fonder.", pt: "Longe dos olhos, perto do coração.", extra: ["absence", "heart"]},
-            {en: "Looks can be deceiving.", pt: "As aparências enganam.", extra: ["looks", "deceiving"]},
-            {en: "He who laughs last laughs best.", pt: "Quem ri por último ri melhor.", extra: ["laughs", "last", "best"]},
-            {en: "Don't look a gift horse in the mouth.", pt: "A cavalo dado não se olham os dentes.", extra: ["look", "gift", "horse"]},
-            {en: "The grass is always greener on the other side.", pt: "A galinha do vizinho é sempre mais gorda.", extra: ["grass", "greener", "other"]},
-            {en: "Haste makes waste.", pt: "A pressa é inimiga da perfeição.", extra: ["haste", "waste"]},
-            {en: "Tomorrow's a new day.", pt: "Amanhã é outro dia.", extra: ["tomorrow", "new", "day"]},
-            {en: "Better late than never.", pt: "Antes tarde que nunca.", extra: ["better", "late", "never"]},
-            {en: "The lesser of two evils.", pt: "Dos males, o menor.", extra: ["lesser", "evil"]},
-            {en: "All for one and one for all.", pt: "Um por todos e todos por um.", extra: ["one", "all"]},
-            {en: "Every cloud has a silver lining.", pt: "Há males que vêm para o bem.", extra: ["cloud", "silver", "lining"]},
-            {en: "No use crying over spilt milk.", pt: "Não adianta chorar o leite derramado.", extra: ["crying", "spilt", "milk"]},
-            {en: "Don't leave for tomorrow what you can do today.", pt: "Não deixe para amanhã o que você pode fazer hoje.", extra: ["leave", "tomorrow", "today"]},
-            {en: "Do unto others as you would have done to you.", pt: "Não faça com os outros o que não quer que façam a você.", extra: ["do", "others"]},
-            {en: "Never say never.", pt: "Nunca diga nunca.", extra: ["never", "say"]},
-            {en: "You're only as old as you feel.", pt: "O importante não é a idade e sim como você se sente.", extra: ["old", "feel"]},
-            {en: "Don't bite the hand that feeds you.", pt: "Não cuspa no prato em que comeu.", extra: ["bite", "hand", "feeds"]},
+            {en: "No pain, no gain.", pt: "Sem dor, sem ganho.", extra: ["pain", "gain"]},
             {en: "Practice makes perfect.", pt: "A prática leva à perfeição.", extra: ["practice", "perfect"]},
-            {en: "Variety is the spice of life.", pt: "O importante é variar.", extra: ["variety", "spice", "life"]},
-            {en: "Seeing is believing.", pt: "Ver para crer.", extra: ["seeing", "believing"]},
-            {en: "If you want something done right, you have to do it yourself.", pt: "Se quiser bem feito faça você mesmo.", extra: ["want", "done", "right", "yourself"]},
-            {en: "Money talks.", pt: "O dinheiro fala mais alto.", extra: ["money", "talks"]},
-            {en: "Two heads are better than one.", pt: "Duas cabeças pensam melhor do que uma.", extra: ["two", "heads", "better"]},
-            {en: "A bird in the hand is worth two in the bush.", pt: "Mais vale um pássaro na mão do que dois voando.", extra: ["bird", "hand", "bush"]},
-            {en: "Easier said than done.", pt: "Falar é fácil.", extra: ["easier", "said", "done"]},
-            {en: "Talk is cheap.", pt: "Falar é fácil.", extra: ["talk", "cheap"]},
-            {en: "It's better to be safe than sorry.", pt: "É melhor prevenir do que remediar.", extra: ["safe", "sorry"]},
-            {en: "Where there's a will, there's a way.", pt: "Querer é poder.", extra: ["will", "way"]}
+            {en: "Better late than never.", pt: "Antes tarde que nunca.", extra: ["better", "late", "never"]},
+            {en: "Time is money.", pt: "Tempo é dinheiro.", extra: ["time", "money"]},
+            {en: "All is well.", pt: "Tudo está bem.", extra: ["all", "well"]}
         ],
-        "Decisões e Comparações": [
-            {en: "It's hard to decide.", pt: "É difícil decidir.", extra: ["hard", "decide"]},
-            {en: "I can't make up my mind.", pt: "Não consigo me decidir.", extra: ["make", "mind"]},
-            {en: "I've made up my mind.", pt: "Já me decidi.", extra: ["made", "mind"]},
-            {en: "I still haven't decided.", pt: "Não me decidi ainda.", extra: ["still", "decided"]},
-            {en: "I'm leaning towards the first option.", pt: "Estou caindo mais para a primeira opção.", extra: ["leaning", "first", "option"]},
-            {en: "It's a tough decision.", pt: "É uma decisão difícil.", extra: ["tough", "decision"]},
-            {en: "I could go either way, really.", pt: "Tanto faz na verdade.", extra: ["either", "way"]},
-            {en: "I had my heart set on the blue one.", pt: "Estava querendo ficar com o azul.", extra: ["heart", "set", "blue"]},
-            {en: "Which would you choose?", pt: "Qual você escolheria?", extra: ["choose"]},
-            {en: "If I had to choose one, I'd choose the red.", pt: "Se fosse escolher um, ficaria com o vermelho.", extra: ["choose", "red"]},
-            {en: "It's up to you.", pt: "Você é quem sabe.", extra: ["up", "you"]},
-            {en: "Why don't you decide?", pt: "Por que você não decide?", extra: ["decide"]},
-            {en: "I trust your judgement.", pt: "Confio no seu bom senso.", extra: ["trust", "judgement"]},
-            {en: "Take your pick.", pt: "Escolha à vontade.", extra: ["take", "pick"]},
-            {en: "You choose whatever you want.", pt: "Escolha o que quiser.", extra: ["choose", "whatever", "want"]},
-            {en: "They're exactly alike.", pt: "São exatamente iguais.", extra: ["exactly", "alike"]},
-            {en: "They're very similar.", pt: "São muito parecidos.", extra: ["very", "similar"]},
-            {en: "The difference is minimal.", pt: "A diferença é muito pequena.", extra: ["difference", "minimal"]},
-            {en: "I can't tell the difference.", pt: "Eu não vejo diferença.", extra: ["tell", "difference"]},
-            {en: "They're slightly different.", pt: "São um pouco diferentes.", extra: ["slightly", "different"]},
-            {en: "They're totally different.", pt: "São totalmente diferentes.", extra: ["totally", "different"]},
-            {en: "One thing has nothing to do with the other.", pt: "Uma coisa não tem nada a ver com a outra.", extra: ["nothing", "other"]},
-            {en: "X is bigger than Y.", pt: "X é maior que Y.", extra: ["bigger", "than"]},
-            {en: "X is more expensive than Y.", pt: "X é mais caro do que Y.", extra: ["more", "expensive"]},
-            {en: "X is much cheaper than Y.", pt: "X é bem mais barato do que Y.", extra: ["much", "cheaper"]},
-            {en: "X is not as interesting as Y.", pt: "X não é tão interessante quanto Y.", extra: ["interesting", "as"]}
-        ],
-        "Emoções e Sentimentos": [
-            {en: "I feel bad.", pt: "Sinto-me mal.", extra: ["feel", "bad"]},
-            {en: "I feel terrible.", pt: "Sinto-me péssimo.", extra: ["feel", "terrible"]},
-            {en: "I feel so guilty.", pt: "Sinto-me tão culpado.", extra: ["feel", "guilty"]},
-            {en: "It's not your fault.", pt: "Não é culpa sua.", extra: ["fault"]},
-            {en: "I love you so much.", pt: "Eu te amo tanto.", extra: ["love", "much"]},
-            {en: "You mean the world to me.", pt: "Você é tudo para mim.", extra: ["mean", "world"]},
-            {en: "Can I trust you?", pt: "Posso confiar em você?", extra: ["trust"]},
-            {en: "Can I count on you?", pt: "Posso contar com você?", extra: ["count"]},
-            {en: "You can count on me.", pt: "Pode contar comigo.", extra: ["count"]},
-            {en: "I'd do anything for you.", pt: "Faria qualquer coisa para você.", extra: ["anything"]},
-            {en: "I'll never turn my back on you.", pt: "Nunca vou abandonar você.", extra: ["never", "back"]},
-            {en: "I don't care.", pt: "Não estou nem aí.", extra: ["care"]},
-            {en: "Whatever.", pt: "Tanto faz.", extra: ["whatever"]},
-            {en: "I feel sorry for him.", pt: "Sinto pena dele.", extra: ["feel", "sorry"]},
-            {en: "Poor thing.", pt: "Coitado.", extra: ["poor", "thing"]},
-            {en: "I wish there were something I could do.", pt: "Queria poder ajudar você.", extra: ["wish", "something"]},
-            {en: "Why me?", pt: "Por que comigo?", extra: ["why"]},
-            {en: "What did I do to deserve this?", pt: "O que eu fiz para merecer isso?", extra: ["deserve"]}
-        ],
-        "Horas e Datas": [
-            {en: "What time is it?", pt: "Que horas são?", extra: ["time"]},
-            {en: "Do you have the time, please?", pt: "Você tem horas?", extra: ["time"]},
-            {en: "It's ten o'clock.", pt: "São dez horas.", extra: ["ten", "o'clock"]},
-            {en: "It's ten fifteen.", pt: "São dez e quinze.", extra: ["ten", "fifteen"]},
-            {en: "It's a quarter past ten.", pt: "São dez e quinze.", extra: ["quarter", "past"]},
-            {en: "It's ten thirty.", pt: "São dez e meia.", extra: ["ten", "thirty"]},
-            {en: "It's half past ten.", pt: "São dez e meia.", extra: ["half", "past"]},
-            {en: "It's about ten o'clock.", pt: "Mais ou menos dez horas.", extra: ["about", "ten"]},
-            {en: "It's almost ten o'clock.", pt: "São quase dez horas.", extra: ["almost", "ten"]},
-            {en: "At ten o'clock.", pt: "Às dez horas.", extra: ["at", "ten"]},
-            {en: "An hour from now.", pt: "Daqui a uma hora.", extra: ["hour", "from"]},
-            {en: "An hour ago.", pt: "Faz uma hora.", extra: ["hour", "ago"]},
-            {en: "All day long.", pt: "O dia todo.", extra: ["all", "day", "long"]},
-            {en: "All night long.", pt: "A noite toda.", extra: ["all", "night", "long"]},
-            {en: "Early in the morning.", pt: "Logo de manhã.", extra: ["early", "morning"]},
-            {en: "In the late morning.", pt: "No final da manhã.", extra: ["late", "morning"]},
-            {en: "At noon.", pt: "Ao meio-dia.", extra: ["noon"]},
-            {en: "In the afternoon.", pt: "De tarde.", extra: ["afternoon"]},
-            {en: "In the evening.", pt: "De noite.", extra: ["evening"]},
-            {en: "At night.", pt: "De noite.", extra: ["night"]},
-            {en: "At midnight.", pt: "À meia-noite.", extra: ["midnight"]},
-            {en: "At dawn.", pt: "Ao amanhecer.", extra: ["dawn"]},
-            {en: "At sunrise.", pt: "Ao nascer do sol.", extra: ["sunrise"]},
-            {en: "At sunset.", pt: "Ao pôr do sol.", extra: ["sunset"]},
-            {en: "What's the date today?", pt: "Que dia é hoje?", extra: ["date", "today"]},
-            {en: "Today's the twenty-fourth.", pt: "Hoje é dia vinte e quatro.", extra: ["today", "twenty"]},
-            {en: "Every day.", pt: "Todo dia.", extra: ["every", "day"]},
-            {en: "Every other day.", pt: "Dia sim, dia não.", extra: ["every", "other", "day"]},
-            {en: "This morning.", pt: "Hoje de manhã.", extra: ["this", "morning"]},
-            {en: "This afternoon.", pt: "Hoje à tarde.", extra: ["this", "afternoon"]},
-            {en: "Tonight.", pt: "Hoje à noite.", extra: ["tonight"]},
-            {en: "Tomorrow morning.", pt: "Amanhã de manhã.", extra: ["tomorrow", "morning"]},
-            {en: "Tomorrow afternoon.", pt: "Amanhã à tarde.", extra: ["tomorrow", "afternoon"]},
-            {en: "Tomorrow night.", pt: "Amanhã à noite.", extra: ["tomorrow", "night"]},
-            {en: "The day before yesterday.", pt: "Anteontem.", extra: ["day", "before", "yesterday"]},
-            {en: "Yesterday morning.", pt: "Ontem de manhã.", extra: ["yesterday", "morning"]},
-            {en: "Last night.", pt: "Ontem à noite.", extra: ["last", "night"]},
-            {en: "The day after tomorrow.", pt: "Depois de amanhã.", extra: ["day", "after", "tomorrow"]},
-            {en: "Every Thursday.", pt: "Toda quinta-feira.", extra: ["every", "thursday"]},
-            {en: "This Friday.", pt: "Nesta sexta-feira.", extra: ["this", "friday"]},
-            {en: "This weekend.", pt: "Este fim de semana.", extra: ["this", "weekend"]},
-            {en: "Next week.", pt: "A semana que vem.", extra: ["next", "week"]},
-            {en: "Last week.", pt: "A semana passada.", extra: ["last", "week"]},
-            {en: "Last month.", pt: "O mês passado.", extra: ["last", "month"]},
-            {en: "Last year.", pt: "O ano passado.", extra: ["last", "year"]},
-            {en: "A week ago.", pt: "Faz uma semana.", extra: ["week", "ago"]},
-            {en: "Right now.", pt: "Agora mesmo.", extra: ["right", "now"]},
-            {en: "Right away.", pt: "Imediatamente.", extra: ["right", "away"]},
-            {en: "As soon as possible.", pt: "Assim que possível.", extra: ["soon", "possible"]}
-        ],
-        "Conselhos e Incentivos": [
-            {en: "Maybe you should try again.", pt: "Talvez você deva tentar de novo.", extra: ["maybe", "try", "again"]},
-            {en: "You should go.", pt: "Você deveria ir.", extra: ["should", "go"]},
-            {en: "It's better to wait.", pt: "É melhor esperar.", extra: ["better", "wait"]},
-            {en: "You could ask for help.", pt: "Você poderia pedir ajuda.", extra: ["could", "ask", "help"]},
-            {en: "If I were you, I would go.", pt: "Se eu fosse você, eu iria.", extra: ["were", "go"]},
-            {en: "I think you should stay.", pt: "Eu acho que você deve ficar.", extra: ["think", "stay"]},
-            {en: "You have to do what's best for you.", pt: "Você tem de fazer o que for melhor para você.", extra: ["best", "you"]},
-            {en: "Only you can decide that.", pt: "Só você pode decidir isso.", extra: ["only", "decide"]},
-            {en: "Go ahead!", pt: "Vai fundo!", extra: ["go", "ahead"]},
-            {en: "Go for it!", pt: "Vai fundo!", extra: ["go", "for"]},
-            {en: "You've got nothing to lose.", pt: "Você não tem nada a perder.", extra: ["got", "lose"]},
-            {en: "You can do it.", pt: "Você vai conseguir.", extra: ["can", "do"]},
-            {en: "It's worth a try.", pt: "Vale a pena tentar.", extra: ["worth", "try"]},
-            {en: "Now's the time.", pt: "O momento é agora.", extra: ["now", "time"]},
-            {en: "It's now or never.", pt: "É agora ou nunca.", extra: ["now", "never"]},
-            {en: "It's a piece of cake.", pt: "É moleza.", extra: ["piece", "cake"]},
-            {en: "Just do your best.", pt: "Faça o melhor possível.", extra: ["do", "best"]},
-            {en: "Give it your best shot.", pt: "Dê o melhor de si.", extra: ["give", "best", "shot"]},
-            {en: "You never know until you try.", pt: "Se você não tentar, você nunca vai saber.", extra: ["never", "know", "try"]},
-            {en: "I don't think you should go.", pt: "Acho que não deve ir.", extra: ["think", "go"]},
-            {en: "I don't think it's a good idea.", pt: "Não acho que seja uma boa ideia.", extra: ["good", "idea"]},
-            {en: "I would reconsider if I were you.", pt: "Eu pensaria bem se fosse você.", extra: ["reconsider", "were"]},
-            {en: "I'd think twice if I were you.", pt: "Eu pensaria bem se fosse você.", extra: ["think", "twice"]},
-            {en: "Trust me, don't do it.", pt: "Confie em mim, não faça.", extra: ["trust", "do"]}
-        ],
-        "Saudações e Apresentações": [
-            {en: "Hi.", pt: "Oi.", extra: ["hi"]},
-            {en: "How are you?", pt: "Tudo bem? / Tudo bom?", extra: ["how", "are"]},
-            {en: "How are you doing?", pt: "Tudo bem? / Tudo bom?", extra: ["how", "doing"]},
-            {en: "What's your name?", pt: "Qual é o seu nome?", extra: ["what", "name"]},
-            {en: "Sorry, what was your name again?", pt: "Desculpe, qual é mesmo o seu nome?", extra: ["sorry", "name", "again"]},
-            {en: "Nice to meet you.", pt: "Prazer.", extra: ["nice", "meet"]},
-            {en: "Do you know Joao?", pt: "Você conhece o João?", extra: ["know"]},
-            {en: "I've heard a lot about you.", pt: "Já ouvi falar muito de você.", extra: ["heard", "lot", "about"]},
-            {en: "All good, I hope.", pt: "Coisas boas, eu espero.", extra: ["good", "hope"]},
-            {en: "See you later.", pt: "Até mais. / Até logo.", extra: ["see", "later"]}
-        ],
-        "Histórias e Expressões": [
-            {en: "Did I ever tell you what happened?", pt: "Já contei para você o que aconteceu?", extra: ["tell", "happened"]},
-            {en: "I'll never forget the time.", pt: "Nunca vou me esquecer de quando.", extra: ["never", "forget", "time"]},
-            {en: "You're not going to believe what happened.", pt: "Você não vai acreditar no que aconteceu.", extra: ["believe", "happened"]},
-            {en: "You should've seen it.", pt: "Você deveria ter visto.", extra: ["should've", "seen"]},
-            {en: "I mean...", pt: "Quer dizer...", extra: ["mean"]},
-            {en: "The other day...", pt: "Um dia desses...", extra: ["other", "day"]},
-            {en: "I was in/at...", pt: "Eu estava em...", extra: ["was"]},
-            {en: "I was on my way to...", pt: "Estava a caminho de...", extra: ["way"]},
-            {en: "I noticed...", pt: "Percebi...", extra: ["noticed"]},
-            {en: "And suddenly...", pt: "E de repente...", extra: ["suddenly"]},
-            {en: "It happened so fast.", pt: "Aconteceu tão rápido.", extra: ["happened", "fast"]},
-            {en: "At the time I...", pt: "Na época eu...", extra: ["time"]},
-            {en: "I was shocked.", pt: "Fiquei chocado.", extra: ["shocked"]},
-            {en: "Can you believe that?", pt: "Dá para acreditar?", extra: ["believe"]},
-            {en: "Can you imagine?", pt: "Dá para imaginar?", extra: ["imagine"]},
-            {en: "It seemed like a good idea at the time.", pt: "Na hora, me pareceu uma boa ideia.", extra: ["seemed", "good", "idea", "time"]},
-            {en: "How was I supposed to know?", pt: "Como é que eu iria saber?", extra: ["supposed", "know"]},
-            {en: "The worst part is...", pt: "A pior parte foi...", extra: ["worst", "part"]},
-            {en: "To make matters worse...", pt: "E para piorar...", extra: ["make", "worse"]},
-            {en: "Then on top of that...", pt: "E além disso...", extra: ["top"]},
-            {en: "So, finally...", pt: "Então, finalmente...", extra: ["finally"]},
-            {en: "Luckily...", pt: "Por sorte...", extra: ["luckily"]},
-            {en: "I couldn't believe it.", pt: "Eu não acreditei.", extra: ["couldn't", "believe"]},
-            {en: "I swear to God...", pt: "Eu juro por Deus...", extra: ["swear", "god"]},
-            {en: "I learned my lesson.", pt: "Aprendi a lição.", extra: ["learned", "lesson"]}
-        ],
-        "Desculpas e Perdão": [
-            {en: "I'm sorry.", pt: "Desculpe-me.", extra: ["sorry"]},
-            {en: "It was an accident.", pt: "Foi sem querer.", extra: ["accident"]},
-            {en: "Please forgive me.", pt: "Perdoe-me.", extra: ["forgive"]},
-            {en: "I sincerely apologize.", pt: "Peço desculpas.", extra: ["apologize"]},
-            {en: "It won't happen again.", pt: "Isso não vai se repetir.", extra: ["happen", "again"]},
-            {en: "Don't worry about it.", pt: "Esquece.", extra: ["worry"]},
-            {en: "That's OK.", pt: "Tudo bem.", extra: ["ok"]},
-            {en: "No problem.", pt: "Sem problemas.", extra: ["problem"]},
-            {en: "Already forgotten.", pt: "Já até esqueci.", extra: ["already", "forgotten"]},
-            {en: "It happens.", pt: "Acontece.", extra: ["happens"]}
-        ],
-        "Família e Relacionamentos": [
-            {en: "I have two brothers and one sister.", pt: "Eu tenho dois irmãos e uma irmã.", extra: ["brothers", "sister"]},
-            {en: "I'm the oldest.", pt: "Eu sou o mais velho.", extra: ["oldest"]},
-            {en: "I'm in the middle.", pt: "Eu sou a/o do meio.", extra: ["middle"]},
-            {en: "I'm the youngest.", pt: "Sou o/a caçula.", extra: ["youngest"]},
-            {en: "I'm an only child.", pt: "Sou filho único.", extra: ["only", "child"]},
-            {en: "My father lives in Fortaleza.", pt: "Meu pai mora em Fortaleza.", extra: ["father", "lives"]},
-            {en: "Are your parents divorced?", pt: "Seus pais são separados?", extra: ["parents", "divorced"]},
-            {en: "My parents are deceased.", pt: "Meus pais são falecidos.", extra: ["parents", "deceased"]},
-            {en: "Do you have any children?", pt: "Você tem filhos?", extra: ["children"]},
-            {en: "Are you single?", pt: "Você é solteiro?", extra: ["single"]},
-            {en: "Are you married?", pt: "Você é casado?", extra: ["married"]},
-            {en: "We're separated.", pt: "Nós estamos separados.", extra: ["separated"]},
-            {en: "We're divorced.", pt: "Nós somos divorciados.", extra: ["divorced"]},
-            {en: "My family is very important to me.", pt: "Minha família é muito importante para mim.", extra: ["family", "important"]}
-        ],
-        "Falando sobre si mesmo": [
-            {en: "I'm a fast learner.", pt: "Sou um aprendiz rápido.", extra: ["fast", "learner"]},
-            {en: "I don't let things bother me.", pt: "Não deixo as coisas me incomodarem.", extra: ["let", "bother"]},
-            {en: "I try to keep my feet on the ground.", pt: "Tento manter os meus pés no chão.", extra: ["keep", "feet", "ground"]},
-            {en: "I'm very sensitive.", pt: "Eu sou muito sensível.", extra: ["sensitive"]},
-            {en: "I have a terrible temper.", pt: "Eu tenho um gênio terrível.", extra: ["terrible", "temper"]},
-            {en: "I keep my word.", pt: "Eu cumpro a palavra.", extra: ["keep", "word"]},
-            {en: "I'm a regular person.", pt: "Sou uma pessoa normal.", extra: ["regular", "person"]},
-            {en: "I'm no one important.", pt: "Não sou ninguém importante.", extra: ["important"]}
-        ],
-        "Relacionamentos Amorosos": [
-            {en: "How did you meet?", pt: "Como vocês se conheceram?", extra: ["meet"]},
-            {en: "How long have you been together?", pt: "Há quanto tempo vocês estão juntos?", extra: ["long", "together"]},
-            {en: "Are you just dating?", pt: "Vocês estão só namorando?", extra: ["dating"]},
-            {en: "Do you think it's serious?", pt: "Você acha que é sério?", extra: ["serious"]},
-            {en: "Are you thinking about getting married?", pt: "Vocês estão pensando em se casar?", extra: ["married"]},
-            {en: "Things aren't going very well.", pt: "As coisas não vão indo muito bem.", extra: ["things", "going"]},
-            {en: "We've grown apart.", pt: "Nós nos afastamos.", extra: ["grown", "apart"]},
-            {en: "We don't talk anymore.", pt: "Nós não conversamos mais.", extra: ["talk", "anymore"]},
-            {en: "I'm confused about my feelings.", pt: "Estou confuso sobre meus sentimentos.", extra: ["confused", "feelings"]},
-            {en: "Maybe we just need a break.", pt: "Talvez nós só precisemos de um tempo.", extra: ["need", "break"]},
-            {en: "We broke up.", pt: "Nós terminamos.", extra: ["broke", "up"]},
-            {en: "We got back together.", pt: "Nós voltamos.", extra: ["got", "back", "together"]},
-            {en: "I have a crush on her/him.", pt: "Estou afim dela/dele.", extra: ["crush"]},
-            {en: "We went to a nice restaurant.", pt: "Fomos a um restaurante legal.", extra: ["went", "nice", "restaurant"]},
-            {en: "We had a candlelight dinner.", pt: "Tivemos um jantar à luz de velas.", extra: ["candlelight", "dinner"]},
-            {en: "We held hands.", pt: "Nós demos as mãos.", extra: ["held", "hands"]},
-            {en: "We kissed.", pt: "Nós nos beijamos.", extra: ["kissed"]},
-            {en: "I can't wait to see her/him again.", pt: "Mal posso esperar para vê-la/lo novamente.", extra: ["wait", "again"]}
-        ],
-        "Necessidades Físicas": [
-            {en: "Are you hungry?", pt: "Está com fome?", extra: ["hungry"]},
-            {en: "I'm hungry.", pt: "Estou com fome.", extra: ["hungry"]},
-            {en: "I'm starving.", pt: "Estou morrendo de fome.", extra: ["starving"]},
-            {en: "Are you thirsty?", pt: "Está com sede?", extra: ["thirsty"]},
-            {en: "I'm thirsty.", pt: "Estou com sede.", extra: ["thirsty"]},
-            {en: "I have to go to the bathroom.", pt: "Preciso ir ao banheiro.", extra: ["bathroom"]},
-            {en: "Are you cold?", pt: "Está com frio?", extra: ["cold"]},
-            {en: "Are you hot?", pt: "Está com calor?", extra: ["hot"]},
-            {en: "I'm cold.", pt: "Estou com frio.", extra: ["cold"]},
-            {en: "I'm hot.", pt: "Estou com calor.", extra: ["hot"]},
-            {en: "I'm freezing.", pt: "Estou congelando.", extra: ["freezing"]},
-            {en: "I'm boiling.", pt: "Estou derretendo.", extra: ["boiling"]}
-        ],
-        "Otimismo e Pessimismo": [
-            {en: "Don't worry. Things will get better.", pt: "Não se preocupe. As coisas vão melhorar.", extra: ["worry", "better"]},
-            {en: "I'm sure things will work out.", pt: "Tenho certeza de que vai dar tudo certo.", extra: ["sure", "work"]},
-            {en: "It doesn't look good actually.", pt: "Na verdade não está nada bom.", extra: ["look", "good"]},
-            {en: "I'm not too optimistic about it.", pt: "Não estou muito otimista sobre isso.", extra: ["optimistic"]},
-            {en: "This is an outrage!", pt: "Isso é um absurdo!", extra: ["outrage"]},
-            {en: "I'm very angry right now.", pt: "Estou com muita raiva agora.", extra: ["angry"]},
-            {en: "I firmly believe it.", pt: "Acredito firmemente nisso.", extra: ["firmly", "believe"]},
-            {en: "I'm convinced that it will work.", pt: "Estou convencido de que vai dar certo.", extra: ["convinced", "work"]}
-        ],
-        "Falando por Telefone": [
-            {en: "Hi, may I speak to Silvia, please?", pt: "Oi, posso falar com a Silvia, por favor?", extra: ["speak"]},
-            {en: "Hi, is Silvia there?", pt: "Oi, a Silvia está?", extra: ["there"]},
-            {en: "This is Pedro.", pt: "É o Pedro.", extra: ["this"]},
-            {en: "Are you busy?", pt: "Você está ocupado?", extra: ["busy"]},
-            {en: "I tried calling you earlier.", pt: "Tentei te ligar mais cedo.", extra: ["tried", "calling"]},
-            {en: "The line was busy.", pt: "A linha estava ocupada.", extra: ["line", "busy"]},
-            {en: "I got your voice mail.", pt: "Eu peguei seu correio de voz.", extra: ["voice", "mail"]},
-            {en: "Did you get my message?", pt: "Você recebeu minha mensagem?", extra: ["message"]},
-            {en: "Can I call you back?", pt: "Posso te ligar de volta?", extra: ["call", "back"]},
-            {en: "I'll call you right back.", pt: "Já te ligo de volta.", extra: ["call", "back"]},
-            {en: "What's your number again?", pt: "Qual é seu número mesmo?", extra: ["number", "again"]},
-            {en: "Sorry, we got cut off.", pt: "Desculpe, a ligação caiu.", extra: ["cut", "off"]},
-            {en: "I can barely hear you.", pt: "Mal consigo te ouvir.", extra: ["barely", "hear"]},
-            {en: "Talk to you later.", pt: "Falo com você depois.", extra: ["talk", "later"]},
-            {en: "Would you like to leave a message?", pt: "Gostaria de deixar uma mensagem?", extra: ["leave", "message"]}
-        ],
-        "Dirigindo e Trânsito": [
-            {en: "Look out for a supermarket.", pt: "Fique de olho num supermercado.", extra: ["look", "supermarket"]},
-            {en: "It'll be on your right/left.", pt: "Vai ficar à sua direita/esquerda.", extra: ["right", "left"]},
-            {en: "It's across the street.", pt: "É do outro lado da rua.", extra: ["across", "street"]},
-            {en: "You can't miss it.", pt: "Não tem como errar.", extra: ["miss"]},
-            {en: "Hop in.", pt: "Entra.", extra: ["hop"]},
-            {en: "Put your seatbelt on.", pt: "Coloque o cinto de segurança.", extra: ["seatbelt"]},
-            {en: "Make sure your door is locked.", pt: "Certifique-se de que a porta está trancada.", extra: ["door", "locked"]},
-            {en: "Do you mind if I smoke?", pt: "Você se importa se eu fumar?", extra: ["mind", "smoke"]},
-            {en: "I need to pull over for a second.", pt: "Preciso encostar por um segundo.", extra: ["pull", "over"]},
-            {en: "I ran the red light.", pt: "Passei o sinal vermelho.", extra: ["ran", "red", "light"]},
-            {en: "I got a ticket.", pt: "Levei uma multa.", extra: ["got", "ticket"]},
-            {en: "I got into an accident.", pt: "Me envolvi num acidente.", extra: ["accident"]},
-            {en: "Turn left/right.", pt: "Vire à esquerda/direita.", extra: ["turn", "left", "right"]},
-            {en: "Speed up.", pt: "Acelere.", extra: ["speed", "up"]},
-            {en: "Slow down.", pt: "Reduza a velocidade.", extra: ["slow", "down"]},
-            {en: "I got stuck in traffic.", pt: "Fiquei preso no trânsito.", extra: ["stuck", "traffic"]},
-            {en: "I got a flat tire.", pt: "Fiquei com um pneu furado.", extra: ["flat", "tire"]},
-            {en: "I got lost.", pt: "Me perdi.", extra: ["lost"]}
-        ],
-        "Compras e Presentes": [
-            {en: "It was on sale.", pt: "Estava em promoção.", extra: ["sale"]},
-            {en: "It was a bargain.", pt: "Foi uma pechincha.", extra: ["bargain"]},
-            {en: "I couldn't pass it up.", pt: "Não pude deixar passar.", extra: ["pass", "up"]},
-            {en: "It's an investment.", pt: "É um investimento.", extra: ["investment"]},
-            {en: "I have expensive taste.", pt: "Tenho um gosto caro.", extra: ["expensive", "taste"]},
-            {en: "I'm on a tight budget.", pt: "Estou com orçamento apertado.", extra: ["tight", "budget"]},
-            {en: "I got you a little something.", pt: "Comprei uma coisinha para você.", extra: ["little", "something"]},
-            {en: "I hope you like it.", pt: "Espero que você goste.", extra: ["hope", "like"]},
-            {en: "Go ahead. Open it.", pt: "Vá em frente. Abra.", extra: ["open"]},
-            {en: "Do you like it?", pt: "Você gostou?", extra: ["like"]},
-            {en: "That's so nice of you.", pt: "Isso é tão gentil da sua parte.", extra: ["nice"]},
-            {en: "You shouldn't have.", pt: "Você não devia ter feito isso.", extra: ["shouldn't"]}
-        ],
-        "Comemorações": [
-            {en: "Merry Christmas!", pt: "Feliz Natal!", extra: ["merry", "christmas"]},
-            {en: "Happy New Year!", pt: "Feliz Ano Novo!", extra: ["happy", "new", "year"]},
-            {en: "Happy Birthday!", pt: "Feliz Aniversário!", extra: ["happy", "birthday"]},
-            {en: "Congratulations!", pt: "Parabéns!", extra: ["congratulations"]},
-            {en: "You deserve it.", pt: "Você merece.", extra: ["deserve"]},
-            {en: "I knew you could do it.", pt: "Sabia que iria conseguir.", extra: ["knew", "do"]},
-            {en: "I'm really happy for you!", pt: "Fico muito contente por você!", extra: ["happy"]},
-            {en: "Make a wish.", pt: "Faça um pedido.", extra: ["make", "wish"]},
-            {en: "Blow out the candles.", pt: "Apague as velas.", extra: ["blow", "candles"]},
-            {en: "Open presents.", pt: "Abra os presentes.", extra: ["open", "presents"]}
-        ],
-        "Expressões Úteis do Dia a Dia": [
-            {en: "So, what's new?", pt: "Então, o que há de novo?", extra: ["new"]},
-            {en: "Guess what!", pt: "Adivinha!", extra: ["guess"]},
-            {en: "I have good news.", pt: "Tenho boas notícias.", extra: ["good", "news"]},
-            {en: "I have bad news.", pt: "Tenho más notícias.", extra: ["bad", "news"]},
-            {en: "Oh no!", pt: "Ah não!", extra: ["no"]},
-            {en: "I'm glad to hear that.", pt: "Fico feliz em saber disso.", extra: ["glad", "hear"]},
-            {en: "I'm sorry to hear that.", pt: "Sinto muito por saber disso.", extra: ["sorry", "hear"]},
-            {en: "That's great!", pt: "Que ótimo!", extra: ["great"]},
-            {en: "That's too bad.", pt: "Que pena.", extra: ["bad"]},
-            {en: "Are you OK?", pt: "Você está bem?", extra: ["ok"]},
-            {en: "You look a little pale.", pt: "Você parece um pouco pálido.", extra: ["look", "pale"]},
-            {en: "Maybe you should go home.", pt: "Talvez você deva ir para casa.", extra: ["go", "home"]},
-            {en: "I'm not feeling very well.", pt: "Não estou me sentindo muito bem.", extra: ["feeling", "well"]},
-            {en: "I hope you feel better.", pt: "Espero que você melhore.", extra: ["hope", "feel", "better"]},
-            {en: "Get well soon.", pt: "Melhore logo.", extra: ["well", "soon"]}
+        "Expressões": [
+            {en: "I am tired.", pt: "Estou cansado.", extra: ["tired"]},
+            {en: "I am hungry.", pt: "Estou com fome.", extra: ["hungry"]},
+            {en: "I am thirsty.", pt: "Estou com sede.", extra: ["thirsty"]},
+            {en: "I am cold.", pt: "Estou com frio.", extra: ["cold"]},
+            {en: "I am hot.", pt: "Estou com calor.", extra: ["hot"]}
         ]
     };
-
-    // ===== VARIÁVEIS DO JOGO PRINCIPAL =====
+    
+    // =====================================================
+    // ===== JOGO PRINCIPAL =====
+    // =====================================================
+    
     let selectedTopic = "", playlistPhrases = [], currentPhraseIndex = 0, selectedWords = [], pescaMode = false, draggedIndex = null;
-
-    // ===== JOGO DE COMBINAÇÃO (MATCH GAME) =====
+    
     function openMatchGame() {
         document.getElementById('match-screen').classList.add('active');
         document.getElementById('matchBtn').classList.add('active');
@@ -947,7 +832,7 @@
     }
     function resetMatchGame() {
         const wordList = Object.keys(dictionary);
-        const numPairs = Math.min(Math.floor(Math.random() * 5) + 8, wordList.length);
+        const numPairs = Math.min(Math.floor(Math.random() * 4) + 4, wordList.length);
         const shuffledWords = wordList.sort(() => Math.random() - 0.5);
         const selectedWordsForMatch = shuffledWords.slice(0, numPairs);
         matchPairs = [];
@@ -987,13 +872,7 @@
         document.getElementById('matchStats').textContent = `Pares: ${matchedPairs} / ${totalPairs}`;
         if (matchedPairs === totalPairs && totalPairs > 0) {
             document.getElementById('matchWinMessage').style.display = 'block';
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance('Congratulations! You matched all pairs!');
-                utterance.lang = 'en-US';
-                utterance.rate = 0.9;
-                window.speechSynthesis.speak(utterance);
-            }
+            speakText('Congratulations! You matched all pairs!', 'en-US', 0.9);
         }
     }
     function handleMatchCardClick(index) {
@@ -1006,7 +885,7 @@
         const secondCard = card;
         if (firstCard.pairId === secondCard.pairId && firstCard.type !== secondCard.type) {
             firstCard.matched = true; secondCard.matched = true; matchedPairs++; selectedMatchCard = null; isProcessingMatch = false; renderMatchGame();
-            speakWord(firstCard.type === 'en' ? firstCard.word : secondCard.word);
+            speakText(firstCard.type === 'en' ? firstCard.word : secondCard.word, 'en-US', 0.9);
         } else {
             isProcessingMatch = true;
             const grid = document.getElementById('matchGrid');
@@ -1016,22 +895,23 @@
             setTimeout(() => { selectedMatchCard = null; isProcessingMatch = false; renderMatchGame(); }, 600);
         }
     }
-
-    // ===== INICIALIZAÇÃO =====
+    
     function init() {
         renderTopics();
         showTopicsScreen();
         setupDragAndDropEvents();
         applyTextColor(colorConfig.textColor);
         applyBgColor(colorConfig.bgColor);
+        setupAudioActivation();
+        setTimeout(() => loadVoices(), 1000);
     }
-
+    
     function renderTopics() {
         const listContainer = document.getElementById("topics-list");
         listContainer.innerHTML = "";
         const mistoBtn = document.createElement("button");
         mistoBtn.className = "topic-card misto-btn";
-        mistoBtn.innerText = "🔀 MODO MISTO CRÍTICO";
+        mistoBtn.innerText = "🔀 MODO MISTO";
         mistoBtn.onclick = () => startTopic("MISTO");
         listContainer.appendChild(mistoBtn);
         for (let topicName in pdfPhrasesDatabase) {
@@ -1043,7 +923,7 @@
             listContainer.appendChild(btn);
         }
     }
-
+    
     function toggleDatabaseStats() {
         const box = document.getElementById("stats-report-box");
         if (box.style.display === "block") { box.style.display = "none"; return; }
@@ -1054,18 +934,20 @@
             <p style='color:#00ff22; margin-bottom:6px;'>📂 LAUDO CENTRAL DE SISTEMA:</p>
             <p>Total de Frases: <span style='color:#ffffff; font-size:16px;'>${totalPhrases}</span></p>
             <p>Total de Palavras: <span style='color:#ffffff; font-size:16px;'>${totalWords}</span></p>
-            <p style='margin-top:6px; color:#00aa33;'>✅ Banco de Dados Gigante Atualizado!</p>
+            <p style='margin-top:6px; color:#00aa33;'>✅ Banco de Dados Atualizado!</p>
+            <p style='font-size:10px; color:#666; margin-top:4px;'>🗣️ Motor de voz: ${ttsReady ? '✅ Disponível' : '⏳ Carregando...'}</p>
+            <p style='font-size:10px; color:#666;'>🔊 Vozes: ${availableVoices.length}</p>
         `;
         box.style.display = "block";
     }
-
+    
     function showTopicsScreen() {
         selectedTopic = "";
         document.getElementById("topics-screen").classList.add("active");
         document.getElementById("game-screen").classList.remove("active");
         renderTopics();
     }
-
+    
     function startTopic(topicName) {
         selectedTopic = topicName;
         let sourcePhrases = [];
@@ -1082,7 +964,7 @@
         document.getElementById("game-screen").classList.add("active");
         loadPhrase();
     }
-
+    
     function loadPhrase() {
         if (currentPhraseIndex >= playlistPhrases.length) {
             alert("🎉 Fim do bloco! Retornando ao painel central.");
@@ -1104,7 +986,7 @@
         document.getElementById("track-number").innerText = `Frase ${currentPhraseIndex + 1} de ${playlistPhrases.length}:`;
         renderZones();
     }
-
+    
     function getCleanWordsList(phraseObj) {
         let cleanEn = phraseObj.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "");
         let rawWords = cleanEn.split(" ").filter(w => w.trim() !== "");
@@ -1123,7 +1005,7 @@
         }
         return uniquePool.sort(() => Math.random() - 0.5);
     }
-
+    
     function renderZones() {
         const constructZone = document.getElementById("construction-zone");
         constructZone.innerHTML = "";
@@ -1136,7 +1018,7 @@
             balloon.style.color = colorConfig.textColor;
             balloon.onclick = (e) => {
                 if (balloon.classList.contains('dragged-active')) return;
-                speakWord(word);
+                speakText(word, 'en-US', 0.9);
                 if (!balloon.classList.contains('dragging')) { selectedWords.splice(index, 1); renderZones(); }
             };
             balloon.addEventListener('dragstart', (e) => { draggedIndex = index; balloon.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
@@ -1176,7 +1058,7 @@
                 btn.className = "word-balloon";
                 btn.innerText = word;
                 btn.style.color = colorConfig.textColor;
-                btn.onclick = () => { speakWord(word); selectedWords.push(word); renderZones(); if(pescaMode) { togglePescaMode(); } };
+                btn.onclick = () => { speakText(word, 'en-US', 0.9); selectedWords.push(word); renderZones(); if(pescaMode) { togglePescaMode(); } };
                 if (pescaMode) {
                     btn.classList.add("pescado");
                     btn.style.color = '#ffff00';
@@ -1187,7 +1069,7 @@
             }
         });
     }
-
+    
     function renderZonesSilently(container) {
         const children = Array.from(container.children);
         children.forEach((child) => {
@@ -1202,7 +1084,7 @@
             if (index === draggedIndex) { child.innerText = selectedWords[index]; }
         });
     }
-
+    
     function setupDragAndDropEvents() {
         const constructZone = document.getElementById("construction-zone");
         constructZone.addEventListener('dragover', (e) => {
@@ -1219,14 +1101,14 @@
             }
         });
     }
-
+    
     function togglePescaMode() {
         pescaMode = !pescaMode;
         const btn = document.getElementById("btn-pesca");
         if (pescaMode) { btn.classList.add("active"); } else { btn.classList.remove("active"); }
         renderZones();
     }
-
+    
     function checkAnswer() {
         const currentPhrase = playlistPhrases[currentPhraseIndex];
         const currentAnswer = selectedWords.join(" ").trim().toLowerCase();
@@ -1241,59 +1123,20 @@
             constructionZone.style.display = "none";
             successTextBox.innerText = currentPhrase.en;
             successTextBox.style.display = "flex";
-            speak(currentPhrase.en);
+            speakText(currentPhrase.en, 'en-US', 0.85);
         } else {
             statusMsg.innerHTML = '<span class="status-wrong">❌ Erro no sistema! Tente outra sequência.</span>';
         }
     }
-
+    
     function revealAnswer() {
         const currentPhrase = playlistPhrases[currentPhraseIndex];
         const box = document.getElementById("revealed-answer");
         if(box.style.display === "block") { box.style.display = "none"; } else { box.innerText = `Resposta Correta: ${currentPhrase.en}`; box.style.display = "block"; }
     }
-
+    
     function nextPhrase() { currentPhraseIndex++; loadPhrase(); }
-
-    function speak(text) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'en-US';
-                    utterance.rate = 0.85;
-                    window.speechSynthesis.speak(utterance);
-                }, i * 1400);
-            }
-        }
-    }
-
-    function speakFullSentence() {
-        const currentPhrase = playlistPhrases[currentPhraseIndex];
-        if (currentPhrase) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(currentPhrase.en);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-    }
-
-    function speakUserSentence() {
-        if (selectedWords.length === 0) return;
-        const userTxt = selectedWords.join(" ");
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(userTxt);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.85;
-            window.speechSynthesis.speak(utterance);
-        }
-    }
-
+    
     init();
 </script>
 </body>
