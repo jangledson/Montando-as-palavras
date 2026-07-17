@@ -5,24 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Formando as Frases</title>
     
-    <!-- ===== PERMISSÕES PARA APK ===== -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="android-manifest:uses-permission" content="android.permission.INTERNET">
     <meta name="android-manifest:uses-permission" content="android.permission.ACCESS_NETWORK_STATE">
     <meta name="android-manifest:uses-permission" content="android.permission.ACCESS_WIFI_STATE">
-    <meta name="android-manifest:uses-permission" content="android.permission.RECORD_AUDIO">
-    <meta name="android-manifest:uses-permission" content="android.permission.MODIFY_AUDIO_SETTINGS">
-    <meta name="android-manifest:uses-permission" content="android.permission.FOREGROUND_SERVICE">
-    <meta name="android-manifest:uses-permission" content="android.permission.WAKE_LOCK">
-    <meta name="android-manifest:uses-permission" content="android.permission.SYSTEM_ALERT_WINDOW">
     
     <style>
-        /* ===== ESTILOS COMPLETOS (MANTIDOS) ===== */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #000000; color: #ffffff; user-select: none; overflow: hidden; transition: background-color 0.4s ease; }
-        .container { width: 100%; height: 100%; padding: 10px; display: flex; flex-direction: column; gap: 8px; transition: background-color 0.4s ease; overflow: hidden; }
+        html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #000000; color: #ffffff; user-select: none; overflow: hidden; }
+        .container { width: 100%; height: 100%; padding: 10px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
         
         h2 { text-align: center; color: #ffffff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0px 0px 20px rgba(255, 255, 255, 0.3); margin-top: 2px; font-size: 18px; font-weight: 800; }
         .counter-banner { text-align: center; color: #ffffff; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
@@ -53,7 +46,7 @@
         #game-screen.active { display: flex; }
         .game-scrollable-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-bottom: 8px; padding-right: 2px; }
         
-        .top-challenge { background: rgba(0, 15, 5, 0.6); border: 2px solid rgba(255, 255, 255, 0.15); padding: 10px 12px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 8px; backdrop-filter: blur(8px); transition: border-color 0.4s ease; position: relative; }
+        .top-challenge { background: rgba(0, 15, 5, 0.6); border: 2px solid rgba(255, 255, 255, 0.15); padding: 10px 12px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 8px; backdrop-filter: blur(8px); position: relative; }
         .phrase-counter { position: absolute; top: 8px; right: 12px; font-size: 11px; color: rgba(255, 255, 255, 0.4); font-weight: bold; letter-spacing: 0.5px; background: rgba(0, 0, 0, 0.3); padding: 2px 10px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); }
         .phrase-container { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
         .phrase-item { font-size: 16px; font-weight: bold; color: #ffffff; text-align: center; padding: 4px 8px; border-radius: 8px; transition: all 0.5s ease; }
@@ -64,11 +57,13 @@
         
         .status-top-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
         .audio-controls-row { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 2px; gap: 6px; flex-wrap: wrap; }
-        .btn-audio-top { background: rgba(255, 255, 255, 0.05); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.2); padding: 6px 10px; font-size: 12px; font-weight: bold; border-radius: 10px; cursor: pointer; flex: 1; min-width: 60px; text-align: center; text-shadow: 0 0 5px rgba(255, 255, 255, 0.1); transition: all 0.3s ease; backdrop-filter: blur(4px); }
+        .btn-audio-top { background: rgba(255, 255, 255, 0.05); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.2); padding: 6px 10px; font-size: 12px; font-weight: bold; border-radius: 10px; cursor: pointer; flex: 1; min-width: 60px; text-align: center; transition: all 0.3s ease; backdrop-filter: blur(4px); }
         .btn-audio-top:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.4); }
         .btn-audio-top:active { transform: scale(0.95); }
         .btn-audio-test { background: rgba(255, 150, 0, 0.1); border-color: rgba(255, 150, 0, 0.3); color: #ffaa44; flex: 0.5; min-width: 40px; }
         .btn-audio-test:hover { background: rgba(255, 150, 0, 0.2); border-color: #ffaa44; }
+        .btn-audio-force { background: rgba(0, 255, 100, 0.1); border-color: rgba(0, 255, 100, 0.3); color: #00ff66; flex: 0.5; min-width: 40px; }
+        .btn-audio-force:hover { background: rgba(0, 255, 100, 0.2); border-color: #00ff66; }
         
         .audio-status { text-align: center; font-size: 11px; color: rgba(255, 255, 255, 0.4); padding: 2px; min-height: 18px; }
         .audio-status.loading { color: #ffaa44; animation: pulse 1s ease infinite; }
@@ -77,18 +72,18 @@
         .audio-status.offline { color: #ff6600; }
         
         .zone-header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
-        .zone-title { font-size: 13px; color: #ffffff; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.1); }
+        .zone-title { font-size: 13px; color: #ffffff; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
         .btn-pesca { background: rgba(0, 17, 4, 0.8); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.2); padding: 4px 12px; font-size: 11px; font-weight: bold; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.3s ease; backdrop-filter: blur(4px); }
-        .btn-pesca:hover { border-color: rgba(255, 255, 255, 0.4); box-shadow: 0 0 20px rgba(255, 255, 255, 0.05); }
-        .btn-pesca.active { background: rgba(255, 255, 255, 0.1); color: #ffffff; border-color: #ffffff; box-shadow: 0 0 25px rgba(255, 255, 255, 0.1); }
+        .btn-pesca:hover { border-color: rgba(255, 255, 255, 0.4); }
+        .btn-pesca.active { background: rgba(255, 255, 255, 0.1); color: #ffffff; border-color: #ffffff; }
         
-        .construction-zone { background: rgba(0, 5, 2, 0.7); border: 2px dashed rgba(255, 255, 255, 0.15); border-radius: 12px; min-height: 100px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; position: relative; transition: border-color 0.4s ease; backdrop-filter: blur(4px); }
+        .construction-zone { background: rgba(0, 5, 2, 0.7); border: 2px dashed rgba(255, 255, 255, 0.15); border-radius: 12px; min-height: 100px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; backdrop-filter: blur(4px); }
         .success-text-box { display: none; background: rgba(0, 255, 102, 0.05); border: 2px solid #00ff66; border-radius: 12px; min-height: 100px; padding: 12px; font-size: 18px; font-weight: bold; color: #00ff66; text-align: center; align-items: center; justify-content: center; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); backdrop-filter: blur(4px); }
         .success-text-box.completed { display: flex; flex-direction: column; gap: 8px; }
         .success-text-box .phrase-completed { font-size: 16px; color: #ffffff; }
         .success-text-box .phrase-completed .check { color: #00ff66; margin-right: 8px; }
         
-        .words-zone { background: rgba(0, 10, 4, 0.4); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 12px; min-height: 80px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; align-content: flex-start; transition: border-color 0.4s ease; backdrop-filter: blur(4px); }
+        .words-zone { background: rgba(0, 10, 4, 0.4); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 12px; min-height: 80px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; align-content: flex-start; backdrop-filter: blur(4px); }
         
         .word-balloon { padding: 6px 12px; font-size: 15px; font-weight: 800; border-radius: 20px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.6); display: inline-block; user-select: none; position: relative; max-width: 100%; word-wrap: break-word; touch-action: none; transition: color 0.3s ease, background-color 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease; background: #1a1a1a; border: 2px solid #2a2a2a; color: #00ff22; text-shadow: 0 0 20px rgba(0, 255, 34, 0.1); letter-spacing: 0.3px; line-height: 1.2; }
         .word-balloon:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 30px rgba(0,0,0,0.8); border-color: #3a3a3a; }
@@ -110,7 +105,7 @@
         @keyframes statusPop { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
         @keyframes statusShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
         
-        .control-panel { display: flex; flex-direction: column; gap: 5px; padding-top: 6px; border-top: 2px solid rgba(255, 255, 255, 0.05); background: transparent; align-items: center; width: 100%; position: relative; }
+        .control-panel { display: flex; flex-direction: column; gap: 5px; padding-top: 6px; border-top: 2px solid rgba(255, 255, 255, 0.05); background: transparent; align-items: center; width: 100%; }
         .action-btn { width: 100%; max-width: 500px; padding: 10px 16px; color: #000000; border: none; border-radius: 25px; font-size: 15px; font-weight: bold; cursor: pointer; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6); display: block; transition: all 0.3s ease; letter-spacing: 0.5px; }
         .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8); }
         .action-btn:active { transform: scale(0.97); }
@@ -122,10 +117,10 @@
         
         .stats-wrapper { text-align: center; padding: 6px 0 12px 0; margin-top: 2px; }
         .btn-show-stats { background: rgba(0, 0, 0, 0.8); color: #ffffff; border: 2px dashed rgba(255, 255, 255, 0.2); padding: 6px 14px; font-size: 12px; font-weight: bold; border-radius: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease; backdrop-filter: blur(4px); }
-        .btn-show-stats:hover { border-color: rgba(255, 255, 255, 0.4); box-shadow: 0 0 20px rgba(255, 255, 255, 0.05); }
+        .btn-show-stats:hover { border-color: rgba(255, 255, 255, 0.4); }
         .stats-report-box { display: none; background: rgba(0, 10, 3, 0.9); border: 2px solid #ffffff; padding: 12px; border-radius: 12px; margin: 6px auto 0 auto; font-size: 13px; color: #ffffff; font-weight: bold; text-align: left; line-height: 1.5; max-width: 550px; box-shadow: 0 0 30px rgba(255, 255, 255, 0.05); backdrop-filter: blur(4px); }
         
-        .bottom-buttons-row { display: flex; justify-content: space-around; width: 100%; padding: 0 5px; position: relative; gap: 10px; }
+        .bottom-buttons-row { display: flex; justify-content: space-around; width: 100%; padding: 0 5px; gap: 10px; }
         .config-btn { background: rgba(0, 20, 5, 0.85); border: 2px solid #ffffff; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(255, 255, 255, 0.05); transition: all 0.3s ease; z-index: 10; backdrop-filter: blur(4px); }
         .config-btn:hover { transform: scale(1.1) rotate(60deg); box-shadow: 0 0 35px rgba(255, 255, 255, 0.1); }
         .config-btn.active { background: #ffffff; color: #000000; box-shadow: 0 0 40px rgba(255, 255, 255, 0.3); }
@@ -137,13 +132,13 @@
         .match-btn-label { color: #ffaa00; }
         .bottom-btn-wrapper { display: flex; flex-direction: column; align-items: center; }
         
-        #match-screen { display: none; flex-direction: column; height: 100%; width: 100%; position: fixed; top: 0; left: 0; background: #000000; z-index: 500; padding: 12px; overflow-y: auto; transition: background-color 0.4s ease; }
+        #match-screen { display: none; flex-direction: column; height: 100%; width: 100%; position: fixed; top: 0; left: 0; background: #000000; z-index: 500; padding: 12px; overflow-y: auto; }
         #match-screen.active { display: flex; }
         .match-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 0 10px 0; border-bottom: 2px solid rgba(255, 170, 0, 0.2); margin-bottom: 10px; }
         .match-header h2 { color: #ffaa00; text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); font-size: 18px; margin: 0; letter-spacing: 2px; }
         .match-close-btn { background: rgba(255, 170, 0, 0.1); border: 2px solid #ffaa00; color: #ffaa00; font-size: 18px; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
         .match-close-btn:hover { background: #ffaa00; color: #000000; transform: rotate(90deg); }
-        .match-stats { color: #ffaa00; text-align: center; font-size: 13px; margin-bottom: 10px; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255, 170, 0, 0.15); }
+        .match-stats { color: #ffaa00; text-align: center; font-size: 13px; margin-bottom: 10px; font-weight: bold; letter-spacing: 1px; }
         .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; }
         .match-card { background: #1a1a1a; border: 2px solid #2a2a2a; border-radius: 20px; padding: 10px 8px; text-align: center; font-size: 16px; font-weight: 800; color: #00ff22; cursor: pointer; transition: all 0.3s ease; min-height: 50px; display: flex; align-items: center; justify-content: center; word-wrap: break-word; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; backdrop-filter: blur(4px); text-shadow: 0 0 20px rgba(0, 255, 34, 0.1); letter-spacing: 0.3px; line-height: 1.2; }
         .match-card:hover { transform: translateY(-2px) scale(1.01); border-color: #3a3a3a; box-shadow: 0 6px 25px rgba(0,0,0,0.7); }
@@ -169,7 +164,7 @@
         .config-modal.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
         .config-modal-content { background: rgba(0, 15, 5, 0.95); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 20px 18px; max-width: 420px; width: 95%; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 60px rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); }
-        .config-modal-content h3 { color: #ffffff; text-align: center; font-size: 18px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(255, 255, 255, 0.1); }
+        .config-modal-content h3 { color: #ffffff; text-align: center; font-size: 18px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 2px; }
         .config-modal-close { float: right; background: transparent; border: none; color: #ffffff; font-size: 22px; cursor: pointer; padding: 0 6px; line-height: 1; transition: all 0.3s ease; }
         .config-modal-close:hover { color: #00ff66; transform: rotate(90deg); }
         .config-section { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
@@ -187,7 +182,7 @@
         .font-size-control button:active { transform: scale(0.9); }
         .font-size-control .size-display { font-size: 16px; font-weight: bold; color: #ffffff; min-width: 40px; text-align: center; }
         .btn-reset-colors { background: rgba(255, 0, 0, 0.15); border: 2px solid rgba(255, 51, 51, 0.3); color: #ff3333; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 6px; transition: all 0.3s ease; letter-spacing: 0.5px; }
-        .btn-reset-colors:hover { background: rgba(255, 0, 0, 0.25); border-color: #ff3333; box-shadow: 0 0 30px rgba(255, 51, 51, 0.1); }
+        .btn-reset-colors:hover { background: rgba(255, 0, 0, 0.25); border-color: #ff3333; }
         
         .game-scrollable-content::-webkit-scrollbar, #topics-screen::-webkit-scrollbar, #match-screen::-webkit-scrollbar { width: 3px; }
         .game-scrollable-content::-webkit-scrollbar-track, #topics-screen::-webkit-scrollbar-track, #match-screen::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
@@ -201,7 +196,7 @@
 <div class="container" id="appContainer">
     <div id="topics-screen" class="screen active">
         <h2>✨ Formando as Frases</h2>
-        <div class="counter-banner">⚡ Com áudio via Voice RSS</div>
+        <div class="counter-banner">⚡ Áudio via Voice RSS</div>
         <div id="topics-list"></div>
         <div class="stats-wrapper">
             <button class="btn-show-stats" onclick="toggleDatabaseStats()">📊 Carregar Laudo de Dados</button>
@@ -228,6 +223,7 @@
                     <button class="btn-audio-top btn-audio-user" onclick="speakUserSentence()">🔊 Ouvir Resposta</button>
                     <button class="btn-audio-top" onclick="speakFullSentence()">🔊 Ouvir Frase</button>
                     <button class="btn-audio-top btn-audio-test" onclick="testAudio()">🎧 Teste</button>
+                    <button class="btn-audio-top btn-audio-force" onclick="forceAudio()">⚡ Forçar</button>
                 </div>
                 <div class="audio-status" id="audio-status">🔊 Clique em um balão para ouvir</div>
             </div>
@@ -333,65 +329,31 @@
 
 <script>
     // ============================================================
-    // 1. VERIFICAÇÃO DE CONEXÃO COM A INTERNET
+    // 1. SISTEMA DE ÁUDIO - MODO FORÇADO (IGNORA VERIFICAÇÃO)
     // ============================================================
-    let isOnline = false;
-    let connectionChecked = false;
-
-    function checkInternetConnection() {
-        const statusEl = document.getElementById('connection-status');
-        statusEl.className = 'connection-status checking';
-        statusEl.textContent = '🌐 Verificando conexão...';
-        
-        try {
-            const xhr = new XMLHttpRequest();
-            xhr.open('HEAD', 'https://www.google.com', true);
-            xhr.timeout = 5000;
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    if (xhr.status >= 200 && xhr.status < 400) {
-                        isOnline = true;
-                        connectionChecked = true;
-                        statusEl.className = 'connection-status online';
-                        statusEl.textContent = '🌐 Conectado à internet ✅';
-                        console.log('✅ Conexão com internet: OK');
-                        document.getElementById('audio-status-label').textContent = '🔊 Online';
-                        setAudioStatus('✅ Conectado! Clique nos balões para ouvir', 'success');
-                    } else {
-                        setOfflineStatus();
-                    }
-                }
-            };
-            xhr.onerror = function() { setOfflineStatus(); };
-            xhr.ontimeout = function() { setOfflineStatus(); };
-            xhr.send();
-        } catch(e) {
-            setOfflineStatus();
-        }
-    }
+    let isOnline = true; // Forçar como online
+    let connectionChecked = true;
     
-    function setOfflineStatus() {
-        const statusEl = document.getElementById('connection-status');
-        isOnline = false;
-        connectionChecked = true;
-        statusEl.className = 'connection-status offline';
-        statusEl.textContent = '📡 Sem conexão com internet ⚠️';
-        console.warn('⚠️ Sem conexão com internet');
-        document.getElementById('audio-status-label').textContent = '📡 Offline';
-        setAudioStatus('⚠️ Sem internet. Usando beeps!', 'offline');
-    }
-
-    // ============================================================
-    // 2. SISTEMA DE ÁUDIO VIA VOICE RSS (100% FUNCIONAL EM APKS)
-    // ============================================================
     function setAudioStatus(text, type = '') {
         const el = document.getElementById('audio-status');
         el.textContent = text;
         el.className = 'audio-status ' + type;
     }
     
-    // Função para tocar áudio usando Voice RSS
-    function speakText(text, callback = null) {
+    // Função para forçar áudio (ignora verificação de internet)
+    function forceAudio() {
+        setAudioStatus('⚡ Forçando áudio...', 'loading');
+        const statusEl = document.getElementById('connection-status');
+        statusEl.className = 'connection-status online';
+        statusEl.textContent = '🌐 Forçado ✅';
+        isOnline = true;
+        
+        // Tentar falar diretamente
+        speakTextDirect('Hello, this is a forced test');
+    }
+    
+    // Função principal de áudio - USA HTTPS
+    function speakTextDirect(text, callback = null) {
         if (!text || text.trim() === '') {
             setAudioStatus('⚠️ Nada para falar', 'error');
             return;
@@ -402,9 +364,9 @@
         
         setAudioStatus(`🔊 Falando: "${cleanText}"`, 'loading');
         
-        // API Key gratuita do Voice RSS (funciona em APKs)
+        // Usar HTTPS (mais seguro para WebView)
         const apiKey = 'ce6ee3b8baec4191b5b3904cbb888a3a';
-        const url = `http://api.voicerss.org/?key=${apiKey}&hl=en-us&src=${encodeURIComponent(cleanText)}&c=MP3&f=8khz_8bit_mono`;
+        const url = `https://api.voicerss.org/?key=${apiKey}&hl=en-us&src=${encodeURIComponent(cleanText)}&c=MP3&f=8khz_8bit_mono`;
         
         const audio = new Audio();
         audio.src = url;
@@ -416,16 +378,13 @@
                 if (callback) callback();
             }).catch(err => {
                 console.warn('Erro ao reproduzir:', err);
-                // Fallback para beep
-                playBeep(440, 200);
-                setAudioStatus('🔊 Beep (fallback)', '');
-                if (callback) callback();
+                // Fallback para Google TTS
+                speakTextGoogle(cleanText, callback);
             });
         };
         
         audio.onerror = function(err) {
             console.warn('Erro no Voice RSS:', err);
-            // Tentar método alternativo com Google TTS
             speakTextGoogle(cleanText, callback);
         };
         
@@ -433,19 +392,18 @@
             setAudioStatus('🔊 Clique em um balão para ouvir', '');
         };
         
-        // Timeout de segurança
         setTimeout(() => {
             if (!audio.ended && !audio.paused) {
                 try { audio.pause(); } catch(e) {}
-                setAudioStatus('⏱️ Timeout no áudio, tentando Google...', 'error');
+                setAudioStatus('⏱️ Timeout, tentando Google...', 'error');
                 speakTextGoogle(cleanText, callback);
             }
-        }, 6000);
+        }, 8000);
         
         audio.load();
     }
     
-    // Fallback: Google TTS (caso Voice RSS falhe)
+    // Fallback: Google TTS (HTTPS)
     function speakTextGoogle(text, callback = null) {
         try {
             const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=en&client=tw-ob`;
@@ -459,26 +417,26 @@
                     if (callback) callback();
                 }).catch(() => {
                     playBeep(440, 200);
-                    setAudioStatus('🔊 Beep (fallback)', '');
+                    setAudioStatus('🔊 Beep (fallback final)', '');
                     if (callback) callback();
                 });
             };
             
             audio.onerror = function() {
                 playBeep(440, 200);
-                setAudioStatus('🔊 Beep (fallback)', '');
+                setAudioStatus('🔊 Beep (fallback final)', '');
                 if (callback) callback();
             };
             
             audio.load();
         } catch(e) {
             playBeep(440, 200);
-            setAudioStatus('🔊 Beep (fallback)', '');
+            setAudioStatus('🔊 Beep (fallback final)', '');
             if (callback) callback();
         }
     }
     
-    // Fallback: Beep (quando não tem internet ou falha)
+    // Beep de fallback
     function playBeep(frequency = 440, duration = 200) {
         try {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -504,36 +462,27 @@
         }
     }
     
+    // ============================================================
+    // 2. FUNÇÕES PÚBLICAS DE ÁUDIO
+    // ============================================================
     function testAudio() {
         setAudioStatus('🎧 Testando áudio...', 'loading');
+        const statusEl = document.getElementById('connection-status');
+        statusEl.className = 'connection-status online';
+        statusEl.textContent = '🌐 Teste forçado ✅';
+        isOnline = true;
         
-        if (!isOnline) {
-            setAudioStatus('📡 Sem internet! Tocando beep de teste', 'offline');
-            playBeep(880, 300);
+        speakTextDirect('Hello, this is a test', () => {
             setTimeout(() => {
-                playBeep(660, 300);
-                setAudioStatus('🔊 Beep de teste (offline)', '');
-            }, 400);
-            return;
-        }
-        
-        speakText('Hello, this is a test', () => {
-            setTimeout(() => {
-                speakText('Audio is working', () => {
-                    setAudioStatus('✅ Áudio funcionando! Clique nos balões', 'success');
+                speakTextDirect('Audio is working', () => {
+                    setAudioStatus('✅ Áudio funcionando!', 'success');
                 });
             }, 1000);
         });
     }
     
     function speakWord(word) {
-        if (!isOnline) {
-            const freq = 300 + (word.length * 20);
-            playBeep(freq, 200);
-            setAudioStatus(`🔊 Beep: "${word}" (offline)`, 'offline');
-            return;
-        }
-        
+        // Destacar o balão
         document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
             if (el.textContent.toLowerCase() === word.toLowerCase()) {
                 el.classList.add('speaking');
@@ -541,18 +490,16 @@
             }
         });
         
-        speakText(word);
+        // Forçar online e falar
+        isOnline = true;
+        speakTextDirect(word);
     }
     
     function speakFullSentence() {
         const currentPhrase = getCurrentPhrase();
         if (currentPhrase) {
-            if (!isOnline) {
-                setAudioStatus('📡 Sem internet! Tocando beep', 'offline');
-                playBeep(500, 300);
-                return;
-            }
-            speakText(currentPhrase.en);
+            isOnline = true;
+            speakTextDirect(currentPhrase.en);
         }
     }
     
@@ -562,16 +509,12 @@
             return;
         }
         const userTxt = selectedWords.join(" ");
-        if (!isOnline) {
-            setAudioStatus('📡 Sem internet! Tocando beep', 'offline');
-            playBeep(400, 300);
-            return;
-        }
-        speakText(userTxt);
+        isOnline = true;
+        speakTextDirect(userTxt);
     }
 
     // ============================================================
-    // 3. CONFIGURAÇÕES DE CORES E FONTES
+    // 3. CONFIGURAÇÕES
     // ============================================================
     const STORAGE_KEY = 'wordGameSettings';
     const PROGRESS_KEY = 'wordGameProgress';
@@ -773,7 +716,7 @@
     }
 
     // ============================================================
-    // 4. SISTEMA DE SALVAMENTO DE PROGRESSO
+    // 4. PROGRESSO
     // ============================================================
     function loadProgress() {
         try {
@@ -805,13 +748,13 @@
     function resetProgress() {
         if (confirm('⚠️ Tem certeza que deseja resetar todo o seu progresso?')) {
             clearProgress();
-            alert('✅ Progresso resetado! O aplicativo vai reiniciar do início.');
+            alert('✅ Progresso resetado!');
             showTopicsScreen();
         }
     }
 
     // ============================================================
-    // 5. DICIONÁRIO
+    // 5. DICIONÁRIO E FRASES
     // ============================================================
     const dictionary = {
         "love": "amor",
@@ -822,9 +765,6 @@
         "here": "aqui"
     };
 
-    // ============================================================
-    // 6. BANCO DE FRASES
-    // ============================================================
     const pdfPhrasesDatabase = {
         "Teste": [
             { frase1: { en: "Love is blind.", pt: "O amor é cego." }, frase2: { en: "The cat is here.", pt: "O gato está aqui." } },
@@ -834,7 +774,7 @@
     };
 
     // ============================================================
-    // 7. VARIÁVEIS DO JOGO PRINCIPAL
+    // 6. JOGO PRINCIPAL
     // ============================================================
     let selectedTopic = "", playlistPhrases = [], currentPhraseIndex = 0;
     let selectedWords = [], currentFrase = 1;
@@ -844,7 +784,7 @@
     let totalPhrases = 0;
 
     // ============================================================
-    // 8. MATCH GAME
+    // 7. MATCH GAME
     // ============================================================
     let matchPairs = [], selectedMatchCard = null, matchedPairs = 0, matchCards = [], isProcessingMatch = false;
 
@@ -913,12 +853,7 @@
         document.getElementById('matchStats').textContent = `Pares: ${matchedPairs} / ${totalPairs}`;
         if (matchedPairs === totalPairs && totalPairs > 0) {
             document.getElementById('matchWinMessage').style.display = 'block';
-            if (isOnline) {
-                speakText('Congratulations! You matched all pairs!');
-            } else {
-                playBeep(880, 300);
-                setTimeout(() => playBeep(1100, 300), 400);
-            }
+            speakTextDirect('Congratulations! You matched all pairs!');
         }
     }
     
@@ -944,7 +879,7 @@
     }
 
     // ============================================================
-    // 9. FUNÇÕES PRINCIPAIS DO JOGO
+    // 8. FUNÇÕES DO JOGO
     // ============================================================
     function getCurrentPhrase() {
         const entry = playlistPhrases[currentPhraseIndex];
@@ -1006,15 +941,13 @@
         if (progress) {
             progressInfo = `Tópico: ${progress.topic}, Frase: ${progress.index + 1} de ${progress.total}`;
         }
-        const status = isOnline ? '🟢 Conectado' : '🔴 Offline';
         box.innerHTML = `
             <p style='color:#ffffff; margin-bottom:6px;'>📂 LAUDO CENTRAL DE SISTEMA:</p>
             <p>Total de Pares de Frases: <span style='color:#00ff66; font-size:16px;'>${totalPhrases}</span></p>
-            <p>Total de Palavras no Dicionário: <span style='color:#00ff66; font-size:16px;'>${totalWords}</span></p>
-            <p style='margin-top:6px; color:#ffaa00;'>📊 Progresso Salvo: ${progressInfo}</p>
-            <p style='margin-top:6px; color:#00aaff;'>🌐 Status da Internet: ${status}</p>
+            <p>Total de Palavras: <span style='color:#00ff66; font-size:16px;'>${totalWords}</span></p>
+            <p style='margin-top:6px; color:#ffaa00;'>📊 Progresso: ${progressInfo}</p>
+            <p style='margin-top:6px; color:#00aaff;'>🔊 Áudio: Voice RSS + Fallback</p>
             <p style='margin-top:6px; color:#00aa33;'>✅ Banco de Dados para Testes!</p>
-            <p style='margin-top:6px; color:#ffaa44;'>🔊 Áudio: Voice RSS + Fallback</p>
         `;
         box.style.display = "block";
     }
@@ -1059,7 +992,7 @@
 
     function loadPhrase() {
         if (currentPhraseIndex >= playlistPhrases.length) {
-            alert("🎉 Parabéns! Você completou todas as frases deste tópico!");
+            alert("🎉 Parabéns! Você completou todas as frases!");
             clearProgress();
             showTopicsScreen();
             return;
@@ -1283,14 +1216,8 @@
                 `;
                 successTextBox.style.display = "flex";
                 
-                if (isOnline) {
-                    speakText(entry.frase1.en);
-                    setTimeout(() => speakText(entry.frase2.en), 2000);
-                } else {
-                    playBeep(880, 300);
-                    setTimeout(() => playBeep(1100, 300), 400);
-                    setTimeout(() => playBeep(1320, 300), 800);
-                }
+                speakTextDirect(entry.frase1.en);
+                setTimeout(() => speakTextDirect(entry.frase2.en), 2000);
                 
                 const phrase2El = document.getElementById("phrase-2");
                 phrase2El.className = "phrase-item completed";
@@ -1323,11 +1250,15 @@
     }
 
     // ============================================================
-    // 10. INICIALIZAÇÃO
+    // 9. INICIALIZAÇÃO
     // ============================================================
     function init() {
-        // Verificar conexão com internet
-        checkInternetConnection();
+        // Forçar status como online
+        const statusEl = document.getElementById('connection-status');
+        statusEl.className = 'connection-status online';
+        statusEl.textContent = '🌐 Online (forçado) ✅';
+        isOnline = true;
+        connectionChecked = true;
         
         // Renderizar interface
         renderTopics();
@@ -1359,7 +1290,7 @@
             console.log('📊 Progresso salvo:', progress);
         }
         
-        setAudioStatus('🔊 Clique nos balões para ouvir (Voice RSS)', '');
+        setAudioStatus('🔊 Clique nos balões para ouvir (modo forçado)', '');
     }
 
     document.addEventListener('DOMContentLoaded', init);
