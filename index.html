@@ -212,10 +212,11 @@
             align-items: center;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
+            flex-wrap: wrap;
         }
         .voice-card:hover { border-color: rgba(255, 255, 255, 0.2); }
         .voice-card.active-voice { border-color: #00aaff; box-shadow: 0 0 30px rgba(0, 170, 255, 0.1); }
-        .voice-card .voice-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+        .voice-card .voice-info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 120px; }
         .voice-card .voice-name { font-size: 15px; font-weight: bold; color: #ffffff; }
         .voice-card .voice-desc { font-size: 11px; color: rgba(255, 255, 255, 0.4); }
         .voice-card .voice-status-badge { font-size: 10px; padding: 2px 10px; border-radius: 12px; display: inline-block; margin-top: 4px; }
@@ -224,15 +225,21 @@
         .voice-card .voice-status-badge.not-downloaded { background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.3); border: 1px solid rgba(255, 255, 255, 0.05); }
         .voice-card .voice-status-badge.active { background: rgba(0, 170, 255, 0.15); color: #00aaff; border: 1px solid rgba(0, 170, 255, 0.2); }
         
+        .voice-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
         .voice-btn-action {
-            padding: 6px 16px;
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: bold;
             cursor: pointer;
             border: none;
             transition: all 0.3s ease;
-            min-width: 70px;
+            min-width: 60px;
             text-align: center;
         }
         .voice-btn-action.download { background: rgba(0, 170, 255, 0.15); color: #00aaff; border: 1px solid rgba(0, 170, 255, 0.3); }
@@ -241,6 +248,9 @@
         .voice-btn-action.select { background: rgba(0, 255, 102, 0.15); color: #00ff66; border: 1px solid rgba(0, 255, 102, 0.3); }
         .voice-btn-action.select:hover { background: rgba(0, 255, 102, 0.25); }
         .voice-btn-action.select:active { transform: scale(0.95); }
+        .voice-btn-action.test { background: rgba(255, 170, 0, 0.15); color: #ffaa44; border: 1px solid rgba(255, 170, 0, 0.3); }
+        .voice-btn-action.test:hover { background: rgba(255, 170, 0, 0.25); }
+        .voice-btn-action.test:active { transform: scale(0.95); }
         .voice-btn-action.loading { background: rgba(255, 170, 0, 0.15); color: #ffaa44; border: 1px solid rgba(255, 170, 0, 0.3); cursor: default; }
         .voice-btn-action.disabled { opacity: 0.3; cursor: default; }
         
@@ -395,7 +405,7 @@
         <button class="voice-close-btn" onclick="closeVoiceScreen()">✕</button>
     </div>
     <div id="voice-status-msg" style="text-align:center; color:rgba(255,255,255,0.5); font-size:12px; padding:8px; margin-bottom:10px; border-radius:8px; background:rgba(255,255,255,0.03);">
-        🔍 Clique em "Baixar" para baixar uma voz
+        🔊 Clique em "Testar" para ouvir um exemplo da voz
     </div>
     <div class="voice-list" id="voice-list">
         <!-- As vozes serão inseridas aqui via JavaScript -->
@@ -482,35 +492,39 @@
     const VOICE_STORAGE_KEY = 'downloadedVoices';
     const ACTIVE_VOICE_KEY = 'activeVoice';
     
-    // Definição das vozes disponíveis com URLs funcionais
+    // Definição das vozes disponíveis
     const availableVoices = [
         { 
             id: 'en-us', 
             name: 'Voz Americana', 
             desc: 'Inglês Americano - Masculino',
             url: 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-us.json',
-            gender: 'male'
+            gender: 'male',
+            example: 'Hello, this is the American voice'
         },
         { 
             id: 'en-us-female', 
             name: 'Voz Americana (Feminina)', 
             desc: 'Inglês Americano - Feminino',
             url: 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-us.json',
-            gender: 'female'
+            gender: 'female',
+            example: 'Hello, this is the American female voice'
         },
         { 
             id: 'en-uk', 
             name: 'Voz Britânica', 
             desc: 'Inglês Britânico - Masculino',
             url: 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-uk.json',
-            gender: 'male'
+            gender: 'male',
+            example: 'Hello, this is the British voice'
         },
         { 
             id: 'en-uk-female', 
             name: 'Voz Britânica (Feminina)', 
             desc: 'Inglês Britânico - Feminino',
             url: 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-uk.json',
-            gender: 'female'
+            gender: 'female',
+            example: 'Hello, this is the British female voice'
         }
     ];
     
@@ -558,11 +572,10 @@
         }
         
         try {
-            // Carregar configuração básica
             meSpeak.loadConfig('https://cdn.jsdelivr.net/npm/mespeak@1.9.6/mespeak_config.json');
             mespeakInitialized = true;
             console.log('✅ meSpeak inicializado');
-            document.getElementById('voice-status-msg').textContent = '🔊 Clique em "Baixar" para baixar uma voz';
+            document.getElementById('voice-status-msg').textContent = '🔊 Clique em "Testar" para ouvir um exemplo da voz';
         } catch(e) {
             console.error('Erro ao inicializar meSpeak:', e);
         }
@@ -571,6 +584,36 @@
     // Verificar se uma voz está baixada
     function isVoiceDownloaded(voiceId) {
         return downloadedVoices[voiceId] === true;
+    }
+    
+    // Testar uma voz (exemplo)
+    function testVoice(voiceId) {
+        const voice = availableVoices.find(v => v.id === voiceId);
+        if (!voice) return;
+        
+        // Verificar se a voz está baixada
+        if (!isVoiceDownloaded(voiceId)) {
+            document.getElementById('voice-status-msg').textContent = `⚠️ Baixe a ${voice.name} primeiro!`;
+            return;
+        }
+        
+        document.getElementById('voice-status-msg').textContent = `🔊 Testando ${voice.name}...`;
+        
+        try {
+            meSpeak.speak(voice.example, {
+                pitch: 50,
+                rate: 150,
+                volume: 100,
+                voice: voiceId,
+                gender: voice.gender || 'male'
+            });
+            
+            setTimeout(() => {
+                document.getElementById('voice-status-msg').textContent = `✅ Teste da ${voice.name} concluído!`;
+            }, 2000);
+        } catch(e) {
+            document.getElementById('voice-status-msg').textContent = `❌ Erro ao testar ${voice.name}`;
+        }
     }
     
     // Baixar uma voz
@@ -584,7 +627,6 @@
         const voice = availableVoices.find(v => v.id === voiceId);
         if (!voice) return;
         
-        // Inicializar meSpeak se necessário
         if (!mespeakInitialized) {
             initMeSpeak();
             if (!mespeakInitialized) {
@@ -597,9 +639,7 @@
         updateVoiceUI(voiceId, 'downloading');
         document.getElementById('voice-status-msg').textContent = `⏳ Baixando ${voice.name}...`;
         
-        // Carregar a voz usando meSpeak
         meSpeak.loadVoice(voice.url, function() {
-            // Voz baixada com sucesso
             downloadedVoices[voiceId] = true;
             saveVoiceSettings();
             isDownloading = false;
@@ -607,17 +647,14 @@
             
             document.getElementById('voice-status-msg').textContent = `✅ ${voice.name} baixada com sucesso!`;
             
-            // Se for a primeira voz baixada, ativar automaticamente
             if (Object.keys(downloadedVoices).length === 1) {
                 activeVoiceId = voiceId;
                 saveVoiceSettings();
             }
             
-            // Atualizar a interface
             renderVoiceList();
             updateVoiceUI(voiceId, 'downloaded');
             
-            // Tentar falar um teste
             setTimeout(() => {
                 try {
                     meSpeak.speak('Voice downloaded successfully', {
@@ -653,7 +690,6 @@
         document.getElementById('voice-status-msg').textContent = `✅ Voz ativada: ${voice.name}`;
         renderVoiceList();
         
-        // Testar a voz
         setTimeout(() => {
             try {
                 meSpeak.speak('Voice activated', {
@@ -669,9 +705,7 @@
     function speakText(text) {
         if (!text || text.trim() === '') return;
         
-        // Verificar se tem voz ativa
         if (!activeVoiceId || !voiceLoaded) {
-            // Tentar usar a primeira voz baixada
             const downloaded = Object.keys(downloadedVoices);
             if (downloaded.length > 0) {
                 activeVoiceId = downloaded[0];
@@ -683,7 +717,6 @@
             }
         }
         
-        // Inicializar meSpeak se necessário
         if (!mespeakInitialized) {
             initMeSpeak();
             if (!mespeakInitialized) return;
@@ -693,7 +726,6 @@
             let cleanText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, '').trim();
             if (cleanText === '') return;
             
-            // Encontrar a voz para usar
             const voice = availableVoices.find(v => v.id === activeVoiceId);
             if (!voice) return;
             
@@ -740,13 +772,11 @@
         availableVoices.forEach(voice => {
             const isDownloaded = isVoiceDownloaded(voice.id);
             const isActive = activeVoiceId === voice.id;
-            const isDownloadingNow = isDownloading;
             
             const card = document.createElement('div');
             card.className = `voice-card${isActive ? ' active-voice' : ''}`;
             card.id = `voice-card-${voice.id}`;
             
-            // Status badge
             let statusText = '📥 Disponível';
             let statusClass = 'not-downloaded';
             let btnHTML = '';
@@ -755,16 +785,24 @@
                 if (isActive) {
                     statusText = '✅ Ativo';
                     statusClass = 'active';
-                    btnHTML = `<button class="voice-btn-action disabled" disabled>✅ Ativo</button>`;
+                    btnHTML = `
+                        <button class="voice-btn-action test" onclick="testVoice('${voice.id}')">🔊 Testar</button>
+                        <button class="voice-btn-action disabled" disabled>✅ Ativo</button>
+                    `;
                 } else {
                     statusText = '📥 Baixado';
                     statusClass = 'downloaded';
-                    btnHTML = `<button class="voice-btn-action select" onclick="activateVoice('${voice.id}')">🔊 Ativar</button>`;
+                    btnHTML = `
+                        <button class="voice-btn-action test" onclick="testVoice('${voice.id}')">🔊 Testar</button>
+                        <button class="voice-btn-action select" onclick="activateVoice('${voice.id}')">🔊 Ativar</button>
+                    `;
                 }
             } else {
                 statusText = '📥 Disponível';
                 statusClass = 'not-downloaded';
-                btnHTML = `<button class="voice-btn-action download" onclick="downloadVoice('${voice.id}')">📥 Baixar</button>`;
+                btnHTML = `
+                    <button class="voice-btn-action download" onclick="downloadVoice('${voice.id}')">📥 Baixar</button>
+                `;
             }
             
             card.innerHTML = `
@@ -773,7 +811,7 @@
                     <div class="voice-desc">${voice.desc}</div>
                     <span class="voice-status-badge ${statusClass}">${statusText}</span>
                 </div>
-                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                <div class="voice-actions">
                     ${btnHTML}
                     <div class="voice-download-progress" id="progress-${voice.id}">
                         <div class="bar" id="bar-${voice.id}"></div>
@@ -790,18 +828,18 @@
         if (!card) return;
         
         const badge = card.querySelector('.voice-status-badge');
-        const btn = card.querySelector('.voice-btn-action');
+        const btns = card.querySelectorAll('.voice-btn-action');
         const progress = document.getElementById(`progress-${voiceId}`);
         const bar = document.getElementById(`bar-${voiceId}`);
         
         if (status === 'downloading') {
             badge.textContent = '⏳ Baixando...';
             badge.className = 'voice-status-badge downloading';
-            if (btn) {
+            btns.forEach(btn => {
                 btn.textContent = '⏳ Baixando';
                 btn.className = 'voice-btn-action loading';
                 btn.disabled = true;
-            }
+            });
             if (progress) {
                 progress.className = 'voice-download-progress active';
                 if (bar) {
@@ -818,12 +856,6 @@
         } else if (status === 'downloaded') {
             badge.textContent = '📥 Baixado';
             badge.className = 'voice-status-badge downloaded';
-            if (btn) {
-                btn.textContent = '🔊 Ativar';
-                btn.className = 'voice-btn-action select';
-                btn.disabled = false;
-                btn.onclick = () => activateVoice(voiceId);
-            }
             if (progress) {
                 progress.className = 'voice-download-progress';
                 if (bar) bar.style.width = '100%';
@@ -835,21 +867,16 @@
         } else if (status === 'active') {
             badge.textContent = '✅ Ativo';
             badge.className = 'voice-status-badge active';
-            if (btn) {
-                btn.textContent = '✅ Ativo';
-                btn.className = 'voice-btn-action disabled';
-                btn.disabled = true;
-            }
             setTimeout(renderVoiceList, 300);
         } else if (status === 'error') {
             badge.textContent = '❌ Erro';
             badge.className = 'voice-status-badge not-downloaded';
-            if (btn) {
+            btns.forEach(btn => {
                 btn.textContent = '🔄 Tentar';
                 btn.className = 'voice-btn-action download';
                 btn.disabled = false;
                 btn.onclick = () => downloadVoice(voiceId);
-            }
+            });
             if (progress) {
                 progress.className = 'voice-download-progress';
                 if (bar) bar.style.width = '0%';
@@ -1624,18 +1651,13 @@
     // 10. INICIALIZAÇÃO
     // ============================================================
     function init() {
-        // Carregar configurações de voz
         loadVoiceSettings();
-        
-        // Inicializar meSpeak
         initMeSpeak();
         
-        // Renderizar interface
         renderTopics();
         showTopicsScreen();
         setupDragAndDropEvents();
         
-        // Aplicar configurações
         applyTextColor(settings.textColor);
         applyBgBalloonColor(settings.bgBalloonColor);
         applyBgColor(settings.bgColor);
@@ -1643,7 +1665,6 @@
         applyBalloonFontSize(settings.balloonFontSize);
         applyMatchFontSize(settings.matchFontSize);
         
-        // Verificar progresso salvo
         const progress = loadProgress();
         if (progress && progress.topic) {
             if (pdfPhrasesDatabase[progress.topic] || progress.topic === "MISTO") {
@@ -1654,7 +1675,6 @@
             }
         }
         
-        // Se já tiver vozes baixadas, ativar a primeira
         const downloaded = Object.keys(downloadedVoices);
         if (downloaded.length > 0) {
             if (!activeVoiceId || !downloadedVoices[activeVoiceId]) {
@@ -1666,7 +1686,7 @@
             document.getElementById('voice-status-msg').textContent = `✅ Voz ativa: ${availableVoices.find(v => v.id === activeVoiceId)?.name || activeVoiceId}`;
         } else {
             console.log('🗣️ Nenhuma voz baixada. Vá em 🗣️ Voz para baixar.');
-            document.getElementById('voice-status-msg').textContent = '🔊 Clique em "Baixar" para baixar uma voz';
+            document.getElementById('voice-status-msg').textContent = '🔊 Clique em "Testar" para ouvir um exemplo da voz';
         }
         
         console.log('🎮 Aplicativo inicializado com sucesso!');
