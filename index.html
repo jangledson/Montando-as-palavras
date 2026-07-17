@@ -5,7 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Formando as Frases</title>
     
+    <!-- ===== PERMISSÕES PARA APK ===== -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="android-manifest:uses-permission" content="android.permission.INTERNET">
+    <meta name="android-manifest:uses-permission" content="android.permission.ACCESS_NETWORK_STATE">
+    <meta name="android-manifest:uses-permission" content="android.permission.ACCESS_WIFI_STATE">
+    
+    <!-- Carregar meSpeak.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mespeak/mespeak.js"></script>
+    
     <style>
+        /* ===== ESTILOS COMPLETOS ===== */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #000000; color: #ffffff; user-select: none; overflow: hidden; }
         .container { width: 100%; height: 100%; padding: 10px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
@@ -17,6 +29,19 @@
         .back-btn-bottom:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
         .back-btn-bottom:active { transform: scale(0.9); }
         .back-btn-bottom.hidden { display: none; }
+        
+        /* STATUS DA VOZ */
+        .voice-status {
+            text-align: center;
+            font-size: 11px;
+            padding: 4px;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .voice-status.loading { color: #ffaa44; animation: pulse 1s ease infinite; }
+        .voice-status.loaded { color: #00ff66; }
+        .voice-status.error { color: #ff3333; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
         
         .screen { display: none; flex-direction: column; width: 100%; height: 100%; flex: 1; overflow: hidden; }
         .screen.active { display: flex; }
@@ -42,11 +67,7 @@
         .phrase-item.completed { color: #00ff66; text-shadow: 0 0 20px rgba(0, 255, 102, 0.3); }
         @keyframes revealPhrase { 0% { opacity: 0; transform: translateY(-20px) scale(0.9); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         
-        .audio-status { text-align: center; font-size: 12px; color: rgba(255, 255, 255, 0.5); padding: 4px; min-height: 24px; }
-        .audio-status.success { color: #00ff66; }
-        .audio-status.error { color: #ff3333; }
-        .audio-status.playing { color: #ffaa44; animation: pulse 1s ease infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        .voice-status { text-align: center; font-size: 11px; padding: 4px; min-height: 20px; }
         
         .audio-controls-row { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 2px; gap: 6px; flex-wrap: wrap; }
         .btn-audio-top { background: rgba(255, 255, 255, 0.05); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.2); padding: 6px 10px; font-size: 12px; font-weight: bold; border-radius: 10px; cursor: pointer; flex: 1; min-width: 60px; text-align: center; transition: all 0.3s ease; backdrop-filter: blur(4px); }
@@ -180,7 +201,7 @@
 <div class="container" id="appContainer">
     <div id="topics-screen" class="screen active">
         <h2>✨ Formando as Frases</h2>
-        <div class="counter-banner">⚡ Áudio 100% Offline (Beeps)</div>
+        <div class="counter-banner">⚡ Com Sintetizador de Voz (meSpeak)</div>
         <div id="topics-list"></div>
         <div class="stats-wrapper">
             <button class="btn-show-stats" onclick="toggleDatabaseStats()">📊 Carregar Laudo de Dados</button>
@@ -198,7 +219,8 @@
                     <div class="phrase-item hidden" id="phrase-2">Carregando...</div>
                 </div>
                 
-                <div class="audio-status" id="audio-status">🔊 Clique nos balões para ouvir (beeps)</div>
+                <!-- STATUS DA VOZ -->
+                <div class="voice-status" id="voice-status">🔊 Carregando sintetizador de voz...</div>
                 
                 <div class="audio-controls-row">
                     <button class="btn-audio-top btn-audio-user" onclick="speakUserSentence()">🔊 Ouvir Resposta</button>
@@ -308,154 +330,175 @@
 
 <script>
     // ============================================================
-    // SISTEMA DE ÁUDIO 100% OFFLINE (WEBAUDIO API - BEEPS)
+    // 1. SISTEMA DE SINTETIZADOR DE VOZ (meSpeak)
     // ============================================================
+    let voiceLoaded = false;
+    let voiceLoading = false;
+    let currentVoice = 'en-us';
     
-    // Código Morse para cada letra - cada palavra vira uma melodia
-    const morseCode = {
-        'a': '.-', 'b': '-...', 'c': '-.-.', 'd': '-..', 'e': '.', 'f': '..-.',
-        'g': '--.', 'h': '....', 'i': '..', 'j': '.---', 'k': '-.-', 'l': '.-..',
-        'm': '--', 'n': '-.', 'o': '---', 'p': '.--.', 'q': '--.-', 'r': '.-.',
-        's': '...', 't': '-', 'u': '..-', 'v': '...-', 'w': '.--', 'x': '-..-',
-        'y': '-.--', 'z': '--..'
+    // Vozes disponíveis
+    const voices = {
+        'en-us': 'Voz Americana (Masculina)',
+        'en-us-female': 'Voz Americana (Feminina)',
+        'en-uk': 'Voz Britânica (Masculina)',
+        'en-uk-female': 'Voz Britânica (Feminina)'
     };
     
-    // Mapear palavras para frequências únicas
-    function getWordFrequency(word) {
-        let hash = 0;
-        for (let i = 0; i < word.length; i++) {
-            hash = word.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        // Frequência entre 300Hz e 900Hz
-        return 300 + Math.abs(hash % 600);
-    }
+    // URL das vozes
+    const voiceUrls = {
+        'en-us': 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-us.json',
+        'en-us-female': 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-us.json',
+        'en-uk': 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-uk.json',
+        'en-uk-female': 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-uk.json'
+    };
     
-    // Tocar um beep
-    function playBeep(frequency = 440, duration = 200, volume = 0.3) {
-        try {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            const ctx = new AudioContext();
-            const oscillator = ctx.createOscillator();
-            const gain = ctx.createGain();
-            
-            oscillator.connect(gain);
-            gain.connect(ctx.destination);
-            
-            oscillator.frequency.value = frequency;
-            oscillator.type = 'sine';
-            
-            gain.gain.setValueAtTime(volume, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration/1000);
-            
-            oscillator.start(ctx.currentTime);
-            oscillator.stop(ctx.currentTime + duration/1000);
-            
-            return true;
-        } catch(e) {
-            return false;
-        }
-    }
-    
-    // Tocar uma palavra usando código Morse ou melodia simples
-    function playWordBeep(word) {
-        if (!word || word.trim() === '') return;
-        
-        const lowerWord = word.toLowerCase().trim();
-        const freq = getWordFrequency(lowerWord);
-        
-        // Tocar 3 beeps com variação
-        playBeep(freq, 150, 0.2);
-        setTimeout(() => {
-            playBeep(freq + 100, 150, 0.2);
-        }, 180);
-        setTimeout(() => {
-            playBeep(freq + 200, 250, 0.25);
-        }, 360);
-        
-        setAudioStatus(`🔊 Tocando: "${word}"`, 'playing');
-        setTimeout(() => {
-            setAudioStatus('🔊 Clique nos balões para ouvir', '');
-        }, 600);
-    }
-    
-    // Tocar uma frase (melodia mais longa)
-    function playPhraseBeep(phrase) {
-        if (!phrase || phrase.trim() === '') return;
-        
-        const words = phrase.split(' ');
-        let delay = 0;
-        
-        words.forEach((word, index) => {
-            const freq = getWordFrequency(word);
-            setTimeout(() => {
-                playBeep(freq, 200, 0.25);
-                setTimeout(() => {
-                    playBeep(freq + 100, 200, 0.25);
-                }, 220);
-                setTimeout(() => {
-                    playBeep(freq + 200, 300, 0.3);
-                }, 440);
-            }, delay);
-            delay += 700;
-        });
-        
-        setAudioStatus(`🔊 Tocando frase: "${phrase}"`, 'playing');
-        setTimeout(() => {
-            setAudioStatus('🔊 Clique nos balões para ouvir', '');
-        }, delay + 500);
-    }
-    
-    // ============================================================
-    // FUNÇÕES PÚBLICAS
-    // ============================================================
-    function setAudioStatus(text, type = '') {
-        const el = document.getElementById('audio-status');
+    function setVoiceStatus(text, type = '') {
+        const el = document.getElementById('voice-status');
         el.textContent = text;
-        el.className = 'audio-status ' + type;
+        el.className = 'voice-status ' + type;
     }
     
+    // Carregar a voz
+    function loadVoice(voiceName = 'en-us') {
+        if (voiceLoading) return;
+        if (voiceLoaded && currentVoice === voiceName) {
+            setVoiceStatus('✅ Voz carregada: ' + voices[voiceName], 'loaded');
+            return;
+        }
+        
+        voiceLoading = true;
+        currentVoice = voiceName;
+        setVoiceStatus('📥 Baixando voz: ' + voices[voiceName] + '...', 'loading');
+        
+        // Verificar se meSpeak está disponível
+        if (typeof meSpeak === 'undefined') {
+            setVoiceStatus('❌ Erro: meSpeak não carregado!', 'error');
+            voiceLoading = false;
+            return;
+        }
+        
+        // Configurar meSpeak
+        meSpeak.loadConfig('https://cdn.jsdelivr.net/npm/mespeak@1.9.6/mespeak_config.json');
+        
+        // Carregar a voz
+        meSpeak.loadVoice(voiceUrls[voiceName], function() {
+            voiceLoaded = true;
+            voiceLoading = false;
+            setVoiceStatus('✅ Voz carregada: ' + voices[voiceName], 'loaded');
+            console.log('✅ Voz carregada com sucesso!');
+            
+            // Teste silencioso
+            try {
+                meSpeak.speak(' ', {volume: 0});
+            } catch(e) {}
+        }, function(error) {
+            voiceLoading = false;
+            setVoiceStatus('❌ Erro ao carregar voz: ' + error, 'error');
+            console.error('❌ Erro ao carregar voz:', error);
+            
+            // Tentar novamente com voz alternativa
+            setTimeout(() => {
+                if (!voiceLoaded) {
+                    loadVoice('en-us');
+                }
+            }, 2000);
+        });
+    }
+    
+    // Falar usando meSpeak
+    function speakText(text) {
+        if (!text || text.trim() === '') return;
+        
+        if (!voiceLoaded) {
+            setVoiceStatus('⏳ Carregando voz, aguarde...', 'loading');
+            loadVoice(currentVoice);
+            
+            // Tentar novamente após carregar
+            setTimeout(() => {
+                if (voiceLoaded) {
+                    speakText(text);
+                } else {
+                    setVoiceStatus('⚠️ Voz não carregada. Clique em Teste.', 'error');
+                }
+            }, 3000);
+            return;
+        }
+        
+        try {
+            // Limpar texto
+            let cleanText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, '').trim();
+            if (cleanText === '') return;
+            
+            // Falar
+            meSpeak.speak(cleanText, {
+                pitch: 50,
+                rate: 150,
+                volume: 100,
+                voice: currentVoice
+            });
+            
+            setVoiceStatus('🔊 Falando: "' + cleanText + '"', 'loaded');
+            
+            // Destacar balões
+            document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
+                if (el.textContent.toLowerCase() === cleanText.toLowerCase()) {
+                    el.classList.add('speaking');
+                    setTimeout(() => el.classList.remove('speaking'), 1000);
+                }
+            });
+            
+        } catch(e) {
+            console.error('Erro ao falar:', e);
+            setVoiceStatus('❌ Erro ao falar: ' + e.message, 'error');
+        }
+    }
+    
+    // ============================================================
+    // 2. FUNÇÕES PÚBLICAS
+    // ============================================================
     function testAudio() {
-        setAudioStatus('🎧 Testando áudio...', 'playing');
-        playBeep(880, 300, 0.3);
+        setVoiceStatus('🎧 Testando sintetizador...', 'loading');
+        
+        if (!voiceLoaded) {
+            loadVoice(currentVoice);
+            setTimeout(() => {
+                if (voiceLoaded) {
+                    speakText('Hello, this is a voice test');
+                } else {
+                    setVoiceStatus('⚠️ Aguarde o carregamento da voz', 'error');
+                }
+            }, 2000);
+            return;
+        }
+        
+        speakText('Hello, this is a voice test');
         setTimeout(() => {
-            playBeep(660, 300, 0.3);
-        }, 400);
-        setTimeout(() => {
-            playBeep(440, 400, 0.35);
-            setAudioStatus('✅ Áudio funcionando! (beeps)', 'success');
-        }, 800);
+            speakText('The audio is working perfectly');
+        }, 1500);
     }
     
     function speakWord(word) {
-        // Destacar o balão
-        document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
-            if (el.textContent.toLowerCase() === word.toLowerCase()) {
-                el.classList.add('speaking');
-                setTimeout(() => el.classList.remove('speaking'), 800);
-            }
-        });
-        
-        playWordBeep(word);
+        speakText(word);
     }
     
     function speakFullSentence() {
         const currentPhrase = getCurrentPhrase();
         if (currentPhrase) {
-            playPhraseBeep(currentPhrase.en);
+            speakText(currentPhrase.en);
         }
     }
     
     function speakUserSentence() {
         if (selectedWords.length === 0) {
-            setAudioStatus('⚠️ Nenhuma palavra selecionada', 'error');
+            setVoiceStatus('⚠️ Nenhuma palavra selecionada', 'error');
             return;
         }
         const userTxt = selectedWords.join(" ");
-        playPhraseBeep(userTxt);
+        speakText(userTxt);
     }
 
     // ============================================================
-    // CONFIGURAÇÕES
+    // 3. CONFIGURAÇÕES
     // ============================================================
     const STORAGE_KEY = 'wordGameSettings';
     const PROGRESS_KEY = 'wordGameProgress';
@@ -591,7 +634,7 @@
     }
     
     function applyGeneralFontSize(size) {
-        document.querySelectorAll('h2, .counter-banner, .phrase-pt, .zone-title, .btn-reveal, .btn-audio-top, .btn-audio-user, .btn-pesca, .status-container, .btn-show-stats, .config-btn-label, .match-btn-label, .phrase-item, .phrase-counter, .audio-status').forEach(el => {
+        document.querySelectorAll('h2, .counter-banner, .phrase-pt, .zone-title, .btn-reveal, .btn-audio-top, .btn-audio-user, .btn-pesca, .status-container, .btn-show-stats, .config-btn-label, .match-btn-label, .phrase-item, .phrase-counter, .voice-status').forEach(el => {
             if (el.tagName === 'H2') { el.style.fontSize = (size + 2) + 'px'; }
             else if (el.classList.contains('counter-banner')) { el.style.fontSize = (size - 6) + 'px'; }
             else if (el.classList.contains('phrase-pt') || el.classList.contains('phrase-item')) { el.style.fontSize = (size + 2) + 'px'; }
@@ -603,7 +646,7 @@
             else if (el.classList.contains('btn-show-stats')) { el.style.fontSize = (size - 4) + 'px'; }
             else if (el.classList.contains('config-btn-label') || el.classList.contains('match-btn-label')) { el.style.fontSize = (size - 9) + 'px'; }
             else if (el.classList.contains('phrase-counter')) { el.style.fontSize = (size - 5) + 'px'; }
-            else if (el.classList.contains('audio-status')) { el.style.fontSize = (size - 4) + 'px'; }
+            else if (el.classList.contains('voice-status')) { el.style.fontSize = (size - 4) + 'px'; }
         });
         document.querySelectorAll('.action-btn').forEach(el => {
             el.style.fontSize = (size - 1) + 'px';
@@ -656,7 +699,7 @@
     }
 
     // ============================================================
-    // PROGRESSO
+    // 4. PROGRESSO
     // ============================================================
     function loadProgress() {
         try {
@@ -694,7 +737,7 @@
     }
 
     // ============================================================
-    // DICIONÁRIO E FRASES
+    // 5. DICIONÁRIO E FRASES
     // ============================================================
     const dictionary = {
         "love": "amor",
@@ -714,7 +757,7 @@
     };
 
     // ============================================================
-    // JOGO PRINCIPAL
+    // 6. JOGO PRINCIPAL
     // ============================================================
     let selectedTopic = "", playlistPhrases = [], currentPhraseIndex = 0;
     let selectedWords = [], currentFrase = 1;
@@ -724,7 +767,7 @@
     let totalPhrases = 0;
 
     // ============================================================
-    // MATCH GAME
+    // 7. MATCH GAME
     // ============================================================
     let matchPairs = [], selectedMatchCard = null, matchedPairs = 0, matchCards = [], isProcessingMatch = false;
 
@@ -793,7 +836,7 @@
         document.getElementById('matchStats').textContent = `Pares: ${matchedPairs} / ${totalPairs}`;
         if (matchedPairs === totalPairs && totalPairs > 0) {
             document.getElementById('matchWinMessage').style.display = 'block';
-            playPhraseBeep('Congratulations');
+            speakText('Congratulations! You matched all pairs!');
         }
     }
     
@@ -819,7 +862,7 @@
     }
 
     // ============================================================
-    // FUNÇÕES DO JOGO
+    // 8. FUNÇÕES DO JOGO
     // ============================================================
     function getCurrentPhrase() {
         const entry = playlistPhrases[currentPhraseIndex];
@@ -886,7 +929,7 @@
             <p>Total de Pares de Frases: <span style='color:#00ff66; font-size:16px;'>${totalPhrases}</span></p>
             <p>Total de Palavras: <span style='color:#00ff66; font-size:16px;'>${totalWords}</span></p>
             <p style='margin-top:6px; color:#ffaa00;'>📊 Progresso: ${progressInfo}</p>
-            <p style='margin-top:6px; color:#00aaff;'>🔊 Áudio: 100% Offline (Beeps)</p>
+            <p style='margin-top:6px; color:#00aaff;'>🔊 Sintetizador: meSpeak (offline)</p>
             <p style='margin-top:6px; color:#00aa33;'>✅ Banco de Dados para Testes!</p>
         `;
         box.style.display = "block";
@@ -1156,10 +1199,8 @@
                 `;
                 successTextBox.style.display = "flex";
                 
-                // Tocar beeps de vitória
-                playBeep(880, 300, 0.3);
-                setTimeout(() => playBeep(1100, 300, 0.3), 400);
-                setTimeout(() => playBeep(1320, 400, 0.35), 800);
+                speakText(entry.frase1.en);
+                setTimeout(() => speakText(entry.frase2.en), 2000);
                 
                 const phrase2El = document.getElementById("phrase-2");
                 phrase2El.className = "phrase-item completed";
@@ -1192,7 +1233,7 @@
     }
 
     // ============================================================
-    // INICIALIZAÇÃO
+    // 9. INICIALIZAÇÃO
     // ============================================================
     function init() {
         // Renderizar interface
@@ -1219,14 +1260,15 @@
             }
         }
         
+        // Carregar a voz
+        loadVoice('en-us');
+        
         console.log('🎮 Aplicativo inicializado com sucesso!');
-        console.log('🔊 Áudio 100% offline (WebAudio API - Beeps)');
+        console.log('🔊 Sintetizador de voz: meSpeak');
         console.log('📊 Configurações carregadas:', settings);
         if (progress) {
             console.log('📊 Progresso salvo:', progress);
         }
-        
-        setAudioStatus('🔊 Clique nos balões para ouvir (beeps)', '');
     }
 
     document.addEventListener('DOMContentLoaded', init);
