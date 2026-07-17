@@ -200,7 +200,7 @@
             flex-direction: column;
             gap: 10px;
             flex: 1;
-            padding-bottom: 20px;
+            padding-bottom: 10px;
         }
         .voice-card {
             background: rgba(0, 20, 5, 0.85);
@@ -270,6 +270,74 @@
             border-radius: 4px;
             width: 0%;
             transition: width 0.3s ease;
+        }
+        
+        /* ===== TESTE DE VOZ NA PARTE INFERIOR ===== */
+        .voice-test-area {
+            margin-top: 10px;
+            padding: 14px 16px;
+            background: rgba(0, 20, 5, 0.85);
+            border: 2px solid rgba(0, 170, 255, 0.2);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+        .voice-test-area .test-title {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .voice-test-area .test-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .voice-test-area .test-row input {
+            flex: 1;
+            min-width: 120px;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .voice-test-area .test-row input:focus {
+            border-color: rgba(0, 170, 255, 0.4);
+        }
+        .voice-test-area .test-row input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+        .voice-test-area .test-row .btn-test-voice {
+            padding: 8px 18px;
+            border-radius: 20px;
+            background: rgba(0, 170, 255, 0.15);
+            color: #00aaff;
+            border: 1px solid rgba(0, 170, 255, 0.3);
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .voice-test-area .test-row .btn-test-voice:hover {
+            background: rgba(0, 170, 255, 0.25);
+        }
+        .voice-test-area .test-row .btn-test-voice:active { transform: scale(0.95); }
+        .voice-test-area .test-row .btn-test-voice.disabled {
+            opacity: 0.3;
+            cursor: default;
+        }
+        .voice-test-area .test-status {
+            margin-top: 6px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            text-align: center;
         }
         
         @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
@@ -410,6 +478,16 @@
     <div class="voice-list" id="voice-list">
         <!-- As vozes serão inseridas aqui via JavaScript -->
     </div>
+    
+    <!-- ===== ÁREA DE TESTE DE VOZ (PARTE INFERIOR) ===== -->
+    <div class="voice-test-area">
+        <div class="test-title">🎤 Teste Rápido de Voz</div>
+        <div class="test-row">
+            <input type="text" id="testVoiceInput" placeholder="Digite uma frase em inglês..." value="Hello, how are you today?">
+            <button class="btn-test-voice" id="btnTestVoice" onclick="testCustomVoice()">🔊 Falar</button>
+        </div>
+        <div class="test-status" id="testVoiceStatus">Digite uma frase e clique em "Falar" para ouvir com a voz ativa</div>
+    </div>
 </div>
 
 <!-- ===== MATCH SCREEN ===== -->
@@ -499,32 +577,28 @@
             name: 'Voz Americana', 
             desc: 'Inglês Americano - Masculino',
             url: 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-us.json',
-            gender: 'male',
-            example: 'Hello, this is the American voice'
+            gender: 'male'
         },
         { 
             id: 'en-us-female', 
             name: 'Voz Americana (Feminina)', 
             desc: 'Inglês Americano - Feminino',
             url: 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-us.json',
-            gender: 'female',
-            example: 'Hello, this is the American female voice'
+            gender: 'female'
         },
         { 
             id: 'en-uk', 
             name: 'Voz Britânica', 
             desc: 'Inglês Britânico - Masculino',
             url: 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-uk.json',
-            gender: 'male',
-            example: 'Hello, this is the British voice'
+            gender: 'male'
         },
         { 
             id: 'en-uk-female', 
             name: 'Voz Britânica (Feminina)', 
             desc: 'Inglês Britânico - Feminino',
             url: 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-uk.json',
-            gender: 'female',
-            example: 'Hello, this is the British female voice'
+            gender: 'female'
         }
     ];
     
@@ -591,7 +665,6 @@
         const voice = availableVoices.find(v => v.id === voiceId);
         if (!voice) return;
         
-        // Verificar se a voz está baixada
         if (!isVoiceDownloaded(voiceId)) {
             document.getElementById('voice-status-msg').textContent = `⚠️ Baixe a ${voice.name} primeiro!`;
             return;
@@ -600,7 +673,7 @@
         document.getElementById('voice-status-msg').textContent = `🔊 Testando ${voice.name}...`;
         
         try {
-            meSpeak.speak(voice.example, {
+            meSpeak.speak('Hello, this is a voice test', {
                 pitch: 50,
                 rate: 150,
                 volume: 100,
@@ -613,6 +686,74 @@
             }, 2000);
         } catch(e) {
             document.getElementById('voice-status-msg').textContent = `❌ Erro ao testar ${voice.name}`;
+        }
+    }
+    
+    // Testar voz com texto personalizado
+    function testCustomVoice() {
+        const input = document.getElementById('testVoiceInput');
+        const status = document.getElementById('testVoiceStatus');
+        const btn = document.getElementById('btnTestVoice');
+        
+        let text = input.value.trim();
+        if (!text) {
+            status.textContent = '⚠️ Digite uma frase para testar!';
+            status.style.color = '#ffaa44';
+            return;
+        }
+        
+        // Verificar se tem voz ativa
+        if (!activeVoiceId || !voiceLoaded) {
+            const downloaded = Object.keys(downloadedVoices);
+            if (downloaded.length > 0) {
+                activeVoiceId = downloaded[0];
+                voiceLoaded = true;
+                saveVoiceSettings();
+            } else {
+                status.textContent = '⚠️ Nenhuma voz baixada! Baixe uma voz primeiro.';
+                status.style.color = '#ffaa44';
+                return;
+            }
+        }
+        
+        if (!mespeakInitialized) {
+            initMeSpeak();
+            if (!mespeakInitialized) return;
+        }
+        
+        const voice = availableVoices.find(v => v.id === activeVoiceId);
+        if (!voice) {
+            status.textContent = '❌ Voz não encontrada!';
+            status.style.color = '#ff3333';
+            return;
+        }
+        
+        status.textContent = `🔊 Falando: "${text}" com ${voice.name}...`;
+        status.style.color = '#00aaff';
+        btn.textContent = '⏳ Falando...';
+        btn.disabled = true;
+        
+        try {
+            meSpeak.speak(text, {
+                pitch: 50,
+                rate: 150,
+                volume: 100,
+                voice: activeVoiceId,
+                gender: voice.gender || 'male'
+            });
+            
+            setTimeout(() => {
+                status.textContent = '✅ Áudio reproduzido com sucesso!';
+                status.style.color = '#00ff66';
+                btn.textContent = '🔊 Falar';
+                btn.disabled = false;
+            }, 2000 + (text.length * 50));
+            
+        } catch(e) {
+            status.textContent = `❌ Erro ao falar: ${e.message}`;
+            status.style.color = '#ff3333';
+            btn.textContent = '🔊 Falar';
+            btn.disabled = false;
         }
     }
     
@@ -690,6 +831,10 @@
         document.getElementById('voice-status-msg').textContent = `✅ Voz ativada: ${voice.name}`;
         renderVoiceList();
         
+        // Atualizar status do teste
+        document.getElementById('testVoiceStatus').textContent = `✅ Voz ativa: ${voice.name}`;
+        document.getElementById('testVoiceStatus').style.color = '#00ff66';
+        
         setTimeout(() => {
             try {
                 meSpeak.speak('Voice activated', {
@@ -758,6 +903,15 @@
         document.getElementById('voice-screen').classList.add('active');
         document.getElementById('voiceBtn').classList.add('active');
         renderVoiceList();
+        
+        // Atualizar status da voz ativa no campo de teste
+        if (activeVoiceId) {
+            const voice = availableVoices.find(v => v.id === activeVoiceId);
+            if (voice) {
+                document.getElementById('testVoiceStatus').textContent = `✅ Voz ativa: ${voice.name}`;
+                document.getElementById('testVoiceStatus').style.color = '#00ff66';
+            }
+        }
     }
     
     function closeVoiceScreen() {
@@ -1044,7 +1198,7 @@
     }
     
     function applyGeneralFontSize(size) {
-        document.querySelectorAll('h2, .counter-banner, .phrase-pt, .zone-title, .btn-reveal, .btn-audio-top, .btn-audio-user, .btn-pesca, .status-container, .btn-show-stats, .btn-label, .phrase-item, .phrase-counter, .voice-card .voice-name, .voice-card .voice-desc, .voice-status-badge, .voice-btn-action, #voice-status-msg').forEach(el => {
+        document.querySelectorAll('h2, .counter-banner, .phrase-pt, .zone-title, .btn-reveal, .btn-audio-top, .btn-audio-user, .btn-pesca, .status-container, .btn-show-stats, .btn-label, .phrase-item, .phrase-counter, .voice-card .voice-name, .voice-card .voice-desc, .voice-status-badge, .voice-btn-action, #voice-status-msg, .voice-test-area .test-title, .voice-test-area .test-row input, .voice-test-area .test-row .btn-test-voice, .voice-test-area .test-status').forEach(el => {
             if (el.tagName === 'H2') { el.style.fontSize = (size + 2) + 'px'; }
             else if (el.classList.contains('counter-banner')) { el.style.fontSize = (size - 6) + 'px'; }
             else if (el.classList.contains('phrase-pt') || el.classList.contains('phrase-item')) { el.style.fontSize = (size + 2) + 'px'; }
@@ -1061,6 +1215,10 @@
             else if (el.classList.contains('voice-status-badge')) { el.style.fontSize = (size - 6) + 'px'; }
             else if (el.classList.contains('voice-btn-action')) { el.style.fontSize = (size - 4) + 'px'; }
             else if (el.id === 'voice-status-msg') { el.style.fontSize = (size - 4) + 'px'; }
+            else if (el.classList.contains('test-title')) { el.style.fontSize = (size - 4) + 'px'; }
+            else if (el.classList.contains('test-row') && el.tagName === 'INPUT') { el.style.fontSize = (size - 2) + 'px'; }
+            else if (el.classList.contains('test-row') && el.classList.contains('btn-test-voice')) { el.style.fontSize = (size - 4) + 'px'; }
+            else if (el.classList.contains('test-status')) { el.style.fontSize = (size - 5) + 'px'; }
         });
         document.querySelectorAll('.action-btn').forEach(el => {
             el.style.fontSize = (size - 1) + 'px';
@@ -1684,9 +1842,17 @@
             voiceLoaded = true;
             console.log('🗣️ Voz ativa:', activeVoiceId);
             document.getElementById('voice-status-msg').textContent = `✅ Voz ativa: ${availableVoices.find(v => v.id === activeVoiceId)?.name || activeVoiceId}`;
+            
+            const voice = availableVoices.find(v => v.id === activeVoiceId);
+            if (voice) {
+                document.getElementById('testVoiceStatus').textContent = `✅ Voz ativa: ${voice.name}`;
+                document.getElementById('testVoiceStatus').style.color = '#00ff66';
+            }
         } else {
             console.log('🗣️ Nenhuma voz baixada. Vá em 🗣️ Voz para baixar.');
             document.getElementById('voice-status-msg').textContent = '🔊 Clique em "Testar" para ouvir um exemplo da voz';
+            document.getElementById('testVoiceStatus').textContent = '🔊 Baixe e ative uma voz para testar';
+            document.getElementById('testVoiceStatus').style.color = 'rgba(255,255,255,0.3)';
         }
         
         console.log('🎮 Aplicativo inicializado com sucesso!');
