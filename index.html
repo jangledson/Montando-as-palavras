@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Formando as Frases</title>
     
-    <!-- ===== PERMISSÕES PARA APK ===== -->
+    <!-- ===== PERMISSÕES PARA APK (REFORÇADAS) ===== -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- PERMISSÕES DE INTERNET E ÁUDIO -->
     <meta name="android-manifest:uses-permission" content="android.permission.INTERNET">
     <meta name="android-manifest:uses-permission" content="android.permission.ACCESS_NETWORK_STATE">
+    <meta name="android-manifest:uses-permission" content="android.permission.ACCESS_WIFI_STATE">
     <meta name="android-manifest:uses-permission" content="android.permission.RECORD_AUDIO">
     <meta name="android-manifest:uses-permission" content="android.permission.MODIFY_AUDIO_SETTINGS">
     <meta name="android-manifest:uses-permission" content="android.permission.FOREGROUND_SERVICE">
@@ -18,7 +21,7 @@
     <meta name="android-manifest:uses-permission" content="android.permission.SYSTEM_ALERT_WINDOW">
     
     <style>
-        /* ===== TODOS OS ESTILOS ===== */
+        /* ===== ESTILOS COMPLETOS ===== */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #000000; color: #ffffff; user-select: none; overflow: hidden; transition: background-color 0.4s ease; }
         .container { width: 100%; height: 100%; padding: 10px; display: flex; flex-direction: column; gap: 8px; transition: background-color 0.4s ease; overflow: hidden; }
@@ -32,6 +35,20 @@
         .back-btn-bottom:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
         .back-btn-bottom:active { transform: scale(0.9); }
         .back-btn-bottom.hidden { display: none; }
+        
+        /* STATUS DE CONEXÃO */
+        .connection-status {
+            text-align: center;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            margin: 0 auto;
+        }
+        .connection-status.online { color: #00ff66; background: rgba(0, 255, 102, 0.1); border: 1px solid rgba(0, 255, 102, 0.2); }
+        .connection-status.offline { color: #ff6600; background: rgba(255, 102, 0, 0.1); border: 1px solid rgba(255, 102, 0, 0.2); }
+        .connection-status.checking { color: #ffaa00; background: rgba(255, 170, 0, 0.1); border: 1px solid rgba(255, 170, 0, 0.2); animation: pulse 1s ease infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
         
         /* SCREENS */
         .screen { display: none; flex-direction: column; width: 100%; height: 100%; flex: 1; overflow: hidden; }
@@ -66,7 +83,6 @@
             position: relative;
         }
         
-        /* NUMERAÇÃO DA FRASE - CANTO SUPERIOR DIREITO */
         .phrase-counter {
             position: absolute;
             top: 8px;
@@ -96,7 +112,7 @@
         .btn-audio-test { background: rgba(255, 150, 0, 0.1); border-color: rgba(255, 150, 0, 0.3); color: #ffaa44; flex: 0.5; min-width: 40px; }
         .btn-audio-test:hover { background: rgba(255, 150, 0, 0.2); border-color: #ffaa44; }
         
-        /* STATUS ÁUDIO */
+        /* STATUS ÁUDIO E CONEXÃO */
         .audio-status {
             text-align: center;
             font-size: 11px;
@@ -107,7 +123,14 @@
         .audio-status.loading { color: #ffaa44; animation: pulse 1s ease infinite; }
         .audio-status.success { color: #00ff66; }
         .audio-status.error { color: #ff3333; }
-        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        .audio-status.offline { color: #ff6600; }
+        
+        .status-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2px;
+        }
         
         /* ZONE HEADER */
         .zone-header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
@@ -264,6 +287,13 @@
                     <div class="phrase-item" id="phrase-1">Carregando...</div>
                     <div class="phrase-item hidden" id="phrase-2">Carregando...</div>
                 </div>
+                
+                <!-- STATUS DE CONEXÃO E ÁUDIO -->
+                <div class="status-top-row">
+                    <span class="connection-status checking" id="connection-status">🌐 Verificando conexão...</span>
+                    <span id="audio-status-label" style="font-size:10px; color:rgba(255,255,255,0.3);">🔊</span>
+                </div>
+                
                 <div class="audio-controls-row">
                     <button class="btn-audio-top btn-audio-user" onclick="speakUserSentence()">🔊 Ouvir Resposta</button>
                     <button class="btn-audio-top" onclick="speakFullSentence()">🔊 Ouvir Frase</button>
@@ -375,11 +405,93 @@
 
 <script>
     // ============================================================
-    // 1. SISTEMA DE ÁUDIO VIA API GOOGLE TTS (100% FUNCIONAL)
+    // 1. VERIFICAÇÃO DE CONEXÃO COM A INTERNET
     // ============================================================
-    let audioQueue = [];
-    let isPlaying = false;
+    let isOnline = false;
+    let connectionChecked = false;
+
+    function checkInternetConnection() {
+        const statusEl = document.getElementById('connection-status');
+        statusEl.className = 'connection-status checking';
+        statusEl.textContent = '🌐 Verificando conexão...';
+        
+        // Tentar carregar um recurso do Google para testar a conexão
+        fetch('https://www.google.com/favicon.ico', { 
+            mode: 'no-cors',
+            cache: 'no-cache',
+            timeout: 5000
+        })
+        .then(() => {
+            isOnline = true;
+            connectionChecked = true;
+            statusEl.className = 'connection-status online';
+            statusEl.textContent = '🌐 Conectado à internet ✅';
+            console.log('✅ Conexão com internet: OK');
+            document.getElementById('audio-status-label').textContent = '🔊 Online';
+            setAudioStatus('✅ Conectado! Clique nos balões para ouvir', 'success');
+        })
+        .catch(() => {
+            // Se falhar, tentar método alternativo
+            checkInternetAlternative();
+        });
+        
+        // Timeout de segurança
+        setTimeout(() => {
+            if (!connectionChecked) {
+                checkInternetAlternative();
+            }
+        }, 3000);
+    }
     
+    function checkInternetAlternative() {
+        const statusEl = document.getElementById('connection-status');
+        
+        // Tentar com XMLHttpRequest (mais compatível com WebView)
+        try {
+            const xhr = new XMLHttpRequest();
+            xhr.open('HEAD', 'https://www.google.com', true);
+            xhr.timeout = 5000;
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status >= 200 && xhr.status < 400) {
+                        isOnline = true;
+                        connectionChecked = true;
+                        statusEl.className = 'connection-status online';
+                        statusEl.textContent = '🌐 Conectado à internet ✅';
+                        console.log('✅ Conexão com internet: OK (XHR)');
+                        document.getElementById('audio-status-label').textContent = '🔊 Online';
+                        setAudioStatus('✅ Conectado! Clique nos balões para ouvir', 'success');
+                    } else {
+                        setOfflineStatus();
+                    }
+                }
+            };
+            xhr.onerror = function() {
+                setOfflineStatus();
+            };
+            xhr.ontimeout = function() {
+                setOfflineStatus();
+            };
+            xhr.send();
+        } catch(e) {
+            setOfflineStatus();
+        }
+    }
+    
+    function setOfflineStatus() {
+        const statusEl = document.getElementById('connection-status');
+        isOnline = false;
+        connectionChecked = true;
+        statusEl.className = 'connection-status offline';
+        statusEl.textContent = '📡 Sem conexão com internet ⚠️';
+        console.warn('⚠️ Sem conexão com internet');
+        document.getElementById('audio-status-label').textContent = '📡 Offline';
+        setAudioStatus('⚠️ Sem internet. O áudio requer conexão!', 'offline');
+    }
+
+    // ============================================================
+    // 2. SISTEMA DE ÁUDIO VIA GOOGLE TTS COM VERIFICAÇÃO
+    // ============================================================
     function setAudioStatus(text, type = '') {
         const el = document.getElementById('audio-status');
         el.textContent = text;
@@ -392,83 +504,113 @@
             return;
         }
         
-        // Limpar texto (remover pontuação desnecessária)
+        // Verificar se está online
+        if (!isOnline) {
+            setAudioStatus('📡 Sem internet! Conecte-se para ouvir', 'offline');
+            return;
+        }
+        
         let cleanText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, '').trim();
         if (cleanText === '') return;
         
         setAudioStatus(`🔊 Falando: "${cleanText}"`, 'loading');
         
-        // Usar API do Google TTS
-        const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=en&client=tw-ob`;
+        // Tentar múltiplas URLs da API do Google TTS
+        const urls = [
+            `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=en&client=tw-ob`,
+            `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=en&client=gtx`,
+            `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=en&client=webapp`
+        ];
         
-        const audio = new Audio();
-        audio.src = url;
-        audio.preload = 'auto';
+        let attempt = 0;
         
-        audio.onloadeddata = function() {
-            setAudioStatus(`✅ Falando: "${cleanText}"`, 'success');
-            audio.play().then(() => {
+        function tryPlayAudio() {
+            if (attempt >= urls.length) {
+                setAudioStatus('❌ Falha ao carregar áudio', 'error');
                 if (callback) callback();
-            }).catch(err => {
-                console.warn('Erro ao reproduzir:', err);
-                setAudioStatus('⚠️ Erro ao reproduzir áudio', 'error');
-                // Tentar método alternativo
-                speakTextAlternative(cleanText, callback);
-            });
-        };
-        
-        audio.onerror = function(err) {
-            console.warn('Erro ao carregar áudio:', err);
-            setAudioStatus('⚠️ Erro ao carregar, tentando alternativa...', 'error');
-            // Tentar método alternativo
-            speakTextAlternative(cleanText, callback);
-        };
-        
-        audio.onended = function() {
-            setAudioStatus('🔊 Clique em um balão para ouvir', '');
-        };
-        
-        // Timeout de segurança
-        setTimeout(() => {
-            if (!audio.ended && !audio.paused) {
-                try { audio.pause(); } catch(e) {}
-                setAudioStatus('⏱️ Timeout no áudio', 'error');
-                if (callback) callback();
+                return;
             }
-        }, 5000);
-        
-        // Forçar carregamento
-        audio.load();
-    }
-    
-    // Método alternativo usando API do Google TTS com formato diferente
-    function speakTextAlternative(text, callback = null) {
-        try {
-            const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=en&client=gtx`;
-            const audio = new Audio(url);
+            
+            const audio = new Audio();
+            audio.src = urls[attempt];
+            audio.preload = 'auto';
+            
             audio.onloadeddata = function() {
+                setAudioStatus(`✅ Falando: "${cleanText}"`, 'success');
                 audio.play().then(() => {
                     if (callback) callback();
                 }).catch(err => {
-                    console.warn('Erro no método alternativo:', err);
-                    setAudioStatus('❌ Áudio indisponível', 'error');
-                    if (callback) callback();
+                    console.warn('Erro ao reproduzir:', err);
+                    attempt++;
+                    tryPlayAudio();
                 });
             };
-            audio.onerror = function() {
-                setAudioStatus('❌ Falha no áudio', 'error');
-                if (callback) callback();
+            
+            audio.onerror = function(err) {
+                console.warn('Erro ao carregar áudio (tentativa ' + (attempt + 1) + '):', err);
+                attempt++;
+                tryPlayAudio();
             };
+            
+            audio.onended = function() {
+                setAudioStatus('🔊 Clique em um balão para ouvir', '');
+            };
+            
+            // Timeout de segurança
+            setTimeout(() => {
+                if (!audio.ended && !audio.paused) {
+                    try { audio.pause(); } catch(e) {}
+                    setAudioStatus('⏱️ Timeout no áudio', 'error');
+                    attempt++;
+                    tryPlayAudio();
+                }
+            }, 6000);
+            
             audio.load();
+        }
+        
+        tryPlayAudio();
+    }
+    
+    // Fallback: Sons locais (beeps) caso não tenha internet
+    function playBeep(frequency = 440, duration = 200) {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioContext();
+            const oscillator = ctx.createOscillator();
+            const gain = ctx.createGain();
+            
+            oscillator.connect(gain);
+            gain.connect(ctx.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+            
+            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration/1000);
+            
+            oscillator.start(ctx.currentTime);
+            oscillator.stop(ctx.currentTime + duration/1000);
+            
+            return true;
         } catch(e) {
-            setAudioStatus('❌ Erro no áudio', 'error');
-            if (callback) callback();
+            return false;
         }
     }
     
-    // Função para testar o áudio (botão Teste)
     function testAudio() {
         setAudioStatus('🎧 Testando áudio...', 'loading');
+        
+        if (!isOnline) {
+            setAudioStatus('📡 Sem internet! Tocando beep de teste', 'offline');
+            playBeep(880, 300);
+            setTimeout(() => {
+                playBeep(660, 300);
+                setAudioStatus('🔊 Beep de teste (offline)', '');
+            }, 400);
+            return;
+        }
+        
         speakText('Hello, this is a test', () => {
             setTimeout(() => {
                 speakText('Audio is working', () => {
@@ -478,8 +620,15 @@
         });
     }
     
-    // Função para falar uma palavra (usada nos balões)
     function speakWord(word) {
+        if (!isOnline) {
+            // Fallback: beep para palavras
+            const freq = 300 + (word.length * 20);
+            playBeep(freq, 200);
+            setAudioStatus(`🔊 Beep: "${word}" (offline)`, 'offline');
+            return;
+        }
+        
         // Destacar o balão
         document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
             if (el.textContent.toLowerCase() === word.toLowerCase()) {
@@ -494,6 +643,10 @@
     function speakFullSentence() {
         const currentPhrase = getCurrentPhrase();
         if (currentPhrase) {
+            if (!isOnline) {
+                setAudioStatus('📡 Sem internet! Não é possível falar a frase', 'offline');
+                return;
+            }
             speakText(currentPhrase.en);
         }
     }
@@ -504,11 +657,15 @@
             return;
         }
         const userTxt = selectedWords.join(" ");
+        if (!isOnline) {
+            setAudioStatus('📡 Sem internet! Não é possível falar', 'offline');
+            return;
+        }
         speakText(userTxt);
     }
 
     // ============================================================
-    // 2. CONFIGURAÇÕES DE CORES E FONTES
+    // 3. CONFIGURAÇÕES DE CORES E FONTES
     // ============================================================
     const STORAGE_KEY = 'wordGameSettings';
     const PROGRESS_KEY = 'wordGameProgress';
@@ -555,7 +712,7 @@
     };
 
     // ============================================================
-    // 3. FUNÇÕES DE CONFIGURAÇÃO
+    // 4. FUNÇÕES DE CONFIGURAÇÃO
     // ============================================================
     function toggleConfigModal() {
         const modal = document.getElementById('configModal');
@@ -647,7 +804,7 @@
     }
     
     function applyGeneralFontSize(size) {
-        document.querySelectorAll('h2, .counter-banner, .phrase-pt, .zone-title, .btn-reveal, .btn-audio-top, .btn-audio-user, .btn-pesca, .status-container, .btn-show-stats, .config-btn-label, .match-btn-label, .phrase-item, .phrase-counter, .audio-status').forEach(el => {
+        document.querySelectorAll('h2, .counter-banner, .phrase-pt, .zone-title, .btn-reveal, .btn-audio-top, .btn-audio-user, .btn-pesca, .status-container, .btn-show-stats, .config-btn-label, .match-btn-label, .phrase-item, .phrase-counter, .audio-status, .connection-status').forEach(el => {
             if (el.tagName === 'H2') { el.style.fontSize = (size + 2) + 'px'; }
             else if (el.classList.contains('counter-banner')) { el.style.fontSize = (size - 6) + 'px'; }
             else if (el.classList.contains('phrase-pt') || el.classList.contains('phrase-item')) { el.style.fontSize = (size + 2) + 'px'; }
@@ -660,6 +817,7 @@
             else if (el.classList.contains('config-btn-label') || el.classList.contains('match-btn-label')) { el.style.fontSize = (size - 9) + 'px'; }
             else if (el.classList.contains('phrase-counter')) { el.style.fontSize = (size - 5) + 'px'; }
             else if (el.classList.contains('audio-status')) { el.style.fontSize = (size - 5) + 'px'; }
+            else if (el.classList.contains('connection-status')) { el.style.fontSize = (size - 6) + 'px'; }
         });
         document.querySelectorAll('.action-btn').forEach(el => {
             el.style.fontSize = (size - 1) + 'px';
@@ -712,7 +870,7 @@
     }
 
     // ============================================================
-    // 4. SISTEMA DE SALVAMENTO DE PROGRESSO
+    // 5. SISTEMA DE SALVAMENTO DE PROGRESSO
     // ============================================================
     function loadProgress() {
         try {
@@ -750,7 +908,7 @@
     }
 
     // ============================================================
-    // 5. DICIONÁRIO
+    // 6. DICIONÁRIO
     // ============================================================
     const dictionary = {
         "love": "amor",
@@ -762,7 +920,7 @@
     };
 
     // ============================================================
-    // 6. BANCO DE FRASES
+    // 7. BANCO DE FRASES
     // ============================================================
     const pdfPhrasesDatabase = {
         "Teste": [
@@ -773,7 +931,7 @@
     };
 
     // ============================================================
-    // 7. VARIÁVEIS DO JOGO PRINCIPAL
+    // 8. VARIÁVEIS DO JOGO PRINCIPAL
     // ============================================================
     let selectedTopic = "", playlistPhrases = [], currentPhraseIndex = 0;
     let selectedWords = [], currentFrase = 1;
@@ -783,7 +941,7 @@
     let totalPhrases = 0;
 
     // ============================================================
-    // 8. MATCH GAME
+    // 9. MATCH GAME
     // ============================================================
     let matchPairs = [], selectedMatchCard = null, matchedPairs = 0, matchCards = [], isProcessingMatch = false;
 
@@ -852,7 +1010,12 @@
         document.getElementById('matchStats').textContent = `Pares: ${matchedPairs} / ${totalPairs}`;
         if (matchedPairs === totalPairs && totalPairs > 0) {
             document.getElementById('matchWinMessage').style.display = 'block';
-            speakText('Congratulations! You matched all pairs!');
+            if (isOnline) {
+                speakText('Congratulations! You matched all pairs!');
+            } else {
+                playBeep(880, 300);
+                setTimeout(() => playBeep(1100, 300), 400);
+            }
         }
     }
     
@@ -878,7 +1041,7 @@
     }
 
     // ============================================================
-    // 9. FUNÇÕES PRINCIPAIS DO JOGO
+    // 10. FUNÇÕES PRINCIPAIS DO JOGO
     // ============================================================
     function getCurrentPhrase() {
         const entry = playlistPhrases[currentPhraseIndex];
@@ -940,13 +1103,14 @@
         if (progress) {
             progressInfo = `Tópico: ${progress.topic}, Frase: ${progress.index + 1} de ${progress.total}`;
         }
+        const status = isOnline ? '🟢 Conectado' : '🔴 Offline';
         box.innerHTML = `
             <p style='color:#ffffff; margin-bottom:6px;'>📂 LAUDO CENTRAL DE SISTEMA:</p>
             <p>Total de Pares de Frases: <span style='color:#00ff66; font-size:16px;'>${totalPhrases}</span></p>
             <p>Total de Palavras no Dicionário: <span style='color:#00ff66; font-size:16px;'>${totalWords}</span></p>
             <p style='margin-top:6px; color:#ffaa00;'>📊 Progresso Salvo: ${progressInfo}</p>
+            <p style='margin-top:6px; color:#00aaff;'>🌐 Status da Internet: ${status}</p>
             <p style='margin-top:6px; color:#00aa33;'>✅ Banco de Dados para Testes!</p>
-            <p style='margin-top:6px; color:#00aaff;'>🔊 Áudio via Google TTS (requer internet)</p>
         `;
         box.style.display = "block";
     }
@@ -1215,9 +1379,14 @@
                 `;
                 successTextBox.style.display = "flex";
                 
-                // Falar a frase completa
-                speakText(entry.frase1.en);
-                setTimeout(() => speakText(entry.frase2.en), 2000);
+                if (isOnline) {
+                    speakText(entry.frase1.en);
+                    setTimeout(() => speakText(entry.frase2.en), 2000);
+                } else {
+                    playBeep(880, 300);
+                    setTimeout(() => playBeep(1100, 300), 400);
+                    setTimeout(() => playBeep(1320, 300), 800);
+                }
                 
                 const phrase2El = document.getElementById("phrase-2");
                 phrase2El.className = "phrase-item completed";
@@ -1250,9 +1419,12 @@
     }
 
     // ============================================================
-    // 10. INICIALIZAÇÃO
+    // 11. INICIALIZAÇÃO
     // ============================================================
     function init() {
+        // Verificar conexão com internet
+        checkInternetConnection();
+        
         // Renderizar interface
         renderTopics();
         showTopicsScreen();
@@ -1283,7 +1455,7 @@
             console.log('📊 Progresso salvo:', progress);
         }
         
-        setAudioStatus('🔊 Áudio via Google TTS - Clique nos balões', '');
+        setAudioStatus('🔊 Clique nos balões para ouvir', '');
     }
 
     document.addEventListener('DOMContentLoaded', init);
