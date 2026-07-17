@@ -5,13 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Formando as Frases</title>
     
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="android-manifest:uses-permission" content="android.permission.INTERNET">
-    <meta name="android-manifest:uses-permission" content="android.permission.ACCESS_NETWORK_STATE">
-    <meta name="android-manifest:uses-permission" content="android.permission.ACCESS_WIFI_STATE">
-    
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #000000; color: #ffffff; user-select: none; overflow: hidden; }
@@ -24,12 +17,6 @@
         .back-btn-bottom:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
         .back-btn-bottom:active { transform: scale(0.9); }
         .back-btn-bottom.hidden { display: none; }
-        
-        .connection-status { text-align: center; font-size: 10px; padding: 2px 8px; border-radius: 12px; display: inline-block; margin: 0 auto; }
-        .connection-status.online { color: #00ff66; background: rgba(0, 255, 102, 0.1); border: 1px solid rgba(0, 255, 102, 0.2); }
-        .connection-status.offline { color: #ff6600; background: rgba(255, 102, 0, 0.1); border: 1px solid rgba(255, 102, 0, 0.2); }
-        .connection-status.checking { color: #ffaa00; background: rgba(255, 170, 0, 0.1); border: 1px solid rgba(255, 170, 0, 0.2); animation: pulse 1s ease infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
         
         .screen { display: none; flex-direction: column; width: 100%; height: 100%; flex: 1; overflow: hidden; }
         .screen.active { display: flex; }
@@ -55,21 +42,18 @@
         .phrase-item.completed { color: #00ff66; text-shadow: 0 0 20px rgba(0, 255, 102, 0.3); }
         @keyframes revealPhrase { 0% { opacity: 0; transform: translateY(-20px) scale(0.9); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         
-        .status-top-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
+        .audio-status { text-align: center; font-size: 12px; color: rgba(255, 255, 255, 0.5); padding: 4px; min-height: 24px; }
+        .audio-status.success { color: #00ff66; }
+        .audio-status.error { color: #ff3333; }
+        .audio-status.playing { color: #ffaa44; animation: pulse 1s ease infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        
         .audio-controls-row { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 2px; gap: 6px; flex-wrap: wrap; }
         .btn-audio-top { background: rgba(255, 255, 255, 0.05); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.2); padding: 6px 10px; font-size: 12px; font-weight: bold; border-radius: 10px; cursor: pointer; flex: 1; min-width: 60px; text-align: center; transition: all 0.3s ease; backdrop-filter: blur(4px); }
         .btn-audio-top:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.4); }
         .btn-audio-top:active { transform: scale(0.95); }
         .btn-audio-test { background: rgba(255, 150, 0, 0.1); border-color: rgba(255, 150, 0, 0.3); color: #ffaa44; flex: 0.5; min-width: 40px; }
         .btn-audio-test:hover { background: rgba(255, 150, 0, 0.2); border-color: #ffaa44; }
-        .btn-audio-force { background: rgba(0, 255, 100, 0.1); border-color: rgba(0, 255, 100, 0.3); color: #00ff66; flex: 0.5; min-width: 40px; }
-        .btn-audio-force:hover { background: rgba(0, 255, 100, 0.2); border-color: #00ff66; }
-        
-        .audio-status { text-align: center; font-size: 11px; color: rgba(255, 255, 255, 0.4); padding: 2px; min-height: 18px; }
-        .audio-status.loading { color: #ffaa44; animation: pulse 1s ease infinite; }
-        .audio-status.success { color: #00ff66; }
-        .audio-status.error { color: #ff3333; }
-        .audio-status.offline { color: #ff6600; }
         
         .zone-header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
         .zone-title { font-size: 13px; color: #ffffff; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
@@ -196,7 +180,7 @@
 <div class="container" id="appContainer">
     <div id="topics-screen" class="screen active">
         <h2>✨ Formando as Frases</h2>
-        <div class="counter-banner">⚡ Áudio via Voice RSS</div>
+        <div class="counter-banner">⚡ Áudio 100% Offline (Beeps)</div>
         <div id="topics-list"></div>
         <div class="stats-wrapper">
             <button class="btn-show-stats" onclick="toggleDatabaseStats()">📊 Carregar Laudo de Dados</button>
@@ -214,18 +198,13 @@
                     <div class="phrase-item hidden" id="phrase-2">Carregando...</div>
                 </div>
                 
-                <div class="status-top-row">
-                    <span class="connection-status checking" id="connection-status">🌐 Verificando conexão...</span>
-                    <span id="audio-status-label" style="font-size:10px; color:rgba(255,255,255,0.3);">🔊</span>
-                </div>
+                <div class="audio-status" id="audio-status">🔊 Clique nos balões para ouvir (beeps)</div>
                 
                 <div class="audio-controls-row">
                     <button class="btn-audio-top btn-audio-user" onclick="speakUserSentence()">🔊 Ouvir Resposta</button>
                     <button class="btn-audio-top" onclick="speakFullSentence()">🔊 Ouvir Frase</button>
                     <button class="btn-audio-top btn-audio-test" onclick="testAudio()">🎧 Teste</button>
-                    <button class="btn-audio-top btn-audio-force" onclick="forceAudio()">⚡ Forçar</button>
                 </div>
-                <div class="audio-status" id="audio-status">🔊 Clique em um balão para ouvir</div>
             </div>
             <div class="zone-title" id="track-number">Sua resposta (Frase 1):</div>
             <div class="construction-zone" id="construction-zone"></div>
@@ -329,115 +308,30 @@
 
 <script>
     // ============================================================
-    // 1. SISTEMA DE ÁUDIO - MODO FORÇADO (IGNORA VERIFICAÇÃO)
+    // SISTEMA DE ÁUDIO 100% OFFLINE (WEBAUDIO API - BEEPS)
     // ============================================================
-    let isOnline = true; // Forçar como online
-    let connectionChecked = true;
     
-    function setAudioStatus(text, type = '') {
-        const el = document.getElementById('audio-status');
-        el.textContent = text;
-        el.className = 'audio-status ' + type;
-    }
+    // Código Morse para cada letra - cada palavra vira uma melodia
+    const morseCode = {
+        'a': '.-', 'b': '-...', 'c': '-.-.', 'd': '-..', 'e': '.', 'f': '..-.',
+        'g': '--.', 'h': '....', 'i': '..', 'j': '.---', 'k': '-.-', 'l': '.-..',
+        'm': '--', 'n': '-.', 'o': '---', 'p': '.--.', 'q': '--.-', 'r': '.-.',
+        's': '...', 't': '-', 'u': '..-', 'v': '...-', 'w': '.--', 'x': '-..-',
+        'y': '-.--', 'z': '--..'
+    };
     
-    // Função para forçar áudio (ignora verificação de internet)
-    function forceAudio() {
-        setAudioStatus('⚡ Forçando áudio...', 'loading');
-        const statusEl = document.getElementById('connection-status');
-        statusEl.className = 'connection-status online';
-        statusEl.textContent = '🌐 Forçado ✅';
-        isOnline = true;
-        
-        // Tentar falar diretamente
-        speakTextDirect('Hello, this is a forced test');
-    }
-    
-    // Função principal de áudio - USA HTTPS
-    function speakTextDirect(text, callback = null) {
-        if (!text || text.trim() === '') {
-            setAudioStatus('⚠️ Nada para falar', 'error');
-            return;
+    // Mapear palavras para frequências únicas
+    function getWordFrequency(word) {
+        let hash = 0;
+        for (let i = 0; i < word.length; i++) {
+            hash = word.charCodeAt(i) + ((hash << 5) - hash);
         }
-        
-        let cleanText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, '').trim();
-        if (cleanText === '') return;
-        
-        setAudioStatus(`🔊 Falando: "${cleanText}"`, 'loading');
-        
-        // Usar HTTPS (mais seguro para WebView)
-        const apiKey = 'ce6ee3b8baec4191b5b3904cbb888a3a';
-        const url = `https://api.voicerss.org/?key=${apiKey}&hl=en-us&src=${encodeURIComponent(cleanText)}&c=MP3&f=8khz_8bit_mono`;
-        
-        const audio = new Audio();
-        audio.src = url;
-        audio.preload = 'auto';
-        
-        audio.onloadeddata = function() {
-            setAudioStatus(`✅ Falando: "${cleanText}"`, 'success');
-            audio.play().then(() => {
-                if (callback) callback();
-            }).catch(err => {
-                console.warn('Erro ao reproduzir:', err);
-                // Fallback para Google TTS
-                speakTextGoogle(cleanText, callback);
-            });
-        };
-        
-        audio.onerror = function(err) {
-            console.warn('Erro no Voice RSS:', err);
-            speakTextGoogle(cleanText, callback);
-        };
-        
-        audio.onended = function() {
-            setAudioStatus('🔊 Clique em um balão para ouvir', '');
-        };
-        
-        setTimeout(() => {
-            if (!audio.ended && !audio.paused) {
-                try { audio.pause(); } catch(e) {}
-                setAudioStatus('⏱️ Timeout, tentando Google...', 'error');
-                speakTextGoogle(cleanText, callback);
-            }
-        }, 8000);
-        
-        audio.load();
+        // Frequência entre 300Hz e 900Hz
+        return 300 + Math.abs(hash % 600);
     }
     
-    // Fallback: Google TTS (HTTPS)
-    function speakTextGoogle(text, callback = null) {
-        try {
-            const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=en&client=tw-ob`;
-            const audio = new Audio();
-            audio.src = url;
-            audio.preload = 'auto';
-            
-            audio.onloadeddata = function() {
-                audio.play().then(() => {
-                    setAudioStatus(`✅ Falando (Google): "${text}"`, 'success');
-                    if (callback) callback();
-                }).catch(() => {
-                    playBeep(440, 200);
-                    setAudioStatus('🔊 Beep (fallback final)', '');
-                    if (callback) callback();
-                });
-            };
-            
-            audio.onerror = function() {
-                playBeep(440, 200);
-                setAudioStatus('🔊 Beep (fallback final)', '');
-                if (callback) callback();
-            };
-            
-            audio.load();
-        } catch(e) {
-            playBeep(440, 200);
-            setAudioStatus('🔊 Beep (fallback final)', '');
-            if (callback) callback();
-        }
-    }
-    
-    // Beep de fallback
-    function playBeep(frequency = 440, duration = 200) {
+    // Tocar um beep
+    function playBeep(frequency = 440, duration = 200, volume = 0.3) {
         try {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             const ctx = new AudioContext();
@@ -450,7 +344,7 @@
             oscillator.frequency.value = frequency;
             oscillator.type = 'sine';
             
-            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+            gain.gain.setValueAtTime(volume, ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration/1000);
             
             oscillator.start(ctx.currentTime);
@@ -462,23 +356,74 @@
         }
     }
     
-    // ============================================================
-    // 2. FUNÇÕES PÚBLICAS DE ÁUDIO
-    // ============================================================
-    function testAudio() {
-        setAudioStatus('🎧 Testando áudio...', 'loading');
-        const statusEl = document.getElementById('connection-status');
-        statusEl.className = 'connection-status online';
-        statusEl.textContent = '🌐 Teste forçado ✅';
-        isOnline = true;
+    // Tocar uma palavra usando código Morse ou melodia simples
+    function playWordBeep(word) {
+        if (!word || word.trim() === '') return;
         
-        speakTextDirect('Hello, this is a test', () => {
+        const lowerWord = word.toLowerCase().trim();
+        const freq = getWordFrequency(lowerWord);
+        
+        // Tocar 3 beeps com variação
+        playBeep(freq, 150, 0.2);
+        setTimeout(() => {
+            playBeep(freq + 100, 150, 0.2);
+        }, 180);
+        setTimeout(() => {
+            playBeep(freq + 200, 250, 0.25);
+        }, 360);
+        
+        setAudioStatus(`🔊 Tocando: "${word}"`, 'playing');
+        setTimeout(() => {
+            setAudioStatus('🔊 Clique nos balões para ouvir', '');
+        }, 600);
+    }
+    
+    // Tocar uma frase (melodia mais longa)
+    function playPhraseBeep(phrase) {
+        if (!phrase || phrase.trim() === '') return;
+        
+        const words = phrase.split(' ');
+        let delay = 0;
+        
+        words.forEach((word, index) => {
+            const freq = getWordFrequency(word);
             setTimeout(() => {
-                speakTextDirect('Audio is working', () => {
-                    setAudioStatus('✅ Áudio funcionando!', 'success');
-                });
-            }, 1000);
+                playBeep(freq, 200, 0.25);
+                setTimeout(() => {
+                    playBeep(freq + 100, 200, 0.25);
+                }, 220);
+                setTimeout(() => {
+                    playBeep(freq + 200, 300, 0.3);
+                }, 440);
+            }, delay);
+            delay += 700;
         });
+        
+        setAudioStatus(`🔊 Tocando frase: "${phrase}"`, 'playing');
+        setTimeout(() => {
+            setAudioStatus('🔊 Clique nos balões para ouvir', '');
+        }, delay + 500);
+    }
+    
+    // ============================================================
+    // FUNÇÕES PÚBLICAS
+    // ============================================================
+    function setAudioStatus(text, type = '') {
+        const el = document.getElementById('audio-status');
+        el.textContent = text;
+        el.className = 'audio-status ' + type;
+    }
+    
+    function testAudio() {
+        setAudioStatus('🎧 Testando áudio...', 'playing');
+        playBeep(880, 300, 0.3);
+        setTimeout(() => {
+            playBeep(660, 300, 0.3);
+        }, 400);
+        setTimeout(() => {
+            playBeep(440, 400, 0.35);
+            setAudioStatus('✅ Áudio funcionando! (beeps)', 'success');
+        }, 800);
     }
     
     function speakWord(word) {
@@ -486,20 +431,17 @@
         document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
             if (el.textContent.toLowerCase() === word.toLowerCase()) {
                 el.classList.add('speaking');
-                setTimeout(() => el.classList.remove('speaking'), 1000);
+                setTimeout(() => el.classList.remove('speaking'), 800);
             }
         });
         
-        // Forçar online e falar
-        isOnline = true;
-        speakTextDirect(word);
+        playWordBeep(word);
     }
     
     function speakFullSentence() {
         const currentPhrase = getCurrentPhrase();
         if (currentPhrase) {
-            isOnline = true;
-            speakTextDirect(currentPhrase.en);
+            playPhraseBeep(currentPhrase.en);
         }
     }
     
@@ -509,12 +451,11 @@
             return;
         }
         const userTxt = selectedWords.join(" ");
-        isOnline = true;
-        speakTextDirect(userTxt);
+        playPhraseBeep(userTxt);
     }
 
     // ============================================================
-    // 3. CONFIGURAÇÕES
+    // CONFIGURAÇÕES
     // ============================================================
     const STORAGE_KEY = 'wordGameSettings';
     const PROGRESS_KEY = 'wordGameProgress';
@@ -650,7 +591,7 @@
     }
     
     function applyGeneralFontSize(size) {
-        document.querySelectorAll('h2, .counter-banner, .phrase-pt, .zone-title, .btn-reveal, .btn-audio-top, .btn-audio-user, .btn-pesca, .status-container, .btn-show-stats, .config-btn-label, .match-btn-label, .phrase-item, .phrase-counter, .audio-status, .connection-status').forEach(el => {
+        document.querySelectorAll('h2, .counter-banner, .phrase-pt, .zone-title, .btn-reveal, .btn-audio-top, .btn-audio-user, .btn-pesca, .status-container, .btn-show-stats, .config-btn-label, .match-btn-label, .phrase-item, .phrase-counter, .audio-status').forEach(el => {
             if (el.tagName === 'H2') { el.style.fontSize = (size + 2) + 'px'; }
             else if (el.classList.contains('counter-banner')) { el.style.fontSize = (size - 6) + 'px'; }
             else if (el.classList.contains('phrase-pt') || el.classList.contains('phrase-item')) { el.style.fontSize = (size + 2) + 'px'; }
@@ -662,8 +603,7 @@
             else if (el.classList.contains('btn-show-stats')) { el.style.fontSize = (size - 4) + 'px'; }
             else if (el.classList.contains('config-btn-label') || el.classList.contains('match-btn-label')) { el.style.fontSize = (size - 9) + 'px'; }
             else if (el.classList.contains('phrase-counter')) { el.style.fontSize = (size - 5) + 'px'; }
-            else if (el.classList.contains('audio-status')) { el.style.fontSize = (size - 5) + 'px'; }
-            else if (el.classList.contains('connection-status')) { el.style.fontSize = (size - 6) + 'px'; }
+            else if (el.classList.contains('audio-status')) { el.style.fontSize = (size - 4) + 'px'; }
         });
         document.querySelectorAll('.action-btn').forEach(el => {
             el.style.fontSize = (size - 1) + 'px';
@@ -716,7 +656,7 @@
     }
 
     // ============================================================
-    // 4. PROGRESSO
+    // PROGRESSO
     // ============================================================
     function loadProgress() {
         try {
@@ -754,7 +694,7 @@
     }
 
     // ============================================================
-    // 5. DICIONÁRIO E FRASES
+    // DICIONÁRIO E FRASES
     // ============================================================
     const dictionary = {
         "love": "amor",
@@ -774,7 +714,7 @@
     };
 
     // ============================================================
-    // 6. JOGO PRINCIPAL
+    // JOGO PRINCIPAL
     // ============================================================
     let selectedTopic = "", playlistPhrases = [], currentPhraseIndex = 0;
     let selectedWords = [], currentFrase = 1;
@@ -784,7 +724,7 @@
     let totalPhrases = 0;
 
     // ============================================================
-    // 7. MATCH GAME
+    // MATCH GAME
     // ============================================================
     let matchPairs = [], selectedMatchCard = null, matchedPairs = 0, matchCards = [], isProcessingMatch = false;
 
@@ -853,7 +793,7 @@
         document.getElementById('matchStats').textContent = `Pares: ${matchedPairs} / ${totalPairs}`;
         if (matchedPairs === totalPairs && totalPairs > 0) {
             document.getElementById('matchWinMessage').style.display = 'block';
-            speakTextDirect('Congratulations! You matched all pairs!');
+            playPhraseBeep('Congratulations');
         }
     }
     
@@ -879,7 +819,7 @@
     }
 
     // ============================================================
-    // 8. FUNÇÕES DO JOGO
+    // FUNÇÕES DO JOGO
     // ============================================================
     function getCurrentPhrase() {
         const entry = playlistPhrases[currentPhraseIndex];
@@ -946,7 +886,7 @@
             <p>Total de Pares de Frases: <span style='color:#00ff66; font-size:16px;'>${totalPhrases}</span></p>
             <p>Total de Palavras: <span style='color:#00ff66; font-size:16px;'>${totalWords}</span></p>
             <p style='margin-top:6px; color:#ffaa00;'>📊 Progresso: ${progressInfo}</p>
-            <p style='margin-top:6px; color:#00aaff;'>🔊 Áudio: Voice RSS + Fallback</p>
+            <p style='margin-top:6px; color:#00aaff;'>🔊 Áudio: 100% Offline (Beeps)</p>
             <p style='margin-top:6px; color:#00aa33;'>✅ Banco de Dados para Testes!</p>
         `;
         box.style.display = "block";
@@ -1216,8 +1156,10 @@
                 `;
                 successTextBox.style.display = "flex";
                 
-                speakTextDirect(entry.frase1.en);
-                setTimeout(() => speakTextDirect(entry.frase2.en), 2000);
+                // Tocar beeps de vitória
+                playBeep(880, 300, 0.3);
+                setTimeout(() => playBeep(1100, 300, 0.3), 400);
+                setTimeout(() => playBeep(1320, 400, 0.35), 800);
                 
                 const phrase2El = document.getElementById("phrase-2");
                 phrase2El.className = "phrase-item completed";
@@ -1250,16 +1192,9 @@
     }
 
     // ============================================================
-    // 9. INICIALIZAÇÃO
+    // INICIALIZAÇÃO
     // ============================================================
     function init() {
-        // Forçar status como online
-        const statusEl = document.getElementById('connection-status');
-        statusEl.className = 'connection-status online';
-        statusEl.textContent = '🌐 Online (forçado) ✅';
-        isOnline = true;
-        connectionChecked = true;
-        
         // Renderizar interface
         renderTopics();
         showTopicsScreen();
@@ -1285,12 +1220,13 @@
         }
         
         console.log('🎮 Aplicativo inicializado com sucesso!');
+        console.log('🔊 Áudio 100% offline (WebAudio API - Beeps)');
         console.log('📊 Configurações carregadas:', settings);
         if (progress) {
             console.log('📊 Progresso salvo:', progress);
         }
         
-        setAudioStatus('🔊 Clique nos balões para ouvir (modo forçado)', '');
+        setAudioStatus('🔊 Clique nos balões para ouvir (beeps)', '');
     }
 
     document.addEventListener('DOMContentLoaded', init);
