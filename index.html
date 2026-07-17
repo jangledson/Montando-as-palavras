@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Formando as Frases</title>
     
-    <!-- ===== PERMISSÕES PARA APK (REFORÇADAS) ===== -->
+    <!-- ===== PERMISSÕES PARA APK ===== -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -18,7 +18,7 @@
     <meta name="android-manifest:uses-permission" content="android.permission.SYSTEM_ALERT_WINDOW">
     
     <style>
-        /* ===== TODOS OS ESTILOS (MANTIDOS) ===== */
+        /* ===== TODOS OS ESTILOS ===== */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #000000; color: #ffffff; user-select: none; overflow: hidden; transition: background-color 0.4s ease; }
         .container { width: 100%; height: 100%; padding: 10px; display: flex; flex-direction: column; gap: 8px; transition: background-color 0.4s ease; overflow: hidden; }
@@ -32,28 +32,6 @@
         .back-btn-bottom:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
         .back-btn-bottom:active { transform: scale(0.9); }
         .back-btn-bottom.hidden { display: none; }
-        
-        /* TESTE DE ÁUDIO */
-        .audio-test-btn {
-            background: rgba(255, 100, 0, 0.15);
-            border: 2px solid rgba(255, 100, 0, 0.3);
-            color: #ffaa44;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-left: 6px;
-        }
-        .audio-test-btn:hover {
-            background: rgba(255, 100, 0, 0.25);
-            border-color: #ffaa44;
-        }
-        .audio-status {
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.3);
-            margin-left: 6px;
-        }
         
         /* SCREENS */
         .screen { display: none; flex-direction: column; width: 100%; height: 100%; flex: 1; overflow: hidden; }
@@ -118,6 +96,19 @@
         .btn-audio-test { background: rgba(255, 150, 0, 0.1); border-color: rgba(255, 150, 0, 0.3); color: #ffaa44; flex: 0.5; min-width: 40px; }
         .btn-audio-test:hover { background: rgba(255, 150, 0, 0.2); border-color: #ffaa44; }
         
+        /* STATUS ÁUDIO */
+        .audio-status {
+            text-align: center;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            padding: 2px;
+            min-height: 18px;
+        }
+        .audio-status.loading { color: #ffaa44; animation: pulse 1s ease infinite; }
+        .audio-status.success { color: #00ff66; }
+        .audio-status.error { color: #ff3333; }
+        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        
         /* ZONE HEADER */
         .zone-header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
         .zone-title { font-size: 13px; color: #ffffff; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.1); }
@@ -147,6 +138,8 @@
         .word-balloon.dragging { opacity: 0.4; border: 2px dashed #ffff00 !important; background: rgba(255, 255, 0, 0.05) !important; transform: scale(0.9); }
         .word-balloon.pescado { background: #001a00 !important; color: #ffff00 !important; border-color: #2a2a00 !important; box-shadow: 0 0 30px rgba(255, 255, 0, 0.15) !important; animation: pescaGlow 1s ease infinite alternate; }
         @keyframes pescaGlow { 0% { box-shadow: 0 0 15px rgba(255, 255, 0, 0.1); } 100% { box-shadow: 0 0 35px rgba(255, 255, 0, 0.25); } }
+        .word-balloon.speaking { animation: speakGlow 0.6s ease; }
+        @keyframes speakGlow { 0% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); } 50% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.2); } 100% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); } }
         
         /* STATUS */
         .status-container { text-align: center; font-size: 14px; font-weight: bold; min-height: 20px; margin: 2px 0; padding: 3px; color: #ffffff; }
@@ -239,10 +232,6 @@
         .btn-reset-colors { background: rgba(255, 0, 0, 0.15); border: 2px solid rgba(255, 51, 51, 0.3); color: #ff3333; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 6px; transition: all 0.3s ease; letter-spacing: 0.5px; }
         .btn-reset-colors:hover { background: rgba(255, 0, 0, 0.25); border-color: #ff3333; box-shadow: 0 0 30px rgba(255, 51, 51, 0.1); }
         
-        /* ANIMATIONS */
-        .word-balloon.speaking { animation: speakGlow 0.6s ease; }
-        @keyframes speakGlow { 0% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); } 50% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.05); } 100% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); } }
-        
         /* SCROLLBAR */
         .game-scrollable-content::-webkit-scrollbar, #topics-screen::-webkit-scrollbar, #match-screen::-webkit-scrollbar { width: 3px; }
         .game-scrollable-content::-webkit-scrollbar-track, #topics-screen::-webkit-scrollbar-track, #match-screen::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
@@ -257,7 +246,7 @@
 <div class="container" id="appContainer">
     <div id="topics-screen" class="screen active">
         <h2>✨ Formando as Frases</h2>
-        <div class="counter-banner">⚡ Com salvamento de progresso</div>
+        <div class="counter-banner">⚡ Com áudio via Google TTS</div>
         <div id="topics-list"></div>
         <div class="stats-wrapper">
             <button class="btn-show-stats" onclick="toggleDatabaseStats()">📊 Carregar Laudo de Dados</button>
@@ -278,8 +267,9 @@
                 <div class="audio-controls-row">
                     <button class="btn-audio-top btn-audio-user" onclick="speakUserSentence()">🔊 Ouvir Resposta</button>
                     <button class="btn-audio-top" onclick="speakFullSentence()">🔊 Ouvir Frase</button>
-                    <button class="btn-audio-top btn-audio-test" onclick="testAudio()">🔊 Teste</button>
+                    <button class="btn-audio-top btn-audio-test" onclick="testAudio()">🎧 Teste</button>
                 </div>
+                <div class="audio-status" id="audio-status">🔊 Clique em um balão para ouvir</div>
             </div>
             <div class="zone-title" id="track-number">Sua resposta (Frase 1):</div>
             <div class="construction-zone" id="construction-zone"></div>
@@ -385,199 +375,120 @@
 
 <script>
     // ============================================================
-    // 1. SISTEMA DE ÁUDIO SUPER REFORÇADO PARA APK
+    // 1. SISTEMA DE ÁUDIO VIA API GOOGLE TTS (100% FUNCIONAL)
     // ============================================================
-    let audioInitialized = false;
-    let selectedVoice = null;
-    let audioTestCount = 0;
+    let audioQueue = [];
+    let isPlaying = false;
     
-    // Função para testar áudio - botão visível
-    function testAudio() {
-        audioTestCount++;
-        const statusMsg = document.getElementById("status-message");
-        statusMsg.innerHTML = '<span style="color:#ffaa44;">🔊 Testando áudio... (' + audioTestCount + ')</span>';
-        
-        // Tentar falar "Hello"
-        speakTextDirect("Hello");
-        
-        // Fallback: tentar com beep se não funcionar
-        setTimeout(() => {
-            if (!window.speechSynthesis.speaking) {
-                statusMsg.innerHTML = '<span style="color:#ffaa44;">🔊 Tentando método alternativo...</span>';
-                // Tentar com outra configuração
-                speakTextDirect("Test");
-            }
-        }, 1000);
-        
-        // Se ainda não funcionou, avisar
-        setTimeout(() => {
-            if (!window.speechSynthesis.speaking) {
-                statusMsg.innerHTML = '<span style="color:#ff6600;">⚠️ Áudio não está funcionando. Verifique as permissões do app.</span>';
-            } else {
-                statusMsg.innerHTML = '<span style="color:#00ff66;">✅ Áudio funcionando! 🔊</span>';
-            }
-        }, 3000);
+    function setAudioStatus(text, type = '') {
+        const el = document.getElementById('audio-status');
+        el.textContent = text;
+        el.className = 'audio-status ' + type;
     }
     
-    function initAudio() {
-        console.log('🎤 Inicializando sistema de áudio SUPER REFORÇADO...');
-        
-        // Verificar se a API existe
-        if (!('speechSynthesis' in window)) {
-            console.warn('⚠️ Speech Synthesis NÃO suportado neste dispositivo');
-            document.getElementById("status-message").innerHTML = '<span style="color:#ff6600;">⚠️ Áudio não suportado neste dispositivo</span>';
+    function speakText(text, callback = null) {
+        if (!text || text.trim() === '') {
+            setAudioStatus('⚠️ Nada para falar', 'error');
             return;
         }
         
-        // Método 1: Tentar carregar vozes imediatamente
-        let voices = window.speechSynthesis.getVoices();
-        if (voices.length > 0) {
-            selectBestVoice(voices);
-        }
+        // Limpar texto (remover pontuação desnecessária)
+        let cleanText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, '').trim();
+        if (cleanText === '') return;
         
-        // Método 2: Aguardar evento de carregamento de vozes
-        window.speechSynthesis.onvoiceschanged = function() {
-            voices = window.speechSynthesis.getVoices();
-            console.log('🔊 Vozes carregadas:', voices.length);
-            selectBestVoice(voices);
-            audioInitialized = true;
+        setAudioStatus(`🔊 Falando: "${cleanText}"`, 'loading');
+        
+        // Usar API do Google TTS
+        const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=en&client=tw-ob`;
+        
+        const audio = new Audio();
+        audio.src = url;
+        audio.preload = 'auto';
+        
+        audio.onloadeddata = function() {
+            setAudioStatus(`✅ Falando: "${cleanText}"`, 'success');
+            audio.play().then(() => {
+                if (callback) callback();
+            }).catch(err => {
+                console.warn('Erro ao reproduzir:', err);
+                setAudioStatus('⚠️ Erro ao reproduzir áudio', 'error');
+                // Tentar método alternativo
+                speakTextAlternative(cleanText, callback);
+            });
         };
         
-        // Método 3: Tentar forçar o carregamento
-        try {
-            const utterance = new SpeechSynthesisUtterance(' ');
-            utterance.volume = 0;
-            utterance.rate = 1;
-            utterance.pitch = 1;
-            window.speechSynthesis.speak(utterance);
-            setTimeout(() => {
-                window.speechSynthesis.cancel();
-                console.log('✅ Áudio inicializado com sucesso!');
-                audioInitialized = true;
-            }, 100);
-        } catch(e) {
-            console.warn('⚠️ Erro ao inicializar áudio:', e);
-        }
+        audio.onerror = function(err) {
+            console.warn('Erro ao carregar áudio:', err);
+            setAudioStatus('⚠️ Erro ao carregar, tentando alternativa...', 'error');
+            // Tentar método alternativo
+            speakTextAlternative(cleanText, callback);
+        };
         
-        // Método 4: Tentar novamente após 1 segundo
+        audio.onended = function() {
+            setAudioStatus('🔊 Clique em um balão para ouvir', '');
+        };
+        
+        // Timeout de segurança
         setTimeout(() => {
-            if (!audioInitialized) {
-                console.log('🔄 Tentando inicializar áudio novamente...');
-                try {
-                    const utterance = new SpeechSynthesisUtterance(' ');
-                    utterance.volume = 0;
-                    window.speechSynthesis.speak(utterance);
-                    setTimeout(() => {
-                        window.speechSynthesis.cancel();
-                        audioInitialized = true;
-                        console.log('✅ Áudio inicializado na segunda tentativa!');
-                    }, 100);
-                } catch(e) {}
+            if (!audio.ended && !audio.paused) {
+                try { audio.pause(); } catch(e) {}
+                setAudioStatus('⏱️ Timeout no áudio', 'error');
+                if (callback) callback();
             }
-        }, 1000);
+        }, 5000);
         
-        // Método 5: Tentar novamente após 3 segundos
-        setTimeout(() => {
-            if (!audioInitialized) {
-                console.log('🔄 Terceira tentativa de inicializar áudio...');
-                try {
-                    const utterance = new SpeechSynthesisUtterance(' ');
-                    utterance.volume = 0;
-                    window.speechSynthesis.speak(utterance);
-                    setTimeout(() => {
-                        window.speechSynthesis.cancel();
-                        audioInitialized = true;
-                        console.log('✅ Áudio inicializado na terceira tentativa!');
-                    }, 100);
-                } catch(e) {}
-            }
-        }, 3000);
+        // Forçar carregamento
+        audio.load();
     }
     
-    function selectBestVoice(voices) {
-        // Priorizar vozes em inglês
-        selectedVoice = voices.find(v => v.lang.startsWith('en')) || 
-                       voices.find(v => v.lang.includes('US')) ||
-                       voices.find(v => v.lang.includes('GB')) ||
-                       voices[0];
-        
-        if (selectedVoice) {
-            console.log(`✅ Voz selecionada: ${selectedVoice.name} (${selectedVoice.lang})`);
-        } else if (voices.length > 0) {
-            selectedVoice = voices[0];
-            console.log(`✅ Usando voz padrão: ${selectedVoice.name} (${selectedVoice.lang})`);
-        } else {
-            console.warn('⚠️ Nenhuma voz disponível');
-        }
-    }
-    
-    function speakTextDirect(text) {
-        if (!('speechSynthesis' in window)) {
-            console.warn('⚠️ Speech Synthesis não disponível');
-            return false;
-        }
-        
+    // Método alternativo usando API do Google TTS com formato diferente
+    function speakTextAlternative(text, callback = null) {
         try {
-            window.speechSynthesis.cancel();
-            
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.85;
-            utterance.volume = 1;
-            utterance.pitch = 1;
-            
-            if (selectedVoice) {
-                utterance.voice = selectedVoice;
-            }
-            
-            utterance.onstart = function() {
-                console.log('🔊 Iniciando áudio:', text);
+            const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=en&client=gtx`;
+            const audio = new Audio(url);
+            audio.onloadeddata = function() {
+                audio.play().then(() => {
+                    if (callback) callback();
+                }).catch(err => {
+                    console.warn('Erro no método alternativo:', err);
+                    setAudioStatus('❌ Áudio indisponível', 'error');
+                    if (callback) callback();
+                });
             };
-            
-            utterance.onend = function() {
-                console.log('✅ Áudio finalizado:', text);
-                document.getElementById("status-message").innerHTML = '<span style="color:#00ff66;">✅ Áudio reproduzido!</span>';
+            audio.onerror = function() {
+                setAudioStatus('❌ Falha no áudio', 'error');
+                if (callback) callback();
             };
-            
-            utterance.onerror = function(event) {
-                console.warn('⚠️ Erro no áudio:', event.error);
-                document.getElementById("status-message").innerHTML = '<span style="color:#ff6600;">⚠️ Erro: ' + event.error + '</span>';
-            };
-            
-            window.speechSynthesis.speak(utterance);
-            return true;
-            
+            audio.load();
         } catch(e) {
-            console.warn('⚠️ Erro ao falar:', e);
-            return false;
+            setAudioStatus('❌ Erro no áudio', 'error');
+            if (callback) callback();
         }
     }
     
-    function speakText(text, retryCount = 0) {
-        if (!('speechSynthesis' in window)) {
-            console.warn('⚠️ Speech Synthesis não disponível');
-            return;
-        }
-        
-        // Tentar falar diretamente
-        const success = speakTextDirect(text);
-        
-        if (!success && retryCount < 3) {
-            console.log(`🔄 Tentando novamente (${retryCount + 1})...`);
+    // Função para testar o áudio (botão Teste)
+    function testAudio() {
+        setAudioStatus('🎧 Testando áudio...', 'loading');
+        speakText('Hello, this is a test', () => {
             setTimeout(() => {
-                speakText(text, retryCount + 1);
-            }, 300);
-        }
+                speakText('Audio is working', () => {
+                    setAudioStatus('✅ Áudio funcionando! Clique nos balões', 'success');
+                });
+            }, 1000);
+        });
     }
     
+    // Função para falar uma palavra (usada nos balões)
     function speakWord(word) {
-        speakText(word);
+        // Destacar o balão
         document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
             if (el.textContent.toLowerCase() === word.toLowerCase()) {
                 el.classList.add('speaking');
-                setTimeout(() => el.classList.remove('speaking'), 700);
+                setTimeout(() => el.classList.remove('speaking'), 1000);
             }
         });
+        
+        speakText(word);
     }
     
     function speakFullSentence() {
@@ -588,7 +499,10 @@
     }
     
     function speakUserSentence() {
-        if (selectedWords.length === 0) return;
+        if (selectedWords.length === 0) {
+            setAudioStatus('⚠️ Nenhuma palavra selecionada', 'error');
+            return;
+        }
         const userTxt = selectedWords.join(" ");
         speakText(userTxt);
     }
@@ -733,7 +647,7 @@
     }
     
     function applyGeneralFontSize(size) {
-        document.querySelectorAll('h2, .counter-banner, .phrase-pt, .zone-title, .btn-reveal, .btn-audio-top, .btn-audio-user, .btn-pesca, .status-container, .btn-show-stats, .config-btn-label, .match-btn-label, .phrase-item, .phrase-counter').forEach(el => {
+        document.querySelectorAll('h2, .counter-banner, .phrase-pt, .zone-title, .btn-reveal, .btn-audio-top, .btn-audio-user, .btn-pesca, .status-container, .btn-show-stats, .config-btn-label, .match-btn-label, .phrase-item, .phrase-counter, .audio-status').forEach(el => {
             if (el.tagName === 'H2') { el.style.fontSize = (size + 2) + 'px'; }
             else if (el.classList.contains('counter-banner')) { el.style.fontSize = (size - 6) + 'px'; }
             else if (el.classList.contains('phrase-pt') || el.classList.contains('phrase-item')) { el.style.fontSize = (size + 2) + 'px'; }
@@ -745,6 +659,7 @@
             else if (el.classList.contains('btn-show-stats')) { el.style.fontSize = (size - 4) + 'px'; }
             else if (el.classList.contains('config-btn-label') || el.classList.contains('match-btn-label')) { el.style.fontSize = (size - 9) + 'px'; }
             else if (el.classList.contains('phrase-counter')) { el.style.fontSize = (size - 5) + 'px'; }
+            else if (el.classList.contains('audio-status')) { el.style.fontSize = (size - 5) + 'px'; }
         });
         document.querySelectorAll('.action-btn').forEach(el => {
             el.style.fontSize = (size - 1) + 'px';
@@ -888,7 +803,6 @@
         document.getElementById('match-screen').classList.remove('active');
         document.getElementById('matchBtn').classList.remove('active');
         document.getElementById('backBtn').classList.remove('hidden');
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     }
     
     function resetMatchGame() {
@@ -1032,6 +946,7 @@
             <p>Total de Palavras no Dicionário: <span style='color:#00ff66; font-size:16px;'>${totalWords}</span></p>
             <p style='margin-top:6px; color:#ffaa00;'>📊 Progresso Salvo: ${progressInfo}</p>
             <p style='margin-top:6px; color:#00aa33;'>✅ Banco de Dados para Testes!</p>
+            <p style='margin-top:6px; color:#00aaff;'>🔊 Áudio via Google TTS (requer internet)</p>
         `;
         box.style.display = "block";
     }
@@ -1300,6 +1215,7 @@
                 `;
                 successTextBox.style.display = "flex";
                 
+                // Falar a frase completa
                 speakText(entry.frase1.en);
                 setTimeout(() => speakText(entry.frase2.en), 2000);
                 
@@ -1337,9 +1253,6 @@
     // 10. INICIALIZAÇÃO
     // ============================================================
     function init() {
-        // Inicializar áudio primeiro
-        initAudio();
-        
         // Renderizar interface
         renderTopics();
         showTopicsScreen();
@@ -1370,21 +1283,7 @@
             console.log('📊 Progresso salvo:', progress);
         }
         
-        // Forçar recarregamento das vozes
-        setTimeout(() => {
-            if ('speechSynthesis' in window) {
-                const voices = window.speechSynthesis.getVoices();
-                console.log('🔊 Vozes disponíveis após inicialização:', voices.length);
-                if (voices.length > 0) {
-                    selectBestVoice(voices);
-                }
-            }
-        }, 2000);
-        
-        // Mensagem de status do áudio
-        setTimeout(() => {
-            document.getElementById("status-message").innerHTML = '<span style="color:#00ff66;">🎤 Áudio inicializado! Clique em "Teste" para verificar.</span>';
-        }, 3000);
+        setAudioStatus('🔊 Áudio via Google TTS - Clique nos balões', '');
     }
 
     document.addEventListener('DOMContentLoaded', init);
