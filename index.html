@@ -12,6 +12,7 @@
     <meta name="android-manifest:uses-permission" content="android.permission.INTERNET">
     <meta name="android-manifest:uses-permission" content="android.permission.ACCESS_NETWORK_STATE">
     <meta name="android-manifest:uses-permission" content="android.permission.ACCESS_WIFI_STATE">
+    <meta name="android-manifest:uses-permission" content="android.permission.WRITE_EXTERNAL_STORAGE">
     
     <!-- Carregar meSpeak.js -->
     <script src="https://cdn.jsdelivr.net/npm/mespeak/mespeak.js"></script>
@@ -29,19 +30,6 @@
         .back-btn-bottom:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
         .back-btn-bottom:active { transform: scale(0.9); }
         .back-btn-bottom.hidden { display: none; }
-        
-        /* STATUS DA VOZ */
-        .voice-status {
-            text-align: center;
-            font-size: 11px;
-            padding: 4px;
-            border-radius: 12px;
-            color: rgba(255, 255, 255, 0.5);
-        }
-        .voice-status.loading { color: #ffaa44; animation: pulse 1s ease infinite; }
-        .voice-status.loaded { color: #00ff66; }
-        .voice-status.error { color: #ff3333; }
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
         
         .screen { display: none; flex-direction: column; width: 100%; height: 100%; flex: 1; overflow: hidden; }
         .screen.active { display: flex; }
@@ -67,14 +55,10 @@
         .phrase-item.completed { color: #00ff66; text-shadow: 0 0 20px rgba(0, 255, 102, 0.3); }
         @keyframes revealPhrase { 0% { opacity: 0; transform: translateY(-20px) scale(0.9); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         
-        .voice-status { text-align: center; font-size: 11px; padding: 4px; min-height: 20px; }
-        
-        .audio-controls-row { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 2px; gap: 6px; flex-wrap: wrap; }
+        .audio-controls-row { display: flex; justify-content: center; align-items: center; width: 100%; margin-top: 2px; gap: 6px; flex-wrap: wrap; }
         .btn-audio-top { background: rgba(255, 255, 255, 0.05); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.2); padding: 6px 10px; font-size: 12px; font-weight: bold; border-radius: 10px; cursor: pointer; flex: 1; min-width: 60px; text-align: center; transition: all 0.3s ease; backdrop-filter: blur(4px); }
         .btn-audio-top:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.4); }
         .btn-audio-top:active { transform: scale(0.95); }
-        .btn-audio-test { background: rgba(255, 150, 0, 0.1); border-color: rgba(255, 150, 0, 0.3); color: #ffaa44; flex: 0.5; min-width: 40px; }
-        .btn-audio-test:hover { background: rgba(255, 150, 0, 0.2); border-color: #ffaa44; }
         
         .zone-header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
         .zone-title { font-size: 13px; color: #ffffff; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
@@ -125,18 +109,163 @@
         .btn-show-stats:hover { border-color: rgba(255, 255, 255, 0.4); }
         .stats-report-box { display: none; background: rgba(0, 10, 3, 0.9); border: 2px solid #ffffff; padding: 12px; border-radius: 12px; margin: 6px auto 0 auto; font-size: 13px; color: #ffffff; font-weight: bold; text-align: left; line-height: 1.5; max-width: 550px; box-shadow: 0 0 30px rgba(255, 255, 255, 0.05); backdrop-filter: blur(4px); }
         
-        .bottom-buttons-row { display: flex; justify-content: space-around; width: 100%; padding: 0 5px; gap: 10px; }
-        .config-btn { background: rgba(0, 20, 5, 0.85); border: 2px solid #ffffff; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(255, 255, 255, 0.05); transition: all 0.3s ease; z-index: 10; backdrop-filter: blur(4px); }
-        .config-btn:hover { transform: scale(1.1) rotate(60deg); box-shadow: 0 0 35px rgba(255, 255, 255, 0.1); }
+        /* ===== BOTTOM BUTTONS COM 3 ÍCONES ===== */
+        .bottom-buttons-row { display: flex; justify-content: space-around; width: 100%; padding: 0 5px; gap: 6px; }
+        .bottom-btn-wrapper { display: flex; flex-direction: column; align-items: center; flex: 1; }
+        .bottom-btn-wrapper .btn-label { font-size: 7px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5; text-align: center; margin-top: 2px; color: #ffffff; }
+        
+        .config-btn, .match-btn, .voice-btn {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+        .config-btn:hover, .match-btn:hover, .voice-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        .config-btn:active, .match-btn:active, .voice-btn:active { transform: scale(0.9); }
         .config-btn.active { background: #ffffff; color: #000000; box-shadow: 0 0 40px rgba(255, 255, 255, 0.3); }
-        .match-btn { background: rgba(20, 20, 5, 0.85); border: 2px solid #ffaa00; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; color: #ffaa00; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(255, 170, 0, 0.05); transition: all 0.3s ease; z-index: 10; backdrop-filter: blur(4px); }
-        .match-btn:hover { transform: scale(1.1); box-shadow: 0 0 35px rgba(255, 170, 0, 0.1); }
         .match-btn.active { background: #ffaa00; color: #000000; box-shadow: 0 0 40px rgba(255, 170, 0, 0.3); }
-        .config-btn-label, .match-btn-label { font-size: 7px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5; text-align: center; margin-top: 2px; }
+        .voice-btn.active { background: #00aaff; color: #000000; box-shadow: 0 0 40px rgba(0, 170, 255, 0.3); }
+        
         .config-btn-label { color: #ffffff; }
         .match-btn-label { color: #ffaa00; }
-        .bottom-btn-wrapper { display: flex; flex-direction: column; align-items: center; }
+        .voice-btn-label { color: #00aaff; }
         
+        /* ===== TELA DE VOZES (VOICE SCREEN) ===== */
+        #voice-screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #0a0a0a;
+            z-index: 600;
+            padding: 12px;
+            overflow-y: auto;
+        }
+        #voice-screen.active { display: flex; }
+        
+        .voice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0 10px 0;
+            border-bottom: 2px solid rgba(0, 170, 255, 0.2);
+            margin-bottom: 10px;
+        }
+        .voice-header h2 {
+            color: #00aaff;
+            text-shadow: 0 0 30px rgba(0, 170, 255, 0.3);
+            font-size: 18px;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+        .voice-close-btn {
+            background: rgba(0, 170, 255, 0.1);
+            border: 2px solid #00aaff;
+            color: #00aaff;
+            font-size: 18px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .voice-close-btn:hover {
+            background: #00aaff;
+            color: #000000;
+            transform: rotate(90deg);
+        }
+        
+        .voice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            padding-bottom: 20px;
+        }
+        .voice-card {
+            background: rgba(0, 20, 5, 0.85);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .voice-card:hover { border-color: rgba(255, 255, 255, 0.2); }
+        .voice-card.active-voice { border-color: #00aaff; box-shadow: 0 0 30px rgba(0, 170, 255, 0.1); }
+        .voice-card .voice-info { display: flex; flex-direction: column; gap: 2px; }
+        .voice-card .voice-name { font-size: 15px; font-weight: bold; color: #ffffff; }
+        .voice-card .voice-desc { font-size: 11px; color: rgba(255, 255, 255, 0.4); }
+        .voice-card .voice-status-badge { font-size: 10px; padding: 2px 10px; border-radius: 12px; }
+        .voice-card .voice-status-badge.downloaded { background: rgba(0, 255, 102, 0.15); color: #00ff66; border: 1px solid rgba(0, 255, 102, 0.2); }
+        .voice-card .voice-status-badge.downloading { background: rgba(255, 170, 0, 0.15); color: #ffaa44; border: 1px solid rgba(255, 170, 0, 0.2); animation: pulse 1s ease infinite; }
+        .voice-card .voice-status-badge.not-downloaded { background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.3); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .voice-card .voice-status-badge.active { background: rgba(0, 170, 255, 0.15); color: #00aaff; border: 1px solid rgba(0, 170, 255, 0.2); }
+        
+        .voice-btn-action {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            min-width: 70px;
+            text-align: center;
+        }
+        .voice-btn-action.download { background: rgba(0, 170, 255, 0.15); color: #00aaff; border: 1px solid rgba(0, 170, 255, 0.3); }
+        .voice-btn-action.download:hover { background: rgba(0, 170, 255, 0.25); }
+        .voice-btn-action.download:active { transform: scale(0.95); }
+        .voice-btn-action.select { background: rgba(0, 255, 102, 0.15); color: #00ff66; border: 1px solid rgba(0, 255, 102, 0.3); }
+        .voice-btn-action.select:hover { background: rgba(0, 255, 102, 0.25); }
+        .voice-btn-action.select:active { transform: scale(0.95); }
+        .voice-btn-action.loading { background: rgba(255, 170, 0, 0.15); color: #ffaa44; border: 1px solid rgba(255, 170, 0, 0.3); cursor: default; }
+        .voice-btn-action.disabled { opacity: 0.3; cursor: default; }
+        
+        .voice-download-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            margin-top: 6px;
+            overflow: hidden;
+            display: none;
+        }
+        .voice-download-progress.active { display: block; }
+        .voice-download-progress .bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00aaff, #00ff66);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        
+        /* ===== MATCH SCREEN ===== */
         #match-screen { display: none; flex-direction: column; height: 100%; width: 100%; position: fixed; top: 0; left: 0; background: #000000; z-index: 500; padding: 12px; overflow-y: auto; }
         #match-screen.active { display: flex; }
         .match-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 0 10px 0; border-bottom: 2px solid rgba(255, 170, 0, 0.2); margin-bottom: 10px; }
@@ -165,6 +294,7 @@
         .match-win-message { display: none; text-align: center; color: #ffaa00; font-size: 22px; font-weight: bold; padding: 12px; text-shadow: 0 0 40px rgba(255, 170, 0, 0.4); animation: winPulse 1.5s ease infinite alternate; }
         @keyframes winPulse { 0% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); } 100% { transform: scale(1.04); text-shadow: 0 0 60px rgba(255, 170, 0, 0.6); } }
         
+        /* ===== CONFIG MODAL ===== */
         .config-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 1000; justify-content: center; align-items: center; animation: fadeIn 0.3s ease; backdrop-filter: blur(8px); }
         .config-modal.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
@@ -189,9 +319,9 @@
         .btn-reset-colors { background: rgba(255, 0, 0, 0.15); border: 2px solid rgba(255, 51, 51, 0.3); color: #ff3333; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 6px; transition: all 0.3s ease; letter-spacing: 0.5px; }
         .btn-reset-colors:hover { background: rgba(255, 0, 0, 0.25); border-color: #ff3333; }
         
-        .game-scrollable-content::-webkit-scrollbar, #topics-screen::-webkit-scrollbar, #match-screen::-webkit-scrollbar { width: 3px; }
-        .game-scrollable-content::-webkit-scrollbar-track, #topics-screen::-webkit-scrollbar-track, #match-screen::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
-        .game-scrollable-content::-webkit-scrollbar-thumb, #topics-screen::-webkit-scrollbar-thumb, #match-screen::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
+        .game-scrollable-content::-webkit-scrollbar, #topics-screen::-webkit-scrollbar, #match-screen::-webkit-scrollbar, #voice-screen::-webkit-scrollbar { width: 3px; }
+        .game-scrollable-content::-webkit-scrollbar-track, #topics-screen::-webkit-scrollbar-track, #match-screen::-webkit-scrollbar-track, #voice-screen::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
+        .game-scrollable-content::-webkit-scrollbar-thumb, #topics-screen::-webkit-scrollbar-thumb, #match-screen::-webkit-scrollbar-thumb, #voice-screen::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -201,7 +331,7 @@
 <div class="container" id="appContainer">
     <div id="topics-screen" class="screen active">
         <h2>✨ Formando as Frases</h2>
-        <div class="counter-banner">⚡ Com Sintetizador de Voz (meSpeak)</div>
+        <div class="counter-banner">⚡ Com Sintetizador de Voz</div>
         <div id="topics-list"></div>
         <div class="stats-wrapper">
             <button class="btn-show-stats" onclick="toggleDatabaseStats()">📊 Carregar Laudo de Dados</button>
@@ -219,13 +349,9 @@
                     <div class="phrase-item hidden" id="phrase-2">Carregando...</div>
                 </div>
                 
-                <!-- STATUS DA VOZ -->
-                <div class="voice-status" id="voice-status">🔊 Carregando sintetizador de voz...</div>
-                
                 <div class="audio-controls-row">
                     <button class="btn-audio-top btn-audio-user" onclick="speakUserSentence()">🔊 Ouvir Resposta</button>
                     <button class="btn-audio-top" onclick="speakFullSentence()">🔊 Ouvir Frase</button>
-                    <button class="btn-audio-top btn-audio-test" onclick="testAudio()">🎧 Teste</button>
                 </div>
             </div>
             <div class="zone-title" id="track-number">Sua resposta (Frase 1):</div>
@@ -243,20 +369,38 @@
             <button class="action-btn btn-next" id="next-btn" onclick="nextPhrase()">➜ Próxima Frase</button>
             <button class="action-btn btn-reveal" id="reveal-btn" onclick="revealAnswer()">👁 Ver Resposta</button>
             <div class="revealed-answer-box" id="revealed-answer"></div>
+            
+            <!-- ===== BOTTOM BUTTONS COM 3 ÍCONES ===== -->
             <div class="bottom-buttons-row">
                 <div class="bottom-btn-wrapper">
                     <button class="match-btn" id="matchBtn" onclick="openMatchGame()">🎯</button>
-                    <span class="match-btn-label">Match</span>
+                    <span class="match-btn-label btn-label">Match</span>
+                </div>
+                <div class="bottom-btn-wrapper">
+                    <button class="voice-btn" id="voiceBtn" onclick="openVoiceScreen()">🗣️</button>
+                    <span class="voice-btn-label btn-label">Voz</span>
                 </div>
                 <div class="bottom-btn-wrapper">
                     <button class="config-btn" id="configBtn" onclick="toggleConfigModal()">⚙</button>
-                    <span class="config-btn-label">Config</span>
+                    <span class="config-btn-label btn-label">Config</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- ===== TELA DE VOZES ===== -->
+<div id="voice-screen">
+    <div class="voice-header">
+        <h2>🗣️ Configurações de Voz</h2>
+        <button class="voice-close-btn" onclick="closeVoiceScreen()">✕</button>
+    </div>
+    <div class="voice-list" id="voice-list">
+        <!-- As vozes serão inseridas aqui via JavaScript -->
+    </div>
+</div>
+
+<!-- ===== MATCH SCREEN ===== -->
 <div id="match-screen">
     <div class="match-header">
         <h2>🎯 Match - Combine as Palavras</h2>
@@ -271,6 +415,7 @@
     </div>
 </div>
 
+<!-- ===== CONFIG MODAL ===== -->
 <div class="config-modal" id="configModal">
     <div class="config-modal-content">
         <button class="config-modal-close" onclick="toggleConfigModal()">✕</button>
@@ -332,112 +477,164 @@
     // ============================================================
     // 1. SISTEMA DE SINTETIZADOR DE VOZ (meSpeak)
     // ============================================================
+    const VOICE_STORAGE_KEY = 'downloadedVoices';
+    const ACTIVE_VOICE_KEY = 'activeVoice';
+    
+    // Definição das vozes disponíveis
+    const availableVoices = [
+        { 
+            id: 'en-us', 
+            name: 'Voz Americana', 
+            desc: 'Inglês Americano - Masculino',
+            url: 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-us.json'
+        },
+        { 
+            id: 'en-us-female', 
+            name: 'Voz Americana (Feminina)', 
+            desc: 'Inglês Americano - Feminino',
+            url: 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-us.json'
+        },
+        { 
+            id: 'en-uk', 
+            name: 'Voz Britânica', 
+            desc: 'Inglês Britânico - Masculino',
+            url: 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-uk.json'
+        },
+        { 
+            id: 'en-uk-female', 
+            name: 'Voz Britânica (Feminina)', 
+            desc: 'Inglês Britânico - Feminino',
+            url: 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-uk.json'
+        }
+    ];
+    
+    let downloadedVoices = {};
+    let activeVoiceId = null;
     let voiceLoaded = false;
-    let voiceLoading = false;
-    let currentVoice = 'en-us';
+    let isDownloading = false;
     
-    // Vozes disponíveis
-    const voices = {
-        'en-us': 'Voz Americana (Masculina)',
-        'en-us-female': 'Voz Americana (Feminina)',
-        'en-uk': 'Voz Britânica (Masculina)',
-        'en-uk-female': 'Voz Britânica (Feminina)'
-    };
-    
-    // URL das vozes
-    const voiceUrls = {
-        'en-us': 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-us.json',
-        'en-us-female': 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-us.json',
-        'en-uk': 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-uk.json',
-        'en-uk-female': 'https://cdn.jsdelivr.net/npm/mespeak-voices@0.1.0/en-uk.json'
-    };
-    
-    function setVoiceStatus(text, type = '') {
-        const el = document.getElementById('voice-status');
-        el.textContent = text;
-        el.className = 'voice-status ' + type;
+    // Carregar configurações salvas
+    function loadVoiceSettings() {
+        try {
+            const saved = localStorage.getItem(VOICE_STORAGE_KEY);
+            if (saved) {
+                downloadedVoices = JSON.parse(saved);
+            }
+        } catch(e) {}
+        
+        try {
+            const saved = localStorage.getItem(ACTIVE_VOICE_KEY);
+            if (saved) {
+                activeVoiceId = saved;
+            }
+        } catch(e) {}
     }
     
-    // Carregar a voz
-    function loadVoice(voiceName = 'en-us') {
-        if (voiceLoading) return;
-        if (voiceLoaded && currentVoice === voiceName) {
-            setVoiceStatus('✅ Voz carregada: ' + voices[voiceName], 'loaded');
+    function saveVoiceSettings() {
+        try {
+            localStorage.setItem(VOICE_STORAGE_KEY, JSON.stringify(downloadedVoices));
+        } catch(e) {}
+        try {
+            if (activeVoiceId) {
+                localStorage.setItem(ACTIVE_VOICE_KEY, activeVoiceId);
+            }
+        } catch(e) {}
+    }
+    
+    // Verificar se uma voz está baixada
+    function isVoiceDownloaded(voiceId) {
+        return downloadedVoices[voiceId] === true;
+    }
+    
+    // Baixar uma voz
+    function downloadVoice(voiceId, callback) {
+        if (isDownloading) return;
+        if (isVoiceDownloaded(voiceId)) {
+            if (callback) callback(true);
             return;
         }
         
-        voiceLoading = true;
-        currentVoice = voiceName;
-        setVoiceStatus('📥 Baixando voz: ' + voices[voiceName] + '...', 'loading');
-        
-        // Verificar se meSpeak está disponível
-        if (typeof meSpeak === 'undefined') {
-            setVoiceStatus('❌ Erro: meSpeak não carregado!', 'error');
-            voiceLoading = false;
+        const voice = availableVoices.find(v => v.id === voiceId);
+        if (!voice) {
+            if (callback) callback(false);
             return;
         }
         
-        // Configurar meSpeak
-        meSpeak.loadConfig('https://cdn.jsdelivr.net/npm/mespeak@1.9.6/mespeak_config.json');
+        isDownloading = true;
+        updateVoiceUI(voiceId, 'downloading');
         
-        // Carregar a voz
-        meSpeak.loadVoice(voiceUrls[voiceName], function() {
-            voiceLoaded = true;
-            voiceLoading = false;
-            setVoiceStatus('✅ Voz carregada: ' + voices[voiceName], 'loaded');
-            console.log('✅ Voz carregada com sucesso!');
+        // Carregar a voz usando meSpeak
+        meSpeak.loadVoice(voice.url, function() {
+            // Voz baixada com sucesso
+            downloadedVoices[voiceId] = true;
+            saveVoiceSettings();
+            isDownloading = false;
             
-            // Teste silencioso
-            try {
-                meSpeak.speak(' ', {volume: 0});
-            } catch(e) {}
+            // Se for a primeira voz baixada, ativar automaticamente
+            if (Object.keys(downloadedVoices).length === 1) {
+                activeVoiceId = voiceId;
+                saveVoiceSettings();
+                voiceLoaded = true;
+            }
+            
+            updateVoiceUI(voiceId, 'downloaded');
+            if (callback) callback(true);
         }, function(error) {
-            voiceLoading = false;
-            setVoiceStatus('❌ Erro ao carregar voz: ' + error, 'error');
-            console.error('❌ Erro ao carregar voz:', error);
-            
-            // Tentar novamente com voz alternativa
-            setTimeout(() => {
-                if (!voiceLoaded) {
-                    loadVoice('en-us');
-                }
-            }, 2000);
+            isDownloading = false;
+            updateVoiceUI(voiceId, 'error');
+            console.error('Erro ao baixar voz:', error);
+            if (callback) callback(false);
         });
     }
     
-    // Falar usando meSpeak
-    function speakText(text) {
-        if (!text || text.trim() === '') return;
-        
-        if (!voiceLoaded) {
-            setVoiceStatus('⏳ Carregando voz, aguarde...', 'loading');
-            loadVoice(currentVoice);
-            
-            // Tentar novamente após carregar
-            setTimeout(() => {
-                if (voiceLoaded) {
-                    speakText(text);
-                } else {
-                    setVoiceStatus('⚠️ Voz não carregada. Clique em Teste.', 'error');
-                }
-            }, 3000);
+    // Ativar uma voz
+    function activateVoice(voiceId) {
+        if (!isVoiceDownloaded(voiceId)) {
+            alert('Baixe a voz primeiro antes de ativá-la!');
             return;
         }
         
+        activeVoiceId = voiceId;
+        voiceLoaded = true;
+        saveVoiceSettings();
+        updateVoiceUI(voiceId, 'active');
+        
+        // Testar a voz
         try {
-            // Limpar texto
+            meSpeak.speak(' ', {volume: 0});
+        } catch(e) {}
+        
+        // Atualizar todos os cards
+        renderVoiceList();
+    }
+    
+    // Falar usando a voz ativa
+    function speakText(text) {
+        if (!text || text.trim() === '') return;
+        
+        if (!voiceLoaded || !activeVoiceId) {
+            // Tentar usar a primeira voz baixada
+            const downloaded = Object.keys(downloadedVoices);
+            if (downloaded.length > 0) {
+                activeVoiceId = downloaded[0];
+                voiceLoaded = true;
+                saveVoiceSettings();
+            } else {
+                alert('⚠️ Nenhuma voz baixada! Vá em 🗣️ Voz e baixe uma voz.');
+                return;
+            }
+        }
+        
+        try {
             let cleanText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, '').trim();
             if (cleanText === '') return;
             
-            // Falar
             meSpeak.speak(cleanText, {
                 pitch: 50,
                 rate: 150,
                 volume: 100,
-                voice: currentVoice
+                voice: activeVoiceId
             });
-            
-            setVoiceStatus('🔊 Falando: "' + cleanText + '"', 'loaded');
             
             // Destacar balões
             document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
@@ -449,34 +646,143 @@
             
         } catch(e) {
             console.error('Erro ao falar:', e);
-            setVoiceStatus('❌ Erro ao falar: ' + e.message, 'error');
         }
     }
     
     // ============================================================
-    // 2. FUNÇÕES PÚBLICAS
+    // 2. INTERFACE DE VOZES
     // ============================================================
-    function testAudio() {
-        setVoiceStatus('🎧 Testando sintetizador...', 'loading');
+    function openVoiceScreen() {
+        document.getElementById('voice-screen').classList.add('active');
+        document.getElementById('voiceBtn').classList.add('active');
+        renderVoiceList();
+    }
+    
+    function closeVoiceScreen() {
+        document.getElementById('voice-screen').classList.remove('active');
+        document.getElementById('voiceBtn').classList.remove('active');
+    }
+    
+    function renderVoiceList() {
+        const container = document.getElementById('voice-list');
+        container.innerHTML = '';
         
-        if (!voiceLoaded) {
-            loadVoice(currentVoice);
-            setTimeout(() => {
-                if (voiceLoaded) {
-                    speakText('Hello, this is a voice test');
+        availableVoices.forEach(voice => {
+            const isDownloaded = isVoiceDownloaded(voice.id);
+            const isActive = activeVoiceId === voice.id;
+            const isDownloadingNow = isDownloading;
+            
+            const card = document.createElement('div');
+            card.className = `voice-card${isActive ? ' active-voice' : ''}`;
+            card.id = `voice-card-${voice.id}`;
+            
+            // Status badge
+            let statusText = 'Não baixado';
+            let statusClass = 'not-downloaded';
+            let btnHTML = '';
+            
+            if (isDownloaded) {
+                if (isActive) {
+                    statusText = '✅ Ativo';
+                    statusClass = 'active';
+                    btnHTML = `<button class="voice-btn-action disabled" disabled>✅ Ativo</button>`;
                 } else {
-                    setVoiceStatus('⚠️ Aguarde o carregamento da voz', 'error');
+                    statusText = '📥 Baixado';
+                    statusClass = 'downloaded';
+                    btnHTML = `<button class="voice-btn-action select" onclick="activateVoice('${voice.id}')">🔊 Ativar</button>`;
                 }
-            }, 2000);
-            return;
-        }
-        
-        speakText('Hello, this is a voice test');
-        setTimeout(() => {
-            speakText('The audio is working perfectly');
-        }, 1500);
+            } else {
+                statusText = '📥 Disponível';
+                statusClass = 'not-downloaded';
+                btnHTML = `<button class="voice-btn-action download" onclick="downloadVoice('${voice.id}')">📥 Baixar</button>`;
+            }
+            
+            card.innerHTML = `
+                <div class="voice-info">
+                    <div class="voice-name">${voice.name}</div>
+                    <div class="voice-desc">${voice.desc}</div>
+                    <span class="voice-status-badge ${statusClass}">${statusText}</span>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                    ${btnHTML}
+                    <div class="voice-download-progress" id="progress-${voice.id}">
+                        <div class="bar" id="bar-${voice.id}"></div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(card);
+        });
     }
     
+    function updateVoiceUI(voiceId, status) {
+        const card = document.getElementById(`voice-card-${voiceId}`);
+        if (!card) return;
+        
+        const badge = card.querySelector('.voice-status-badge');
+        const btn = card.querySelector('.voice-btn-action');
+        const progress = document.getElementById(`progress-${voiceId}`);
+        const bar = document.getElementById(`bar-${voiceId}`);
+        
+        if (status === 'downloading') {
+            badge.textContent = '⏳ Baixando...';
+            badge.className = 'voice-status-badge downloading';
+            if (btn) {
+                btn.textContent = '⏳ Baixando';
+                btn.className = 'voice-btn-action loading';
+                btn.disabled = true;
+            }
+            if (progress) {
+                progress.className = 'voice-download-progress active';
+                if (bar) bar.style.width = '50%';
+            }
+        } else if (status === 'downloaded') {
+            badge.textContent = '📥 Baixado';
+            badge.className = 'voice-status-badge downloaded';
+            if (btn) {
+                btn.textContent = '🔊 Ativar';
+                btn.className = 'voice-btn-action select';
+                btn.disabled = false;
+                btn.onclick = () => activateVoice(voiceId);
+            }
+            if (progress) {
+                progress.className = 'voice-download-progress';
+                if (bar) bar.style.width = '100%';
+                setTimeout(() => {
+                    progress.className = 'voice-download-progress';
+                }, 1000);
+            }
+            // Atualizar lista para remover o estado de download
+            setTimeout(renderVoiceList, 500);
+        } else if (status === 'active') {
+            badge.textContent = '✅ Ativo';
+            badge.className = 'voice-status-badge active';
+            if (btn) {
+                btn.textContent = '✅ Ativo';
+                btn.className = 'voice-btn-action disabled';
+                btn.disabled = true;
+            }
+            // Atualizar lista para mostrar o ativo
+            setTimeout(renderVoiceList, 300);
+        } else if (status === 'error') {
+            badge.textContent = '❌ Erro';
+            badge.className = 'voice-status-badge not-downloaded';
+            if (btn) {
+                btn.textContent = '🔄 Tentar novamente';
+                btn.className = 'voice-btn-action download';
+                btn.disabled = false;
+                btn.onclick = () => downloadVoice(voiceId);
+            }
+            if (progress) {
+                progress.className = 'voice-download-progress';
+                if (bar) bar.style.width = '0%';
+            }
+        }
+    }
+    
+    // ============================================================
+    // 3. FUNÇÕES PÚBLICAS DE ÁUDIO
+    // ============================================================
     function speakWord(word) {
         speakText(word);
     }
@@ -490,7 +796,6 @@
     
     function speakUserSentence() {
         if (selectedWords.length === 0) {
-            setVoiceStatus('⚠️ Nenhuma palavra selecionada', 'error');
             return;
         }
         const userTxt = selectedWords.join(" ");
@@ -498,7 +803,7 @@
     }
 
     // ============================================================
-    // 3. CONFIGURAÇÕES
+    // 4. CONFIGURAÇÕES
     // ============================================================
     const STORAGE_KEY = 'wordGameSettings';
     const PROGRESS_KEY = 'wordGameProgress';
@@ -616,6 +921,7 @@
         document.getElementById('appContainer').style.backgroundColor = color;
         document.body.style.backgroundColor = color;
         document.getElementById('match-screen').style.backgroundColor = color;
+        document.getElementById('voice-screen').style.backgroundColor = color;
     }
     
     function adjustFontSize(type, delta) {
@@ -634,7 +940,7 @@
     }
     
     function applyGeneralFontSize(size) {
-        document.querySelectorAll('h2, .counter-banner, .phrase-pt, .zone-title, .btn-reveal, .btn-audio-top, .btn-audio-user, .btn-pesca, .status-container, .btn-show-stats, .config-btn-label, .match-btn-label, .phrase-item, .phrase-counter, .voice-status').forEach(el => {
+        document.querySelectorAll('h2, .counter-banner, .phrase-pt, .zone-title, .btn-reveal, .btn-audio-top, .btn-audio-user, .btn-pesca, .status-container, .btn-show-stats, .btn-label, .phrase-item, .phrase-counter, .voice-card .voice-name, .voice-card .voice-desc, .voice-status-badge, .voice-btn-action').forEach(el => {
             if (el.tagName === 'H2') { el.style.fontSize = (size + 2) + 'px'; }
             else if (el.classList.contains('counter-banner')) { el.style.fontSize = (size - 6) + 'px'; }
             else if (el.classList.contains('phrase-pt') || el.classList.contains('phrase-item')) { el.style.fontSize = (size + 2) + 'px'; }
@@ -644,9 +950,12 @@
             else if (el.classList.contains('btn-pesca')) { el.style.fontSize = (size - 5) + 'px'; }
             else if (el.classList.contains('status-container')) { el.style.fontSize = (size - 2) + 'px'; }
             else if (el.classList.contains('btn-show-stats')) { el.style.fontSize = (size - 4) + 'px'; }
-            else if (el.classList.contains('config-btn-label') || el.classList.contains('match-btn-label')) { el.style.fontSize = (size - 9) + 'px'; }
+            else if (el.classList.contains('btn-label')) { el.style.fontSize = (size - 9) + 'px'; }
             else if (el.classList.contains('phrase-counter')) { el.style.fontSize = (size - 5) + 'px'; }
-            else if (el.classList.contains('voice-status')) { el.style.fontSize = (size - 4) + 'px'; }
+            else if (el.classList.contains('voice-card') && el.classList.contains('voice-name')) { el.style.fontSize = (size) + 'px'; }
+            else if (el.classList.contains('voice-card') && el.classList.contains('voice-desc')) { el.style.fontSize = (size - 4) + 'px'; }
+            else if (el.classList.contains('voice-status-badge')) { el.style.fontSize = (size - 6) + 'px'; }
+            else if (el.classList.contains('voice-btn-action')) { el.style.fontSize = (size - 4) + 'px'; }
         });
         document.querySelectorAll('.action-btn').forEach(el => {
             el.style.fontSize = (size - 1) + 'px';
@@ -699,7 +1008,7 @@
     }
 
     // ============================================================
-    // 4. PROGRESSO
+    // 5. PROGRESSO
     // ============================================================
     function loadProgress() {
         try {
@@ -737,7 +1046,7 @@
     }
 
     // ============================================================
-    // 5. DICIONÁRIO E FRASES
+    // 6. DICIONÁRIO E FRASES
     // ============================================================
     const dictionary = {
         "love": "amor",
@@ -757,7 +1066,7 @@
     };
 
     // ============================================================
-    // 6. JOGO PRINCIPAL
+    // 7. JOGO PRINCIPAL
     // ============================================================
     let selectedTopic = "", playlistPhrases = [], currentPhraseIndex = 0;
     let selectedWords = [], currentFrase = 1;
@@ -767,7 +1076,7 @@
     let totalPhrases = 0;
 
     // ============================================================
-    // 7. MATCH GAME
+    // 8. MATCH GAME
     // ============================================================
     let matchPairs = [], selectedMatchCard = null, matchedPairs = 0, matchCards = [], isProcessingMatch = false;
 
@@ -862,7 +1171,7 @@
     }
 
     // ============================================================
-    // 8. FUNÇÕES DO JOGO
+    // 9. FUNÇÕES DO JOGO
     // ============================================================
     function getCurrentPhrase() {
         const entry = playlistPhrases[currentPhraseIndex];
@@ -924,12 +1233,13 @@
         if (progress) {
             progressInfo = `Tópico: ${progress.topic}, Frase: ${progress.index + 1} de ${progress.total}`;
         }
+        const downloaded = Object.keys(downloadedVoices).length;
         box.innerHTML = `
             <p style='color:#ffffff; margin-bottom:6px;'>📂 LAUDO CENTRAL DE SISTEMA:</p>
             <p>Total de Pares de Frases: <span style='color:#00ff66; font-size:16px;'>${totalPhrases}</span></p>
             <p>Total de Palavras: <span style='color:#00ff66; font-size:16px;'>${totalWords}</span></p>
             <p style='margin-top:6px; color:#ffaa00;'>📊 Progresso: ${progressInfo}</p>
-            <p style='margin-top:6px; color:#00aaff;'>🔊 Sintetizador: meSpeak (offline)</p>
+            <p style='margin-top:6px; color:#00aaff;'>🗣️ Vozes baixadas: ${downloaded}</p>
             <p style='margin-top:6px; color:#00aa33;'>✅ Banco de Dados para Testes!</p>
         `;
         box.style.display = "block";
@@ -1233,9 +1543,12 @@
     }
 
     // ============================================================
-    // 9. INICIALIZAÇÃO
+    // 10. INICIALIZAÇÃO
     // ============================================================
     function init() {
+        // Carregar configurações de voz
+        loadVoiceSettings();
+        
         // Renderizar interface
         renderTopics();
         showTopicsScreen();
@@ -1260,11 +1573,20 @@
             }
         }
         
-        // Carregar a voz
-        loadVoice('en-us');
+        // Se já tiver vozes baixadas, ativar a primeira
+        const downloaded = Object.keys(downloadedVoices);
+        if (downloaded.length > 0) {
+            if (!activeVoiceId || !downloadedVoices[activeVoiceId]) {
+                activeVoiceId = downloaded[0];
+                saveVoiceSettings();
+            }
+            voiceLoaded = true;
+            console.log('🗣️ Voz ativa:', activeVoiceId);
+        } else {
+            console.log('🗣️ Nenhuma voz baixada. Vá em 🗣️ Voz para baixar.');
+        }
         
         console.log('🎮 Aplicativo inicializado com sucesso!');
-        console.log('🔊 Sintetizador de voz: meSpeak');
         console.log('📊 Configurações carregadas:', settings);
         if (progress) {
             console.log('📊 Progresso salvo:', progress);
