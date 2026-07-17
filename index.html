@@ -5,78 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Formando as Frases</title>
     
-    <!-- ===== PERMISSÕES PARA APK ===== -->
+    <!-- ===== PERMISSÕES PARA APK (REFORÇADAS) ===== -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="android-manifest:uses-permission" content="android.permission.INTERNET">
+    <meta name="android-manifest:uses-permission" content="android.permission.ACCESS_NETWORK_STATE">
+    <meta name="android-manifest:uses-permission" content="android.permission.RECORD_AUDIO">
+    <meta name="android-manifest:uses-permission" content="android.permission.MODIFY_AUDIO_SETTINGS">
+    <meta name="android-manifest:uses-permission" content="android.permission.FOREGROUND_SERVICE">
+    <meta name="android-manifest:uses-permission" content="android.permission.WAKE_LOCK">
+    <meta name="android-manifest:uses-permission" content="android.permission.SYSTEM_ALERT_WINDOW">
     
     <style>
-        /* ===== ESTILOS COMPLETOS ===== */
+        /* ===== TODOS OS ESTILOS (MANTIDOS) ===== */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #000000; color: #ffffff; user-select: none; overflow: hidden; transition: background-color 0.4s ease; }
         .container { width: 100%; height: 100%; padding: 10px; display: flex; flex-direction: column; gap: 8px; transition: background-color 0.4s ease; overflow: hidden; }
         
-        /* HEADER - COR FIXA BRANCA */
+        /* HEADER */
         h2 { text-align: center; color: #ffffff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0px 0px 20px rgba(255, 255, 255, 0.3); margin-top: 2px; font-size: 18px; font-weight: 800; }
         .counter-banner { text-align: center; color: #ffffff; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
-        .phrase-pt { font-size: 18px; font-weight: bold; text-align: center; line-height: 1.3; color: #ffffff; text-shadow: 0 2px 10px rgba(255,255,255,0.2); word-wrap: break-word; }
-        .zone-title { font-size: 13px; color: #ffffff; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.1); }
         
-        /* PROGRESS BAR */
-        .progress-container { 
-            background: rgba(255, 255, 255, 0.05); 
-            border-radius: 20px; 
-            padding: 4px; 
-            margin: 2px 0 4px 0;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .progress-bar {
-            height: 6px;
-            background: linear-gradient(90deg, #00ff22, #00ff66);
-            border-radius: 20px;
-            transition: width 0.5s ease;
-            width: 0%;
-        }
-        .progress-text {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.5);
-            padding: 2px 4px;
-        }
+        /* BARRA DE PROGRESSO */
+        .progress-container { background: rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 4px; margin: 2px 0 4px 0; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .progress-bar { height: 6px; background: linear-gradient(90deg, #00ff22, #00ff66); border-radius: 20px; transition: width 0.5s ease; width: 0%; }
+        .progress-text { display: flex; justify-content: space-between; font-size: 10px; color: rgba(255, 255, 255, 0.5); padding: 2px 4px; }
         
-        /* BOTÃO VOLTAR - CANTO INFERIOR ESQUERDO */
-        .back-btn-bottom {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            color: #ffffff;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(4px);
-            z-index: 100;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        .back-btn-bottom:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: scale(1.05);
-        }
-        .back-btn-bottom:active {
-            transform: scale(0.9);
-        }
-        .back-btn-bottom.hidden {
-            display: none;
-        }
+        /* BOTÃO VOLTAR */
+        .back-btn-bottom { position: fixed; bottom: 20px; left: 20px; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.15); border-radius: 50%; width: 44px; height: 44px; color: #ffffff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; backdrop-filter: blur(4px); z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .back-btn-bottom:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
+        .back-btn-bottom:active { transform: scale(0.9); }
+        .back-btn-bottom.hidden { display: none; }
         
         /* SCREENS */
         .screen { display: none; flex-direction: column; width: 100%; height: 100%; flex: 1; overflow: hidden; }
@@ -89,15 +49,7 @@
         .topic-card:hover { transform: scale(1.01); border-left-color: #00ff88; box-shadow: 0 6px 25px rgba(255, 255, 255, 0.1); }
         .topic-card:active { transform: scale(0.98); }
         .topic-card.misto-btn { background: rgba(255, 255, 255, 0.05); border-left-color: #00ff66; border-color: rgba(255, 255, 255, 0.2); color: #ffffff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.2); font-size: 15px; }
-        .topic-card .progress-badge { 
-            margin-left: auto; 
-            background: rgba(0, 255, 102, 0.15); 
-            padding: 2px 10px; 
-            border-radius: 12px; 
-            font-size: 11px; 
-            color: #00ff66;
-            border: 1px solid rgba(0, 255, 102, 0.2);
-        }
+        .topic-card .progress-badge { margin-left: auto; background: rgba(0, 255, 102, 0.15); padding: 2px 10px; border-radius: 12px; font-size: 11px; color: #00ff66; border: 1px solid rgba(0, 255, 102, 0.2); }
         
         /* GAME SCREEN */
         #game-screen { display: none; flex-direction: column; height: 100%; overflow: hidden; }
@@ -111,7 +63,6 @@
         .phrase-item.hidden { display: none; }
         .phrase-item.revealed { animation: revealPhrase 0.8s ease; }
         .phrase-item.completed { color: #00ff66; text-shadow: 0 0 20px rgba(0, 255, 102, 0.3); }
-        .phrase-number { font-size: 12px; opacity: 0.6; margin-right: 8px; }
         @keyframes revealPhrase { 0% { opacity: 0; transform: translateY(-20px) scale(0.9); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         
         /* AUDIO CONTROLS */
@@ -122,6 +73,7 @@
         
         /* ZONE HEADER */
         .zone-header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
+        .zone-title { font-size: 13px; color: #ffffff; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.1); }
         .btn-pesca { background: rgba(0, 17, 4, 0.8); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.2); padding: 4px 12px; font-size: 11px; font-weight: bold; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.3s ease; backdrop-filter: blur(4px); }
         .btn-pesca:hover { border-color: rgba(255, 255, 255, 0.4); box-shadow: 0 0 20px rgba(255, 255, 255, 0.05); }
         .btn-pesca.active { background: rgba(255, 255, 255, 0.1); color: #ffffff; border-color: #ffffff; box-shadow: 0 0 25px rgba(255, 255, 255, 0.1); }
@@ -136,18 +88,17 @@
         /* WORDS ZONE */
         .words-zone { background: rgba(0, 10, 4, 0.4); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 12px; min-height: 80px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; align-content: flex-start; transition: border-color 0.4s ease; backdrop-filter: blur(4px); }
         
-        /* WORD BALLOONS - COM CORES PERSONALIZÁVEIS */
+        /* WORD BALLOONS */
         .word-balloon { padding: 6px 12px; font-size: 15px; font-weight: 800; border-radius: 20px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.6); display: inline-block; user-select: none; position: relative; max-width: 100%; word-wrap: break-word; touch-action: none; transition: color 0.3s ease, background-color 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease; background: #1a1a1a; border: 2px solid #2a2a2a; color: #00ff22; text-shadow: 0 0 20px rgba(0, 255, 34, 0.1); letter-spacing: 0.3px; line-height: 1.2; }
         .word-balloon:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 30px rgba(0,0,0,0.8); border-color: #3a3a3a; }
         .word-balloon:active { transform: scale(0.93); }
-        .construction-zone .word-balloon { background: #1a1a1a; border: 2px solid #2a2a2a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5); cursor: grab; color: #00ff22; transition: color 0.3s ease, background-color 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease; font-size: 14px; padding: 5px 10px; }
+        .construction-zone .word-balloon { background: #1a1a1a; border: 2px solid #2a2a2a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5); cursor: grab; transition: color 0.3s ease, background-color 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease; font-size: 14px; padding: 5px 10px; }
         .construction-zone .word-balloon:hover { box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7); border-color: #3a3a3a; }
         .construction-zone .word-balloon:active { cursor: grabbing; transform: scale(0.93); }
         .words-zone .word-balloon { background: #1a1a1a; border: 2px solid #2a2a2a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4); color: #00ffaa; transition: color 0.3s ease, background-color 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease; font-size: 13px; padding: 4px 10px; }
         .words-zone .word-balloon:hover { border-color: #3a3a3a; box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6); }
         .word-balloon.dragging { opacity: 0.4; border: 2px dashed #ffff00 !important; background: rgba(255, 255, 0, 0.05) !important; transform: scale(0.9); }
         .word-balloon.pescado { background: #001a00 !important; color: #ffff00 !important; border-color: #2a2a00 !important; box-shadow: 0 0 30px rgba(255, 255, 0, 0.15) !important; animation: pescaGlow 1s ease infinite alternate; }
-        .word-balloon.used { opacity: 0.3; pointer-events: none; transform: scale(0.9); }
         @keyframes pescaGlow { 0% { box-shadow: 0 0 15px rgba(255, 255, 0, 0.1); } 100% { box-shadow: 0 0 35px rgba(255, 255, 0, 0.25); } }
         
         /* STATUS */
@@ -187,7 +138,7 @@
         .match-btn-label { color: #ffaa00; }
         .bottom-btn-wrapper { display: flex; flex-direction: column; align-items: center; }
         
-        /* MATCH SCREEN - COM 26 PALAVRAS (13 DE CADA LADO) */
+        /* MATCH SCREEN */
         #match-screen { display: none; flex-direction: column; height: 100%; width: 100%; position: fixed; top: 0; left: 0; background: #000000; z-index: 500; padding: 12px; overflow-y: auto; transition: background-color 0.4s ease; }
         #match-screen.active { display: flex; }
         .match-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 0 10px 0; border-bottom: 2px solid rgba(255, 170, 0, 0.2); margin-bottom: 10px; }
@@ -253,11 +204,10 @@
 </head>
 <body>
 
-<!-- BOTÃO VOLTAR - CANTO INFERIOR ESQUERDO -->
+<!-- BOTÃO VOLTAR -->
 <button class="back-btn-bottom" id="backBtn" onclick="showTopicsScreen()">←</button>
 
 <div class="container" id="appContainer">
-    <!-- TELA DE TÓPICOS -->
     <div id="topics-screen" class="screen active">
         <h2>✨ Formando as Frases</h2>
         <div class="counter-banner">⚡ Com salvamento de progresso</div>
@@ -268,11 +218,9 @@
         </div>
     </div>
 
-    <!-- TELA DO JOGO -->
     <div id="game-screen" class="screen">
         <div class="game-scrollable-content">
             <div class="top-challenge">
-                <!-- BARRA DE PROGRESSO -->
                 <div class="progress-container">
                     <div class="progress-text">
                         <span id="progress-label">Progresso</span>
@@ -319,7 +267,7 @@
     </div>
 </div>
 
-<!-- TELA MATCH -->
+<!-- MATCH SCREEN -->
 <div id="match-screen">
     <div class="match-header">
         <h2>🎯 Match - Combine as Palavras</h2>
@@ -334,13 +282,12 @@
     </div>
 </div>
 
-<!-- MODAL CONFIG -->
+<!-- CONFIG MODAL -->
 <div class="config-modal" id="configModal">
     <div class="config-modal-content">
         <button class="config-modal-close" onclick="toggleConfigModal()">✕</button>
         <h3>⚙ Configurações</h3>
         
-        <!-- CORES -->
         <div class="config-section">
             <label>🎨 Cor da Fonte dos Balões</label>
             <div class="color-options" id="textColorOptions"></div>
@@ -356,7 +303,6 @@
             <div class="color-options" id="bgColorOptions"></div>
         </div>
         
-        <!-- FONTES -->
         <div class="config-section">
             <label>🔤 Tamanho da Fonte Geral</label>
             <div class="font-size-control">
@@ -396,24 +342,137 @@
 
 <script>
     // ============================================================
-    // 1. PERMISSÕES E CONFIGURAÇÕES DE ÁUDIO
+    // 1. SISTEMA DE ÁUDIO MELHORADO PARA APK
     // ============================================================
+    let audioInitialized = false;
+    let selectedVoice = null;
+    
     function initAudio() {
-        if ('speechSynthesis' in window) {
-            if (window.speechSynthesis.getVoices().length === 0) {
-                window.speechSynthesis.onvoiceschanged = function() {
-                    window.speechSynthesis.getVoices();
-                };
-            }
-            setTimeout(() => {
-                const utterance = new SpeechSynthesisUtterance(' ');
-                utterance.volume = 0;
-                window.speechSynthesis.speak(utterance);
-                window.speechSynthesis.cancel();
-            }, 100);
-        } else {
-            console.warn('Speech Synthesis não suportado neste dispositivo');
+        if (!('speechSynthesis' in window)) {
+            console.warn('⚠️ Speech Synthesis não suportado neste dispositivo');
+            return;
         }
+        
+        console.log('🎤 Inicializando sistema de áudio...');
+        
+        // Forçar carregamento das vozes
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length === 0) {
+            window.speechSynthesis.onvoiceschanged = function() {
+                loadVoices();
+            };
+        } else {
+            loadVoices();
+        }
+        
+        // Teste de áudio silencioso para ativar o sistema
+        try {
+            const testUtterance = new SpeechSynthesisUtterance(' ');
+            testUtterance.volume = 0;
+            testUtterance.rate = 1;
+            testUtterance.pitch = 1;
+            window.speechSynthesis.speak(testUtterance);
+            setTimeout(() => {
+                window.speechSynthesis.cancel();
+                audioInitialized = true;
+                console.log('✅ Áudio inicializado com sucesso!');
+            }, 100);
+        } catch(e) {
+            console.warn('⚠️ Erro ao inicializar áudio:', e);
+        }
+    }
+    
+    function loadVoices() {
+        const voices = window.speechSynthesis.getVoices();
+        console.log(`🔊 ${voices.length} vozes disponíveis`);
+        
+        // Tentar encontrar uma voz em inglês
+        selectedVoice = voices.find(v => v.lang.startsWith('en')) || 
+                       voices.find(v => v.lang.includes('US')) ||
+                       voices[0];
+        
+        if (selectedVoice) {
+            console.log(`✅ Voz selecionada: ${selectedVoice.name} (${selectedVoice.lang})`);
+        }
+        audioInitialized = true;
+    }
+    
+    function speakText(text, retryCount = 0) {
+        if (!('speechSynthesis' in window)) {
+            console.warn('⚠️ Speech Synthesis não disponível');
+            return;
+        }
+        
+        try {
+            // Cancelar qualquer fala anterior
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85;
+            utterance.volume = 1;
+            utterance.pitch = 1;
+            
+            // Usar a voz selecionada se disponível
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+            
+            // Evento para saber se funcionou
+            utterance.onend = function() {
+                console.log('✅ Áudio reproduzido com sucesso:', text);
+            };
+            
+            utterance.onerror = function(event) {
+                console.warn('⚠️ Erro no áudio:', event.error);
+                // Tentar novamente se não for um erro crítico
+                if (retryCount < 2 && event.error !== 'not-allowed') {
+                    console.log(`🔄 Tentando novamente (${retryCount + 1})...`);
+                    setTimeout(() => speakText(text, retryCount + 1), 200);
+                }
+            };
+            
+            window.speechSynthesis.speak(utterance);
+            
+            // Fallback: se não falar em 3 segundos, tentar de novo
+            setTimeout(() => {
+                if (!window.speechSynthesis.speaking) {
+                    console.log('🔄 Fallback: tentando novamente...');
+                    if (retryCount < 2) {
+                        speakText(text, retryCount + 1);
+                    }
+                }
+            }, 3000);
+            
+        } catch(e) {
+            console.warn('⚠️ Erro ao falar:', e);
+            if (retryCount < 2) {
+                setTimeout(() => speakText(text, retryCount + 1), 200);
+            }
+        }
+    }
+    
+    function speakWord(word) {
+        speakText(word);
+        document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
+            if (el.textContent.toLowerCase() === word.toLowerCase()) {
+                el.classList.add('speaking');
+                setTimeout(() => el.classList.remove('speaking'), 700);
+            }
+        });
+    }
+    
+    function speakFullSentence() {
+        const currentPhrase = getCurrentPhrase();
+        if (currentPhrase) {
+            speakText(currentPhrase.en);
+        }
+    }
+    
+    function speakUserSentence() {
+        if (selectedWords.length === 0) return;
+        const userTxt = selectedWords.join(" ");
+        speakText(userTxt);
     }
 
     // ============================================================
@@ -464,45 +523,7 @@
     };
 
     // ============================================================
-    // 3. SISTEMA DE SALVAMENTO DE PROGRESSO
-    // ============================================================
-    function loadProgress() {
-        try {
-            const saved = localStorage.getItem(PROGRESS_KEY);
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                return parsed;
-            }
-        } catch (e) {}
-        return null;
-    }
-    
-    function saveProgress(topicName, index, total) {
-        try {
-            const data = {
-                topic: topicName,
-                index: index,
-                total: total,
-                timestamp: new Date().toISOString()
-            };
-            localStorage.setItem(PROGRESS_KEY, JSON.stringify(data));
-        } catch (e) {}
-    }
-    
-    function clearProgress() {
-        localStorage.removeItem(PROGRESS_KEY);
-    }
-    
-    function resetProgress() {
-        if (confirm('⚠️ Tem certeza que deseja resetar todo o seu progresso?')) {
-            clearProgress();
-            alert('✅ Progresso resetado! O aplicativo vai reiniciar do início.');
-            showTopicsScreen();
-        }
-    }
-
-    // ============================================================
-    // 4. FUNÇÕES DE CONFIGURAÇÃO
+    // 3. FUNÇÕES DE CONFIGURAÇÃO
     // ============================================================
     function toggleConfigModal() {
         const modal = document.getElementById('configModal');
@@ -658,6 +679,44 @@
     }
 
     // ============================================================
+    // 4. SISTEMA DE SALVAMENTO DE PROGRESSO
+    // ============================================================
+    function loadProgress() {
+        try {
+            const saved = localStorage.getItem(PROGRESS_KEY);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                return parsed;
+            }
+        } catch (e) {}
+        return null;
+    }
+    
+    function saveProgress(topicName, index, total) {
+        try {
+            const data = {
+                topic: topicName,
+                index: index,
+                total: total,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem(PROGRESS_KEY, JSON.stringify(data));
+        } catch (e) {}
+    }
+    
+    function clearProgress() {
+        localStorage.removeItem(PROGRESS_KEY);
+    }
+    
+    function resetProgress() {
+        if (confirm('⚠️ Tem certeza que deseja resetar todo o seu progresso?')) {
+            clearProgress();
+            alert('✅ Progresso resetado! O aplicativo vai reiniciar do início.');
+            showTopicsScreen();
+        }
+    }
+
+    // ============================================================
     // 5. DICIONÁRIO (APENAS UM EXEMPLO PARA TESTE)
     // ============================================================
     const dictionary = {
@@ -691,7 +750,7 @@
     let totalPhrases = 0;
 
     // ============================================================
-    // 8. MATCH GAME (26 PALAVRAS - 13 DE CADA LADO)
+    // 8. MATCH GAME
     // ============================================================
     let matchPairs = [], selectedMatchCard = null, matchedPairs = 0, matchCards = [], isProcessingMatch = false;
 
@@ -787,54 +846,7 @@
     }
 
     // ============================================================
-    // 9. FUNÇÕES DE VOZ (OTIMIZADAS PARA APK)
-    // ============================================================
-    function speakWord(word) {
-        speakText(word);
-        document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
-            if (el.textContent.toLowerCase() === word.toLowerCase()) {
-                el.classList.add('speaking');
-                setTimeout(() => el.classList.remove('speaking'), 700);
-            }
-        });
-    }
-
-    function speakText(text) {
-        if ('speechSynthesis' in window) {
-            try {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.85;
-                utterance.volume = 1;
-                utterance.pitch = 1;
-                const voices = window.speechSynthesis.getVoices();
-                const englishVoice = voices.find(v => v.lang.startsWith('en'));
-                if (englishVoice) {
-                    utterance.voice = englishVoice;
-                }
-                window.speechSynthesis.speak(utterance);
-            } catch(e) {
-                console.log('Erro no áudio:', e);
-            }
-        }
-    }
-
-    function speakFullSentence() {
-        const currentPhrase = getCurrentPhrase();
-        if (currentPhrase) {
-            speakText(currentPhrase.en);
-        }
-    }
-
-    function speakUserSentence() {
-        if (selectedWords.length === 0) return;
-        const userTxt = selectedWords.join(" ");
-        speakText(userTxt);
-    }
-
-    // ============================================================
-    // 10. FUNÇÕES PRINCIPAIS DO JOGO (COM SISTEMA DE 2 FRASES)
+    // 9. FUNÇÕES PRINCIPAIS DO JOGO
     // ============================================================
     function getCurrentPhrase() {
         const entry = playlistPhrases[currentPhraseIndex];
@@ -860,7 +872,6 @@
         const listContainer = document.getElementById("topics-list");
         listContainer.innerHTML = "";
         
-        // Verificar progresso salvo para cada tópico
         const progress = loadProgress();
         
         const mistoBtn = document.createElement("button");
@@ -928,14 +939,12 @@
         
         totalPhrases = playlistPhrases.length;
         
-        // Verificar se há progresso salvo para este tópico
         const progress = loadProgress();
         let startIndex = 0;
         if (progress && progress.topic === topicName && progress.index < totalPhrases) {
             startIndex = progress.index;
         }
         
-        // Embaralhar apenas se não tiver progresso salvo
         if (!progress || progress.topic !== topicName) {
             playlistPhrases.sort(() => Math.random() - 0.5);
         }
@@ -972,7 +981,6 @@
         
         const entry = playlistPhrases[currentPhraseIndex];
         
-        // Atualizar barra de progresso
         updateProgressBar();
         
         const phrase1El = document.getElementById("phrase-1");
@@ -988,7 +996,6 @@
         document.getElementById("track-number").innerText = `Frase ${currentPhraseIndex + 1} de ${playlistPhrases.length} - Frase 1:`;
         renderZones();
         
-        // Salvar progresso
         saveProgress(selectedTopic, currentPhraseIndex, playlistPhrases.length);
     }
     
@@ -1192,7 +1199,6 @@
                 phrase2El.className = "phrase-item completed";
                 phrase2El.innerHTML = `✅ ${phrase2El.textContent}`;
                 
-                // Avançar para a próxima frase automaticamente após um delay
                 setTimeout(() => {
                     currentPhraseIndex++;
                     loadPhrase();
@@ -1220,27 +1226,18 @@
     }
 
     // ============================================================
-    // 11. INICIALIZAÇÃO
+    // 10. INICIALIZAÇÃO
     // ============================================================
     function init() {
+        // Inicializar áudio primeiro
         initAudio();
+        
+        // Renderizar interface
         renderTopics();
         showTopicsScreen();
         setupDragAndDropEvents();
         
-        // Verificar se há progresso salvo e carregar automaticamente
-        const progress = loadProgress();
-        if (progress && progress.topic) {
-            // Verificar se o tópico ainda existe
-            if (pdfPhrasesDatabase[progress.topic] || progress.topic === "MISTO") {
-                console.log(`📊 Carregando progresso salvo: ${progress.topic} - Frase ${progress.index + 1} de ${progress.total}`);
-                // Pequeno delay para garantir que a interface carregou
-                setTimeout(() => {
-                    startTopic(progress.topic);
-                }, 300);
-            }
-        }
-        
+        // Aplicar configurações
         applyTextColor(settings.textColor);
         applyBgBalloonColor(settings.bgBalloonColor);
         applyBgColor(settings.bgColor);
@@ -1248,11 +1245,29 @@
         applyBalloonFontSize(settings.balloonFontSize);
         applyMatchFontSize(settings.matchFontSize);
         
+        // Verificar progresso salvo
+        const progress = loadProgress();
+        if (progress && progress.topic) {
+            if (pdfPhrasesDatabase[progress.topic] || progress.topic === "MISTO") {
+                console.log(`📊 Carregando progresso salvo: ${progress.topic} - Frase ${progress.index + 1} de ${progress.total}`);
+                setTimeout(() => {
+                    startTopic(progress.topic);
+                }, 500);
+            }
+        }
+        
         console.log('🎮 Aplicativo inicializado com sucesso!');
         console.log('📊 Configurações carregadas:', settings);
         if (progress) {
             console.log('📊 Progresso salvo:', progress);
         }
+        
+        // Forçar recarregamento das vozes após 1 segundo
+        setTimeout(() => {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.getVoices();
+            }
+        }, 1000);
     }
 
     document.addEventListener('DOMContentLoaded', init);
