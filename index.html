@@ -8,23 +8,8 @@
     <!-- ===== META TAGS PARA ANDROID ===== -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
     <meta name="msapplication-navbutton-color" content="#000000">
-    
-    <!-- ===== PERMISSÕES PARA ANDROID (via WebView) ===== -->
-    <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self' data: blob:;
-        script-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;
-        style-src 'self' 'unsafe-inline';
-        media-src 'self' blob: data:;
-        connect-src 'self' data: blob:;
-        worker-src 'self' blob:;
-        manifest-src 'self';
-    ">
-    
-    <!-- ===== MANIFEST PARA APK (via PWA) ===== -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkZvcm1hbmRvIGFzIEZyYXNlcyIsCiAgInNob3J0X25hbWUiOiAiRnJhc2VzIiwKICAiZGVzY3JpcHRpb24iOiAiSnVnb3Bhw7NkbyBkZSBGcmFzZXMgZW0gSW5nbMOqcyBjb20gQXVkw7NpbyIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDAwMDAwIiwKICAidGhlbWVfY29sb3IiOiAiIzAwMDAwMCIsCiAgIm9yaWVudGF0aW9uIjogInBvcnRyYWl0IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLDxzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMjU2IDI1Nic+PCEtLSBpY29uZSAtLT48cmVjdCB3aWR0aD0nMjU2JyBoZWlnaHQ9JzI1NicgZmlsbD0nJzAwMDAwMCcvPjx0ZXh0IHg9JzUwJScgeT0nNTAlJyBkeT0nLjFlbScgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nNzAnIGZpbGw9JyMwMGZmMjInIHRleHQtYW5jaG9yPSdtaWRkbGUnIGRvbWluYW50LWJhc2VsaW5lPSJjZW50cmFsIj5GPzwvdGV4dD48L3N2Zz4iLAogICAgICAic2l6ZXMiOiAiMjU2eDI1NiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
     
     <style>
         /* ===== SEU CSS AQUI (mantido igual) ===== */
@@ -1005,52 +990,58 @@
             100% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); }
         }
 
-        /* ===== PERMISSÃO DE MICROFONE - BOTÃO E INDICADOR ===== */
-        .mic-status {
+        /* ===== BOTÃO DE ATIVAÇÃO DE ÁUDIO (FIX PARA WEB2APP) ===== */
+        .audio-activation-banner {
             display: none;
-            background: rgba(255, 0, 0, 0.1);
-            border: 2px solid #ff3333;
-            border-radius: 12px;
-            padding: 10px;
-            margin: 5px 0;
+            background: rgba(255, 170, 0, 0.15);
+            border: 2px solid #ffaa00;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 10px;
             text-align: center;
-            color: #ff3333;
-            font-weight: bold;
-            font-size: 14px;
+            animation: pulseBanner 2s ease infinite;
         }
-        .mic-status.active {
+        .audio-activation-banner.active {
             display: block;
-            animation: micPulse 1.5s ease infinite;
         }
-        @keyframes micPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        .mic-permission-btn {
-            background: rgba(0, 255, 102, 0.1);
-            border: 2px solid #00ff66;
-            color: #00ff66;
-            padding: 8px 16px;
-            border-radius: 25px;
-            font-size: 14px;
+        .audio-activation-banner p {
+            color: #ffaa00;
+            font-size: 16px;
             font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .audio-activation-banner button {
+            background: linear-gradient(135deg, #ffaa00, #ffcc44);
+            color: #000000;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 800;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 5px;
         }
-        .mic-permission-btn:hover {
-            background: rgba(0, 255, 102, 0.2);
-            box-shadow: 0 0 30px rgba(0, 255, 102, 0.15);
+        .audio-activation-banner button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(255, 170, 0, 0.3);
+        }
+        .audio-activation-banner button:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes pulseBanner {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
     </style>
 </head>
 <body>
 
-<!-- ===== BOTÃO DE PERMISSÃO DO MICROFONE (aparece apenas se necessário) ===== -->
-<div id="micPermissionBanner" style="display: none; padding: 10px; text-align: center; background: rgba(0,0,0,0.9); border-bottom: 2px solid #ff3333; position: sticky; top: 0; z-index: 999;">
-    <div style="color: #ff3333; font-weight: bold; margin-bottom: 5px;">🎤 Permissão de Microfone Necessária</div>
-    <button class="mic-permission-btn" onclick="requestMicrophonePermission()">🔊 Conceder Acesso ao Microfone</button>
-    <div style="color: #888; font-size: 12px; margin-top: 5px;">Necessário para funcionalidades de voz</div>
+<!-- ===== BANNER DE ATIVAÇÃO DE ÁUDIO (FIX PARA WEB2APP) ===== -->
+<div id="audioActivationBanner" class="audio-activation-banner">
+    <p>🔊 Toque aqui para ativar o áudio do aplicativo!</p>
+    <button onclick="activateAudio()">🔊 ATIVAR ÁUDIO</button>
+    <p style="font-size: 12px; color: #888; margin-top: 8px;">Necessário para ouvir as palavras e frases</p>
 </div>
 
 <div class="container" id="appContainer">
@@ -1153,103 +1144,185 @@
 
 <script>
     // =============================================
-    // ===== SISTEMA DE PERMISSÕES PARA ANDROID =====
+    // ===== FIX PARA ÁUDIO NO WEB2APP =====
     // =============================================
     
-    // 1. Verificar e solicitar permissões ao carregar
-    async function checkAndRequestPermissions() {
-        console.log('🔍 Verificando permissões...');
-        
-        // Verifica se é um ambiente Android (WebView ou navegador)
-        const isAndroid = /android/i.test(navigator.userAgent);
-        const isChrome = /chrome/i.test(navigator.userAgent);
-        
-        if (isAndroid || isChrome) {
-            console.log('📱 Ambiente Android/Chrome detectado');
-            
-            // Solicita permissão de áudio (necessário para speech synthesis)
-            try {
-                // Tenta criar um contexto de áudio para solicitar permissão
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                if (audioContext.state === 'suspended') {
-                    await audioContext.resume();
-                }
-                console.log('✅ Permissão de áudio concedida');
-            } catch (e) {
-                console.log('⚠️ Erro ao solicitar permissão de áudio:', e);
-            }
-            
-            // Solicita permissão de microfone (se disponível)
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                stream.getTracks().forEach(track => track.stop());
-                console.log('✅ Permissão de microfone concedida');
-                document.getElementById('micPermissionBanner').style.display = 'none';
-            } catch (err) {
-                console.log('⚠️ Permissão de microfone negada ou indisponível:', err);
-                // Mostra banner para solicitar permissão manualmente
-                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-                    document.getElementById('micPermissionBanner').style.display = 'block';
-                }
-            }
-        }
-        
-        // Verifica localStorage (permissão de armazenamento)
+    let audioActivated = false;
+    let audioContext = null;
+    
+    // Função para ativar o áudio (chamada pelo botão)
+    function activateAudio() {
         try {
-            localStorage.setItem('permission_test', 'ok');
-            localStorage.removeItem('permission_test');
-            console.log('✅ Permissão de armazenamento (localStorage) OK');
+            // 1. Criar e ativar AudioContext
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            
+            // 2. Testar Speech Synthesis
+            if ('speechSynthesis' in window) {
+                // Cancela qualquer fala pendente
+                window.speechSynthesis.cancel();
+                
+                // Tenta falar algo para ativar
+                const utterance = new SpeechSynthesisUtterance('Áudio ativado com sucesso!');
+                utterance.lang = 'pt-BR';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+                
+                console.log('✅ Áudio ativado com sucesso!');
+            }
+            
+            // 3. Esconder o banner
+            document.getElementById('audioActivationBanner').classList.remove('active');
+            audioActivated = true;
+            
+            // 4. Mostrar mensagem de sucesso
+            const statusMsg = document.getElementById('status-message');
+            if (statusMsg) {
+                statusMsg.innerHTML = '<span class="status-correct">🔊 Áudio ativado! Toque nas palavras para ouvir.</span>';
+                setTimeout(() => {
+                    statusMsg.innerHTML = '';
+                }, 3000);
+            }
+            
         } catch (e) {
-            console.log('⚠️ Permissão de armazenamento negada:', e);
+            console.log('❌ Erro ao ativar áudio:', e);
+            alert('❌ Não foi possível ativar o áudio. Verifique as permissões do aplicativo.');
         }
     }
     
-    // 2. Função para solicitar permissão de microfone manualmente
-    async function requestMicrophonePermission() {
-        const banner = document.getElementById('micPermissionBanner');
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            stream.getTracks().forEach(track => track.stop());
-            banner.style.display = 'none';
-            alert('✅ Permissão de microfone concedida com sucesso!');
-            console.log('✅ Permissão de microfone concedida manualmente');
-        } catch (err) {
-            console.log('❌ Erro ao conceder permissão:', err);
-            alert('❌ Não foi possível acessar o microfone. Verifique as configurações do seu dispositivo.');
-        }
+    // Função para verificar se o áudio está ativo
+    function isAudioActive() {
+        return audioActivated || ('speechSynthesis' in window && window.speechSynthesis.speaking);
     }
     
-    // 3. Inicializar permissões
-    document.addEventListener('DOMContentLoaded', () => {
-        // Pequeno delay para garantir que tudo está carregado
-        setTimeout(() => {
-            checkAndRequestPermissions();
-        }, 500);
-    });
-    
-    // 4. Verificar permissões quando a página ganha foco (para Android)
-    document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) {
-            checkAndRequestPermissions();
+    // Sobrescrever a função speak para verificar ativação
+    const originalSpeak = window.speak;
+    window.speak = function(text) {
+        if (!isAudioActive()) {
+            // Mostra o banner se o áudio não estiver ativo
+            document.getElementById('audioActivationBanner').classList.add('active');
+            const statusMsg = document.getElementById('status-message');
+            if (statusMsg) {
+                statusMsg.innerHTML = '<span class="status-wrong">🔇 Clique em "ATIVAR ÁUDIO" para ouvir!</span>';
+                setTimeout(() => {
+                    statusMsg.innerHTML = '';
+                }, 3000);
+            }
+            return;
         }
-    });
-    
-    // 5. Função para testar áudio (Speech Synthesis)
-    function testAudioPermission() {
+        
         if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance('Teste de áudio');
-            utterance.lang = 'pt-BR';
+            window.speechSynthesis.cancel();
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    window.speechSynthesis.speak(utterance);
+                }, i * 1400);
+            }
+        }
+    };
+    
+    // Sobrescrever speakWord
+    const originalSpeakWord = window.speakWord;
+    window.speakWord = function(word) {
+        if (!isAudioActive()) {
+            document.getElementById('audioActivationBanner').classList.add('active');
+            return;
+        }
+        
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
             utterance.rate = 0.9;
             window.speechSynthesis.speak(utterance);
-            console.log('🔊 Teste de áudio iniciado');
+            
+            document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
+                if (el.textContent.toLowerCase() === word.toLowerCase()) {
+                    el.classList.add('speaking');
+                    setTimeout(() => el.classList.remove('speaking'), 700);
+                }
+            });
+        }
+    };
+    
+    // Sobrescrever speakFullSentence
+    const originalSpeakFull = window.speakFullSentence;
+    window.speakFullSentence = function() {
+        if (!isAudioActive()) {
+            document.getElementById('audioActivationBanner').classList.add('active');
+            return;
+        }
+        
+        const currentPhrase = playlistPhrases ? playlistPhrases[currentPhraseIndex] : null;
+        if (currentPhrase) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(currentPhrase.en);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+    };
+    
+    // Sobrescrever speakUserSentence
+    const originalSpeakUser = window.speakUserSentence;
+    window.speakUserSentence = function() {
+        if (!isAudioActive()) {
+            document.getElementById('audioActivationBanner').classList.add('active');
+            return;
+        }
+        
+        if (selectedWords && selectedWords.length > 0) {
+            const userTxt = selectedWords.join(" ");
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(userTxt);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+    };
+    
+    // =============================================
+    // ===== DETECÇÃO DE AMBIENTE WEB2APP =====
+    // =============================================
+    
+    function detectWeb2App() {
+        const isWebView = /wv|webview|android|app/i.test(navigator.userAgent);
+        const isChrome = /chrome/i.test(navigator.userAgent);
+        const isWeb2App = /web2app/i.test(navigator.userAgent);
+        
+        console.log('📱 Ambiente detectado:', {
+            isWebView,
+            isChrome,
+            isWeb2App,
+            userAgent: navigator.userAgent
+        });
+        
+        // Se for WebView ou Web2App, mostrar banner de ativação
+        if (isWebView || isWeb2App) {
+            console.log('⚠️ Web2App detectado - Ativação manual de áudio necessária');
+            setTimeout(() => {
+                document.getElementById('audioActivationBanner').classList.add('active');
+            }, 1000);
         } else {
-            console.log('❌ Speech Synthesis não disponível');
+            // No Chrome, tenta ativar automaticamente
+            setTimeout(() => {
+                activateAudio();
+            }, 500);
         }
     }
     
     // =============================================
     // ===== SEU CÓDIGO ORIGINAL AQUI =====
-    // (mantido exatamente como estava)
+    // (mantido exatamente como estava, com ajustes nas funções)
     // =============================================
     
     // ===== CONFIGURAÇÕES DE CORES COM SALVAMENTO =====
@@ -1294,24 +1367,6 @@
     let matchedPairs = 0;
     let matchCards = [];
     let isProcessingMatch = false;
-
-    // ===== FUNÇÕES DE VOZ =====
-    function speakWord(word) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
-            
-            document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
-                if (el.textContent.toLowerCase() === word.toLowerCase()) {
-                    el.classList.add('speaking');
-                    setTimeout(() => el.classList.remove('speaking'), 700);
-                }
-            });
-        }
-    }
 
     // ===== FUNÇÕES DE CONFIGURAÇÃO =====
     function toggleConfigModal() {
@@ -1798,10 +1853,8 @@
         applyTextColor(colorConfig.textColor);
         applyBgColor(colorConfig.bgColor);
         
-        // Teste de áudio ao iniciar
-        setTimeout(() => {
-            testAudioPermission();
-        }, 1000);
+        // Detectar ambiente e configurar áudio
+        detectWeb2App();
     }
 
     function renderTopics() {
@@ -2132,46 +2185,9 @@
         loadPhrase();
     }
 
-    function speak(text) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'en-US';
-                    utterance.rate = 0.85;
-                    window.speechSynthesis.speak(utterance);
-                }, i * 1400); 
-            }
-        }
-    }
+    // ===== A FUNÇÃO speak FOI SOBRESCRITA LÁ EM CIMA =====
 
-    function speakFullSentence() {
-        const currentPhrase = playlistPhrases[currentPhraseIndex];
-        if (currentPhrase) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(currentPhrase.en);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-    }
-
-    function speakUserSentence() {
-        if (selectedWords.length === 0) return;
-        const userTxt = selectedWords.join(" ");
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(userTxt);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.85;
-            window.speechSynthesis.speak(utterance);
-        }
-    }
-
-    // Inicializar após carregar tudo
+    // ===== INICIALIZAR =====
     document.addEventListener('DOMContentLoaded', () => {
         init();
     });
