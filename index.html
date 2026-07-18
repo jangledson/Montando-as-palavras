@@ -5,173 +5,637 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Formando as Frases</title>
     
-    <!-- ===== PERMISSÕES PARA APK ===== -->
+    <!-- ===== META TAGS PARA ANDROID ===== -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="android-manifest:uses-permission" content="android.permission.INTERNET">
-    <meta name="android-manifest:uses-permission" content="android.permission.ACCESS_NETWORK_STATE">
+    <meta name="theme-color" content="#000000">
+    <meta name="msapplication-navbutton-color" content="#000000">
+    
+    <!-- ===== PERMISSÕES PARA ANDROID (via WebView) ===== -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self' data: blob:;
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;
+        style-src 'self' 'unsafe-inline';
+        media-src 'self' blob: data:;
+        connect-src 'self' data: blob:;
+        worker-src 'self' blob:;
+        manifest-src 'self';
+    ">
+    
+    <!-- ===== MANIFEST PARA APK (via PWA) ===== -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkZvcm1hbmRvIGFzIEZyYXNlcyIsCiAgInNob3J0X25hbWUiOiAiRnJhc2VzIiwKICAiZGVzY3JpcHRpb24iOiAiSnVnb3Bhw7NkbyBkZSBGcmFzZXMgZW0gSW5nbMOqcyBjb20gQXVkw7NpbyIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDAwMDAwIiwKICAidGhlbWVfY29sb3IiOiAiIzAwMDAwMCIsCiAgIm9yaWVudGF0aW9uIjogInBvcnRyYWl0IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLDxzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMjU2IDI1Nic+PCEtLSBpY29uZSAtLT48cmVjdCB3aWR0aD0nMjU2JyBoZWlnaHQ9JzI1NicgZmlsbD0nJzAwMDAwMCcvPjx0ZXh0IHg9JzUwJScgeT0nNTAlJyBkeT0nLjFlbScgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nNzAnIGZpbGw9JyMwMGZmMjInIHRleHQtYW5jaG9yPSdtaWRkbGUnIGRvbWluYW50LWJhc2VsaW5lPSJjZW50cmFsIj5GPzwvdGV4dD48L3N2Zz4iLAogICAgICAic2l6ZXMiOiAiMjU2eDI1NiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
     
     <style>
-        /* ===== ESTILOS COMPLETOS ===== */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #000000; color: #ffffff; user-select: none; overflow: hidden; }
-        .container { width: 100%; height: 100%; padding: 10px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
-        
-        /* HEADER */
-        h2 { text-align: center; color: #ffffff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0px 0px 20px rgba(255, 255, 255, 0.3); margin-top: 2px; font-size: 18px; font-weight: 800; }
-        .counter-banner { text-align: center; color: #ffffff; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
-        
-        /* BOTÃO VOLTAR - CANTO INFERIOR ESQUERDO */
-        .back-btn-bottom { position: fixed; bottom: 20px; left: 20px; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.15); border-radius: 50%; width: 44px; height: 44px; color: #ffffff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; backdrop-filter: blur(4px); z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .back-btn-bottom:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
-        .back-btn-bottom:active { transform: scale(0.9); }
-        .back-btn-bottom.hidden { display: none; }
-        
-        /* STATUS ÁUDIO */
-        .audio-status-bar {
-            text-align: center;
-            font-size: 11px;
-            padding: 4px 8px;
-            border-radius: 8px;
-            color: rgba(255, 255, 255, 0.4);
-            min-height: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            margin-top: 2px;
+        /* ===== SEU CSS AQUI (mantido igual) ===== */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
         }
-        .audio-status-bar.success { color: #00ff66; background: rgba(0, 255, 102, 0.05); }
-        .audio-status-bar.error { color: #ff3333; background: rgba(255, 51, 51, 0.05); }
-        .audio-status-bar.loading { color: #ffaa44; background: rgba(255, 170, 0, 0.05); animation: pulse 1s ease infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-        
-        /* SCREENS */
-        .screen { display: none; flex-direction: column; width: 100%; height: 100%; flex: 1; overflow: hidden; }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #000000;
+            color: #00ff66;
+            user-select: none;
+            overflow: hidden;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: background-color 0.4s ease;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 255, 34, 0.05);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 34, 0.3);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 255, 34, 0.6);
+        }
+
+        h2 { 
+            text-align: center; 
+            color: #00ff22; 
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0px 0px 20px rgba(0, 255, 34, 0.5);
+            margin-top: 5px;
+            font-size: 26px;
+            font-weight: 800;
+            transition: color 0.4s ease;
+        }
+
+        .counter-banner {
+            text-align: center;
+            color: #00aa33;
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            transition: color 0.4s ease;
+        }
+
+        .screen { 
+            display: none; 
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            flex: 1;
+        }
         .screen.active { display: flex; }
-        #topics-screen { overflow-y: auto; gap: 8px; padding-bottom: 10px; }
-        #topics-list { display: flex; flex-direction: column; gap: 6px; padding-bottom: 6px; }
-        
-        /* TOPIC CARDS */
-        .topic-card { background: rgba(0, 20, 5, 0.85); border: 2px solid #004411; padding: 12px 16px; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; border-left: 8px solid #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.8); text-align: left; color: #ffffff; width: 100%; display: flex; align-items: center; min-height: 50px; transition: all 0.3s ease; backdrop-filter: blur(10px); }
-        .topic-card:hover { transform: scale(1.01); border-left-color: #00ff88; box-shadow: 0 6px 25px rgba(255, 255, 255, 0.1); }
-        .topic-card:active { transform: scale(0.98); }
-        .topic-card.misto-btn { background: rgba(255, 255, 255, 0.05); border-left-color: #00ff66; border-color: rgba(255, 255, 255, 0.2); color: #ffffff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.2); font-size: 15px; }
-        .topic-card .progress-badge { margin-left: auto; background: rgba(0, 255, 102, 0.15); padding: 2px 10px; border-radius: 12px; font-size: 11px; color: #00ff66; border: 1px solid rgba(0, 255, 102, 0.2); }
-        
-        /* GAME SCREEN */
-        #game-screen { display: none; flex-direction: column; height: 100%; overflow: hidden; }
+
+        #topics-screen {
+            overflow-y: auto;
+            gap: 14px;
+        }
+
+        #topics-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-bottom: 10px;
+        }
+
+        .topic-card {
+            background: rgba(0, 20, 5, 0.85);
+            border: 2px solid #004411;
+            padding: 18px 22px; 
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 24px; 
+            font-weight: bold;
+            border-left: 10px solid #00ff22; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            text-align: left;
+            color: #ffffff;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            min-height: 70px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .topic-card:hover {
+            transform: scale(1.02);
+            border-left-color: #00ff88;
+            box-shadow: 0 6px 25px rgba(0, 255, 34, 0.15);
+        }
+        .topic-card:active {
+            transform: scale(0.98);
+        }
+
+        .topic-card.misto-btn {
+            background: rgba(0, 255, 100, 0.12);
+            border-left-color: #00ff66; 
+            border-color: rgba(0, 255, 102, 0.3);
+            color: #00ff66;
+            text-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
+        }
+
+        #game-screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            justify-content: space-between;
+        }
         #game-screen.active { display: flex; }
-        .game-scrollable-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-bottom: 8px; padding-right: 2px; }
-        
-        /* TOP CHALLENGE */
-        .top-challenge { background: rgba(0, 15, 5, 0.6); border: 2px solid rgba(255, 255, 255, 0.15); padding: 10px 12px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 8px; backdrop-filter: blur(8px); position: relative; }
-        .phrase-counter { position: absolute; top: 8px; right: 12px; font-size: 11px; color: rgba(255, 255, 255, 0.4); font-weight: bold; letter-spacing: 0.5px; background: rgba(0, 0, 0, 0.3); padding: 2px 10px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .phrase-container { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
-        .phrase-item { font-size: 16px; font-weight: bold; color: #ffffff; text-align: center; padding: 4px 8px; border-radius: 8px; transition: all 0.5s ease; }
-        .phrase-item.hidden { display: none; }
-        .phrase-item.revealed { animation: revealPhrase 0.8s ease; }
-        .phrase-item.completed { color: #00ff66; text-shadow: 0 0 20px rgba(0, 255, 102, 0.3); }
-        @keyframes revealPhrase { 0% { opacity: 0; transform: translateY(-20px) scale(0.9); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
-        
-        /* AUDIO CONTROLS */
-        .audio-controls-row { display: flex; justify-content: center; align-items: center; width: 100%; margin-top: 2px; gap: 6px; flex-wrap: wrap; }
-        .btn-audio-top { background: rgba(255, 255, 255, 0.05); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.2); padding: 6px 10px; font-size: 12px; font-weight: bold; border-radius: 10px; cursor: pointer; flex: 1; min-width: 60px; text-align: center; transition: all 0.3s ease; backdrop-filter: blur(4px); }
-        .btn-audio-top:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.4); }
-        .btn-audio-top:active { transform: scale(0.95); }
-        
-        /* ZONE HEADER */
-        .zone-header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
-        .zone-title { font-size: 13px; color: #ffffff; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
-        .btn-pesca { background: rgba(0, 17, 4, 0.8); color: #ffffff; border: 2px solid rgba(255, 255, 255, 0.2); padding: 4px 12px; font-size: 11px; font-weight: bold; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.3s ease; backdrop-filter: blur(4px); }
-        .btn-pesca:hover { border-color: rgba(255, 255, 255, 0.4); }
-        .btn-pesca.active { background: rgba(255, 255, 255, 0.1); color: #ffffff; border-color: #ffffff; }
-        
-        /* CONSTRUCTION ZONE */
-        .construction-zone { background: rgba(0, 5, 2, 0.7); border: 2px dashed rgba(255, 255, 255, 0.15); border-radius: 12px; min-height: 100px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; backdrop-filter: blur(4px); }
-        .success-text-box { display: none; background: rgba(0, 255, 102, 0.05); border: 2px solid #00ff66; border-radius: 12px; min-height: 100px; padding: 12px; font-size: 18px; font-weight: bold; color: #00ff66; text-align: center; align-items: center; justify-content: center; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); backdrop-filter: blur(4px); }
-        .success-text-box.completed { display: flex; flex-direction: column; gap: 8px; }
-        .success-text-box .phrase-completed { font-size: 16px; color: #ffffff; }
-        .success-text-box .phrase-completed .check { color: #00ff66; margin-right: 8px; }
-        
-        /* WORDS ZONE */
-        .words-zone { background: rgba(0, 10, 4, 0.4); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 12px; min-height: 80px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; align-content: flex-start; backdrop-filter: blur(4px); }
-        
-        /* WORD BALLOONS */
-        .word-balloon { padding: 6px 12px; font-size: 15px; font-weight: 800; border-radius: 20px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.6); display: inline-block; user-select: none; position: relative; max-width: 100%; word-wrap: break-word; touch-action: none; transition: color 0.3s ease, background-color 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease; background: #1a1a1a; border: 2px solid #2a2a2a; color: #00ff22; text-shadow: 0 0 20px rgba(0, 255, 34, 0.1); letter-spacing: 0.3px; line-height: 1.2; }
-        .word-balloon:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 30px rgba(0,0,0,0.8); border-color: #3a3a3a; }
-        .word-balloon:active { transform: scale(0.93); }
-        .construction-zone .word-balloon { background: #1a1a1a; border: 2px solid #2a2a2a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5); cursor: grab; transition: color 0.3s ease, background-color 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease; font-size: 14px; padding: 5px 10px; }
-        .construction-zone .word-balloon:hover { box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7); border-color: #3a3a3a; }
-        .construction-zone .word-balloon:active { cursor: grabbing; transform: scale(0.93); }
-        .words-zone .word-balloon { background: #1a1a1a; border: 2px solid #2a2a2a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4); color: #00ffaa; transition: color 0.3s ease, background-color 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease; font-size: 13px; padding: 4px 10px; }
-        .words-zone .word-balloon:hover { border-color: #3a3a3a; box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6); }
-        .word-balloon.dragging { opacity: 0.4; border: 2px dashed #ffff00 !important; background: rgba(255, 255, 0, 0.05) !important; transform: scale(0.9); }
-        .word-balloon.pescado { background: #001a00 !important; color: #ffff00 !important; border-color: #2a2a00 !important; box-shadow: 0 0 30px rgba(255, 255, 0, 0.15) !important; animation: pescaGlow 1s ease infinite alternate; }
-        @keyframes pescaGlow { 0% { box-shadow: 0 0 15px rgba(255, 255, 0, 0.1); } 100% { box-shadow: 0 0 35px rgba(255, 255, 0, 0.25); } }
-        .word-balloon.speaking { animation: speakGlow 0.6s ease; }
-        @keyframes speakGlow { 0% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); } 50% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.2); } 100% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); } }
-        
-        /* STATUS */
-        .status-container { text-align: center; font-size: 14px; font-weight: bold; min-height: 20px; margin: 2px 0; padding: 3px; color: #ffffff; }
-        .status-correct { color: #00ff66; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); animation: statusPop 0.5s ease; }
-        .status-wrong { color: #ff3333; text-shadow: 0 0 20px rgba(255, 51, 51, 0.4); animation: statusShake 0.5s ease; }
-        @keyframes statusPop { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes statusShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
-        
-        /* CONTROL PANEL */
-        .control-panel { display: flex; flex-direction: column; gap: 5px; padding-top: 6px; border-top: 2px solid rgba(255, 255, 255, 0.05); background: transparent; align-items: center; width: 100%; }
-        .action-btn { width: 100%; max-width: 500px; padding: 10px 16px; color: #000000; border: none; border-radius: 25px; font-size: 15px; font-weight: bold; cursor: pointer; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6); display: block; transition: all 0.3s ease; letter-spacing: 0.5px; }
-        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8); }
-        .action-btn:active { transform: scale(0.97); }
-        .btn-check { background: linear-gradient(135deg, #00aa22 0%, #00ff66 100%); color: #000000; font-weight: 800; }
-        .btn-next { background: linear-gradient(135deg, #00ddff 0%, #00ffaa 100%); color: #000000; display: none; font-weight: 800; }
-        .btn-reveal { background: rgba(0, 17, 4, 0.8); border: 2px solid rgba(255, 255, 255, 0.2); padding: 6px 14px; font-size: 13px; color: #ffffff; backdrop-filter: blur(4px); transition: all 0.3s ease; border-radius: 20px; }
-        .btn-reveal:hover { border-color: rgba(255, 255, 255, 0.4); background: rgba(255, 255, 255, 0.05); }
-        .revealed-answer-box { background: rgba(0, 0, 0, 0.9); border: 2px solid #00ff66; color: #00ff66; padding: 10px; border-radius: 12px; text-align: center; font-size: 14px; font-weight: bold; display: none; word-wrap: break-word; width: 100%; max-width: 500px; box-shadow: 0 0 30px rgba(0, 255, 102, 0.15); backdrop-filter: blur(4px); }
-        
-        /* STATS */
-        .stats-wrapper { text-align: center; padding: 6px 0 12px 0; margin-top: 2px; }
-        .btn-show-stats { background: rgba(0, 0, 0, 0.8); color: #ffffff; border: 2px dashed rgba(255, 255, 255, 0.2); padding: 6px 14px; font-size: 12px; font-weight: bold; border-radius: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease; backdrop-filter: blur(4px); }
-        .btn-show-stats:hover { border-color: rgba(255, 255, 255, 0.4); }
-        .stats-report-box { display: none; background: rgba(0, 10, 3, 0.9); border: 2px solid #ffffff; padding: 12px; border-radius: 12px; margin: 6px auto 0 auto; font-size: 13px; color: #ffffff; font-weight: bold; text-align: left; line-height: 1.5; max-width: 550px; box-shadow: 0 0 30px rgba(255, 255, 255, 0.05); backdrop-filter: blur(4px); }
-        
-        /* BOTTOM BUTTONS */
-        .bottom-buttons-row { display: flex; justify-content: space-around; width: 100%; padding: 0 5px; gap: 6px; }
-        .bottom-btn-wrapper { display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .bottom-btn-wrapper .btn-label { font-size: 7px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5; text-align: center; margin-top: 2px; color: #ffffff; }
-        
-        .config-btn, .match-btn, .voice-btn {
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
+
+        .game-scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding-bottom: 14px;
+            padding-right: 2px;
+        }
+
+        .top-challenge {
+            background: rgba(0, 15, 5, 0.6);
+            border: 2px solid rgba(0, 68, 17, 0.6);
+            padding: 18px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            backdrop-filter: blur(8px);
+            transition: border-color 0.4s ease;
+        }
+
+        .phrase-pt {
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.4;
+            color: #ffffff; 
+            text-shadow: 0 2px 10px rgba(0,255,34,0.3);
+            word-wrap: break-word;
+            transition: color 0.4s ease;
+        }
+
+        .audio-controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-top: 5px;
+            gap: 10px;
+        }
+
+        .btn-audio-top {
+            background: rgba(0, 255, 102, 0.08);
+            color: #00ff66;
+            border: 2px solid rgba(0, 255, 102, 0.3);
+            padding: 10px 16px;
+            font-size: 17px; 
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            flex: 1; 
+            text-align: center;
+            text-shadow: 0 0 5px rgba(0, 255, 102, 0.2);
+            transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease;
+            backdrop-filter: blur(4px);
+        }
+        .btn-audio-top:hover {
+            background: rgba(0, 255, 102, 0.15);
+            border-color: #00ff66;
+        }
+        .btn-audio-top:active {
+            transform: scale(0.95);
+        }
+
+        .btn-audio-user {
+            color: #00ff22;
+            border-color: rgba(0, 255, 34, 0.3);
+        }
+
+        .zone-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .zone-title {
             font-size: 18px;
+            color: #00aa33;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 170, 51, 0.2);
+            transition: color 0.4s ease;
+        }
+
+        .btn-pesca {
+            background: rgba(0, 17, 4, 0.8);
+            color: #00dd44;
+            border: 2px solid rgba(0, 68, 17, 0.6);
+            padding: 8px 18px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease;
+            backdrop-filter: blur(4px);
+        }
+        .btn-pesca:hover {
+            border-color: #00dd44;
+            box-shadow: 0 0 20px rgba(0, 221, 68, 0.15);
+        }
+        .btn-pesca.active {
+            background: rgba(0, 51, 10, 0.8);
+            color: #00ff66;
+            border-color: #00ff66;
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.3);
+        }
+
+        .construction-zone {
+            background: rgba(0, 5, 2, 0.7);
+            border: 2px dashed rgba(0, 255, 34, 0.3);
+            border-radius: 16px;
+            min-height: 300px;
+            padding: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-content: flex-start;
+            position: relative;
+            transition: border-color 0.4s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .success-text-box {
+            display: none;
+            background: rgba(0, 255, 102, 0.05);
+            border: 2px solid #00ff66;
+            border-radius: 16px;
+            min-height: 300px;
+            padding: 18px;
+            font-size: 26px;
+            font-weight: bold;
+            color: #00ff66;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
+            backdrop-filter: blur(4px);
+            transition: color 0.4s ease, border-color 0.4s ease;
+        }
+
+        .words-zone {
+            background: rgba(0, 10, 4, 0.4);
+            border: 2px solid rgba(0, 68, 17, 0.4);
+            border-radius: 16px;
+            min-height: 160px;
+            padding: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: flex-start;
+            align-content: flex-start;
+            transition: border-color 0.4s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        /* ===== BALÕES DO JOGO DAS PALAVRAS ===== */
+        .word-balloon {
+            padding: 14px 22px; 
+            font-size: 28px; 
+            font-weight: 900;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            display: inline-block;
+            user-select: none;
+            position: relative;
+            max-width: 100%;
+            word-wrap: break-word;
+            touch-action: none;
+            transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease;
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            color: #00ff22;
+            text-shadow: 0 0 20px rgba(0, 255, 34, 0.15);
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+        }
+        .word-balloon:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 6px 30px rgba(0,0,0,0.8);
+            border-color: #2a2a2a;
+        }
+        .word-balloon:active {
+            transform: scale(0.93);
+        }
+
+        .construction-zone .word-balloon {
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5);
+            cursor: grab;
+            color: #00ff22;
+            transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .construction-zone .word-balloon:hover {
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7);
+            border-color: #2a2a2a;
+        }
+        .construction-zone .word-balloon:active {
+            cursor: grabbing;
+            transform: scale(0.93);
+        }
+
+        .words-zone .word-balloon {
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4);
+            color: #00ffaa;
+            transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .words-zone .word-balloon:hover {
+            border-color: #2a2a2a;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
+        }
+
+        .word-balloon.dragging {
+            opacity: 0.4;
+            border: 2px dashed #ffff00 !important;
+            background: rgba(255, 255, 0, 0.05) !important;
+            transform: scale(0.9);
+        }
+
+        .word-balloon.pescado {
+            background: #001a00 !important;
+            color: #ffff00 !important;
+            border-color: #2a2a00 !important;
+            box-shadow: 0 0 30px rgba(255, 255, 0, 0.15) !important;
+            animation: pescaGlow 1s ease infinite alternate;
+        }
+
+        @keyframes pescaGlow {
+            0% { box-shadow: 0 0 15px rgba(255, 255, 0, 0.1); }
+            100% { box-shadow: 0 0 35px rgba(255, 255, 0, 0.25); }
+        }
+
+        .status-container {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            min-height: 28px;
+            margin: 5px 0;
+            padding: 5px;
+        }
+        .status-correct { 
+            color: #00ff66; 
+            text-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
+            animation: statusPop 0.5s ease;
+            transition: color 0.4s ease;
+        }
+        .status-wrong { 
+            color: #ff3333; 
+            text-shadow: 0 0 20px rgba(255, 51, 51, 0.4);
+            animation: statusShake 0.5s ease;
+        }
+
+        @keyframes statusPop {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes statusShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-top: 10px;
+            border-top: 2px solid rgba(0, 255, 34, 0.08);
+            background: transparent;
+            align-items: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .action-btn {
+            width: 90%;
+            max-width: 500px;
+            padding: 14px 20px; 
+            color: #000000;
+            border: none;
+            border-radius: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            display: block;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8);
+        }
+        .action-btn:active {
+            transform: scale(0.97);
+        }
+        
+        .btn-check { 
+            background: linear-gradient(135deg, #00aa22 0%, #00ff66 100%); 
+            color: #000000;
+            font-weight: 800;
+        }
+        .btn-next { 
+            background: linear-gradient(135deg, #00ddff 0%, #00ffaa 100%); 
+            color: #000000; 
+            display: none;
+            font-weight: 800;
+        }
+        
+        .btn-reveal {
+            background: rgba(0, 17, 4, 0.8);
+            border: 2px solid rgba(0, 68, 17, 0.6);
+            padding: 10px 18px;
+            font-size: 16px;
+            color: #00ff22;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease;
+        }
+        .btn-reveal:hover {
+            border-color: #00ff22;
+            background: rgba(0, 255, 34, 0.1);
+        }
+
+        .revealed-answer-box {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff66;
+            color: #00ff66;
+            padding: 14px;
+            border-radius: 16px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            display: none;
+            word-wrap: break-word;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 0 30px rgba(0, 255, 102, 0.15);
+            backdrop-filter: blur(4px);
+            transition: color 0.4s ease, border-color 0.4s ease;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #00ff22;
+            font-weight: bold;
+            font-size: 20px;
+            cursor: pointer;
+            margin-bottom: 4px;
+            text-shadow: 0 0 10px rgba(0, 255, 34, 0.2);
+            transition: all 0.3s ease, color 0.4s ease;
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+        .back-link:hover {
+            background: rgba(0, 255, 34, 0.05);
+            text-shadow: 0 0 20px rgba(0, 255, 34, 0.4);
+        }
+
+        .stats-wrapper {
+            text-align: center;
+            padding: 10px 0 20px 0;
+            margin-top: 5px;
+        }
+        .btn-show-stats {
+            background: rgba(0, 0, 0, 0.8);
+            color: #00aa33;
+            border: 2px dashed rgba(0, 68, 17, 0.5);
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease;
+            backdrop-filter: blur(4px);
+        }
+        .btn-show-stats:hover {
+            border-color: #00aa33;
+            box-shadow: 0 0 20px rgba(0, 170, 51, 0.15);
+        }
+        .stats-report-box {
+            display: none;
+            background: rgba(0, 10, 3, 0.9);
+            border: 2px solid #00ff22;
+            padding: 16px;
+            border-radius: 16px;
+            margin: 10px auto 0 auto;
+            font-size: 16px;
+            color: #00ff22;
+            font-weight: bold;
+            text-align: left;
+            line-height: 1.6;
+            max-width: 550px;
+            box-shadow: 0 0 30px rgba(0, 255, 34, 0.1);
+            backdrop-filter: blur(4px);
+            transition: color 0.4s ease, border-color 0.4s ease;
+        }
+
+        .bottom-buttons-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 5px;
+            position: relative;
+        }
+
+        .config-btn {
+            background: rgba(0, 20, 5, 0.85);
+            border: 2px solid #00ff66;
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            font-size: 26px;
+            color: #00ff66;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.15);
+            transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+        .config-btn:hover {
+            transform: scale(1.1) rotate(60deg);
+            box-shadow: 0 0 35px rgba(0, 255, 102, 0.3);
+        }
+        .config-btn.active {
+            background: #00ff66;
+            color: #000000;
+            box-shadow: 0 0 40px rgba(0, 255, 102, 0.5);
+        }
+
+        .match-btn {
+            background: rgba(20, 20, 5, 0.85);
+            border: 2px solid #ffaa00;
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            font-size: 24px;
+            color: #ffaa00;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 25px rgba(255, 170, 0, 0.15);
             transition: all 0.3s ease;
             z-index: 10;
             backdrop-filter: blur(4px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
         }
-        .config-btn:hover, .match-btn:hover, .voice-btn:hover {
+        .match-btn:hover {
             transform: scale(1.1);
-            box-shadow: 0 0 35px rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 35px rgba(255, 170, 0, 0.3);
         }
-        .config-btn:active, .match-btn:active, .voice-btn:active { transform: scale(0.9); }
-        .config-btn.active { background: #ffffff; color: #000000; box-shadow: 0 0 40px rgba(255, 255, 255, 0.3); }
-        .match-btn.active { background: #ffaa00; color: #000000; box-shadow: 0 0 40px rgba(255, 170, 0, 0.3); }
-        .voice-btn.active { background: #00aaff; color: #000000; box-shadow: 0 0 40px rgba(0, 170, 255, 0.3); }
-        
-        .config-btn-label { color: #ffffff; }
-        .match-btn-label { color: #ffaa00; }
-        .voice-btn-label { color: #00aaff; }
-        
-        /* ===== TELA DE VOZES ===== */
-        #voice-screen {
+        .match-btn.active {
+            background: #ffaa00;
+            color: #000000;
+            box-shadow: 0 0 40px rgba(255, 170, 0, 0.5);
+        }
+
+        /* ===== TELA DO JOGO DE COMBINAÇÃO ===== */
+        #match-screen {
             display: none;
             flex-direction: column;
             height: 100%;
@@ -179,130 +643,423 @@
             position: fixed;
             top: 0;
             left: 0;
-            background: #0a0a0a;
-            z-index: 600;
-            padding: 12px;
+            background: #000000;
+            z-index: 500;
+            padding: 16px;
             overflow-y: auto;
+            transition: background-color 0.4s ease;
         }
-        #voice-screen.active { display: flex; }
-        
-        .voice-header {
+        #match-screen.active {
+            display: flex;
+        }
+
+        .match-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0 10px 0;
-            border-bottom: 2px solid rgba(0, 170, 255, 0.2);
-            margin-bottom: 10px;
+            padding: 10px 0 15px 0;
+            border-bottom: 2px solid rgba(255, 170, 0, 0.2);
+            margin-bottom: 15px;
         }
-        .voice-header h2 { color: #00aaff; text-shadow: 0 0 30px rgba(0, 170, 255, 0.3); font-size: 18px; margin: 0; letter-spacing: 2px; }
-        .voice-close-btn { background: rgba(0, 170, 255, 0.1); border: 2px solid #00aaff; color: #00aaff; font-size: 18px; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
-        .voice-close-btn:hover { background: #00aaff; color: #000000; transform: rotate(90deg); }
-        
-        .voice-list { display: flex; flex-direction: column; gap: 10px; flex: 1; padding-bottom: 10px; }
-        .voice-card {
-            background: rgba(0, 20, 5, 0.85);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 14px 16px;
+        .match-header h2 {
+            color: #ffaa00;
+            text-shadow: 0 0 30px rgba(255, 170, 0, 0.3);
+            font-size: 22px;
+            margin: 0;
+            letter-spacing: 2px;
+            transition: color 0.4s ease;
+        }
+        .match-close-btn {
+            background: rgba(255, 170, 0, 0.1);
+            border: 2px solid #ffaa00;
+            color: #ffaa00;
+            font-size: 24px;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: center;
             transition: all 0.3s ease;
+        }
+        .match-close-btn:hover {
+            background: #ffaa00;
+            color: #000000;
+            transform: rotate(90deg);
+        }
+
+        .match-stats {
+            color: #ffaa00;
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(255, 170, 0, 0.15);
+            transition: color 0.4s ease;
+        }
+
+        .match-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            flex: 1;
+        }
+
+        /* ===== CARDS DO MATCH GAME - MESMO ESTILO DOS BALÕES ===== */
+        .match-card {
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            border-radius: 30px;
+            padding: 14px 10px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 900;
+            color: #00ff22;
+            cursor: pointer;
+            transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-wrap: break-word;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            position: relative;
+            backdrop-filter: blur(4px);
+            text-shadow: 0 0 20px rgba(0, 255, 34, 0.15);
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+        }
+        .match-card:hover {
+            transform: translateY(-3px) scale(1.02);
+            border-color: #2a2a2a;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.7);
+        }
+        .match-card:active {
+            transform: scale(0.95);
+        }
+        .match-card.selected {
+            border-color: #ffaa00;
+            box-shadow: 0 0 40px rgba(255, 170, 0, 0.3);
+            transform: scale(1.04);
+        }
+        .match-card.matched {
+            background: rgba(0, 26, 0, 0.6);
+            border-color: #00ff66;
+            color: #00ff66;
+            cursor: default;
+            opacity: 0.3;
+            transform: scale(0.92);
+            pointer-events: none;
+            animation: matchPop 0.6s ease;
+        }
+        .match-card.matched::after {
+            content: "✓";
+            position: absolute;
+            top: 5px;
+            right: 15px;
+            font-size: 24px;
+            color: #00ff66;
+            text-shadow: 0 0 30px rgba(0, 255, 102, 0.5);
+        }
+
+        @keyframes matchPop {
+            0% { transform: scale(1.3); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.92); opacity: 0.3; }
+        }
+
+        .match-card.wrong {
+            animation: wrongShake 0.5s ease;
+            border-color: #ff3333;
+            box-shadow: 0 0 40px rgba(255, 51, 51, 0.25);
+        }
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-12px); }
+            40% { transform: translateX(12px); }
+            60% { transform: translateX(-8px); }
+            80% { transform: translateX(8px); }
+        }
+
+        .match-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 170, 0, 0.15);
+        }
+        .match-controls button {
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+        .match-controls button:hover {
+            transform: translateY(-2px);
+        }
+        .match-controls button:active {
+            transform: scale(0.95);
+        }
+        .btn-match-reset {
+            background: linear-gradient(135deg, #ffaa00, #ffcc44);
+            color: #000000;
+            font-weight: 800;
+        }
+        .btn-match-reset:hover {
+            box-shadow: 0 6px 30px rgba(255, 170, 0, 0.4);
+        }
+        .btn-match-close {
+            background: rgba(51, 51, 51, 0.8);
+            color: #ffaa00;
+            border: 2px solid rgba(255, 170, 0, 0.3) !important;
+        }
+        .btn-match-close:hover {
+            background: rgba(255, 170, 0, 0.15);
+            border-color: #ffaa00 !important;
+        }
+
+        .match-win-message {
+            display: none;
+            text-align: center;
+            color: #ffaa00;
+            font-size: 30px;
+            font-weight: bold;
+            padding: 20px;
+            text-shadow: 0 0 40px rgba(255, 170, 0, 0.4);
+            animation: winPulse 1.5s ease infinite alternate;
+        }
+        @keyframes winPulse {
+            0% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); }
+            100% { transform: scale(1.05); text-shadow: 0 0 60px rgba(255, 170, 0, 0.6); }
+        }
+
+        /* Modal de Configuração */
+        .config-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.88);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+        .config-modal.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .config-modal-content {
+            background: rgba(0, 15, 5, 0.95);
+            border: 2px solid rgba(0, 255, 102, 0.2);
+            border-radius: 20px;
+            padding: 30px 25px;
+            max-width: 420px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 0 60px rgba(0, 255, 102, 0.08);
             backdrop-filter: blur(10px);
+            transition: border-color 0.4s ease;
+        }
+
+        .config-modal-content h3 {
+            color: #00ff66;
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
+            transition: color 0.4s ease;
+        }
+
+        .config-modal-close {
+            float: right;
+            background: transparent;
+            border: none;
+            color: #00ff66;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0 8px;
+            line-height: 1;
+            transition: all 0.3s ease, color 0.4s ease;
+        }
+        .config-modal-close:hover {
+            color: #ffffff;
+            transform: rotate(90deg);
+        }
+
+        .color-picker-group {
+            margin-bottom: 22px;
+        }
+
+        .color-picker-group label {
+            display: block;
+            color: #00ff66;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            transition: color 0.4s ease;
+        }
+
+        .color-picker-group .color-options {
+            display: flex;
             flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
         }
-        .voice-card:hover { border-color: rgba(255, 255, 255, 0.2); }
-        .voice-card .voice-info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 120px; }
-        .voice-card .voice-name { font-size: 15px; font-weight: bold; color: #ffffff; }
-        .voice-card .voice-desc { font-size: 11px; color: rgba(255, 255, 255, 0.4); }
-        .voice-card .voice-status-badge { font-size: 10px; padding: 2px 10px; border-radius: 12px; display: inline-block; margin-top: 4px; background: rgba(0, 255, 102, 0.15); color: #00ff66; border: 1px solid rgba(0, 255, 102, 0.2); }
-        
-        .voice-test-area {
+
+        .color-option {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .color-option:hover {
+            transform: scale(1.15);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+        }
+        .color-option.selected {
+            border-color: #ffffff;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            transform: scale(1.12);
+        }
+
+        .color-option .check-mark {
+            display: none;
+            font-size: 18px;
+            color: white;
+            text-align: center;
+            line-height: 42px;
+            text-shadow: 0 0 15px rgba(0,0,0,0.9);
+        }
+        .color-option.selected .check-mark {
+            display: block;
+        }
+
+        .btn-reset-colors {
+            background: rgba(255, 0, 0, 0.15);
+            border: 2px solid rgba(255, 51, 51, 0.3);
+            color: #ff3333;
+            padding: 12px 20px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
             margin-top: 10px;
-            padding: 14px 16px;
-            background: rgba(0, 20, 5, 0.85);
-            border: 2px solid rgba(0, 170, 255, 0.2);
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
         }
-        .voice-test-area .test-title { font-size: 12px; color: rgba(255, 255, 255, 0.5); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; text-align: center; }
-        .voice-test-area .test-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-        .voice-test-area .test-row input { flex: 1; min-width: 120px; padding: 8px 12px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.05); color: #ffffff; font-size: 14px; outline: none; transition: border-color 0.3s ease; }
-        .voice-test-area .test-row input:focus { border-color: rgba(0, 170, 255, 0.4); }
-        .voice-test-area .test-row input::placeholder { color: rgba(255, 255, 255, 0.2); }
-        .voice-test-area .test-row .btn-test-voice { padding: 8px 18px; border-radius: 20px; background: rgba(0, 170, 255, 0.15); color: #00aaff; border: 1px solid rgba(0, 170, 255, 0.3); font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; }
-        .voice-test-area .test-row .btn-test-voice:hover { background: rgba(0, 170, 255, 0.25); }
-        .voice-test-area .test-row .btn-test-voice:active { transform: scale(0.95); }
-        .voice-test-area .test-status { margin-top: 6px; font-size: 11px; color: rgba(255, 255, 255, 0.3); text-align: center; }
-        
-        /* ===== MATCH SCREEN ===== */
-        #match-screen { display: none; flex-direction: column; height: 100%; width: 100%; position: fixed; top: 0; left: 0; background: #000000; z-index: 500; padding: 12px; overflow-y: auto; }
-        #match-screen.active { display: flex; }
-        .match-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 0 10px 0; border-bottom: 2px solid rgba(255, 170, 0, 0.2); margin-bottom: 10px; }
-        .match-header h2 { color: #ffaa00; text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); font-size: 18px; margin: 0; letter-spacing: 2px; }
-        .match-close-btn { background: rgba(255, 170, 0, 0.1); border: 2px solid #ffaa00; color: #ffaa00; font-size: 18px; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
-        .match-close-btn:hover { background: #ffaa00; color: #000000; transform: rotate(90deg); }
-        .match-stats { color: #ffaa00; text-align: center; font-size: 13px; margin-bottom: 10px; font-weight: bold; letter-spacing: 1px; }
-        .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; }
-        .match-card { background: #1a1a1a; border: 2px solid #2a2a2a; border-radius: 20px; padding: 10px 8px; text-align: center; font-size: 16px; font-weight: 800; color: #00ff22; cursor: pointer; transition: all 0.3s ease; min-height: 50px; display: flex; align-items: center; justify-content: center; word-wrap: break-word; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; backdrop-filter: blur(4px); text-shadow: 0 0 20px rgba(0, 255, 34, 0.1); letter-spacing: 0.3px; line-height: 1.2; }
-        .match-card:hover { transform: translateY(-2px) scale(1.01); border-color: #3a3a3a; box-shadow: 0 6px 25px rgba(0,0,0,0.7); }
-        .match-card:active { transform: scale(0.95); }
-        .match-card.selected { border-color: #ffaa00; box-shadow: 0 0 40px rgba(255, 170, 0, 0.3); transform: scale(1.03); }
-        .match-card.matched { background: rgba(0, 26, 0, 0.6); border-color: #00ff66; color: #00ff66; cursor: default; opacity: 0.3; transform: scale(0.92); pointer-events: none; animation: matchPop 0.6s ease; }
-        .match-card.matched::after { content: "✓"; position: absolute; top: 2px; right: 10px; font-size: 18px; color: #00ff66; text-shadow: 0 0 30px rgba(0, 255, 102, 0.5); }
-        @keyframes matchPop { 0% { transform: scale(1.3); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.92); opacity: 0.3; } }
-        .match-card.wrong { animation: wrongShake 0.5s ease; border-color: #ff3333; box-shadow: 0 0 40px rgba(255, 51, 51, 0.25); }
-        @keyframes wrongShake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-10px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); } }
-        .match-controls { display: flex; gap: 8px; justify-content: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 170, 0, 0.15); }
-        .match-controls button { padding: 8px 18px; border-radius: 25px; font-size: 13px; font-weight: bold; cursor: pointer; border: none; transition: all 0.3s ease; letter-spacing: 0.5px; }
-        .match-controls button:hover { transform: translateY(-2px); }
-        .match-controls button:active { transform: scale(0.95); }
-        .btn-match-reset { background: linear-gradient(135deg, #ffaa00, #ffcc44); color: #000000; font-weight: 800; }
-        .btn-match-reset:hover { box-shadow: 0 6px 30px rgba(255, 170, 0, 0.4); }
-        .btn-match-close { background: rgba(51, 51, 51, 0.8); color: #ffaa00; border: 2px solid rgba(255, 170, 0, 0.3) !important; }
-        .btn-match-close:hover { background: rgba(255, 170, 0, 0.15); border-color: #ffaa00 !important; }
-        .match-win-message { display: none; text-align: center; color: #ffaa00; font-size: 22px; font-weight: bold; padding: 12px; text-shadow: 0 0 40px rgba(255, 170, 0, 0.4); animation: winPulse 1.5s ease infinite alternate; }
-        @keyframes winPulse { 0% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); } 100% { transform: scale(1.04); text-shadow: 0 0 60px rgba(255, 170, 0, 0.6); } }
-        
-        /* ===== CONFIG MODAL ===== */
-        .config-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 1000; justify-content: center; align-items: center; animation: fadeIn 0.3s ease; backdrop-filter: blur(8px); }
-        .config-modal.active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .config-modal-content { background: rgba(0, 15, 5, 0.95); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 20px 18px; max-width: 420px; width: 95%; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 60px rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); }
-        .config-modal-content h3 { color: #ffffff; text-align: center; font-size: 18px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 2px; }
-        .config-modal-close { float: right; background: transparent; border: none; color: #ffffff; font-size: 22px; cursor: pointer; padding: 0 6px; line-height: 1; transition: all 0.3s ease; }
-        .config-modal-close:hover { color: #00ff66; transform: rotate(90deg); }
-        .config-section { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .config-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .config-section label { display: block; color: #ffffff; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; opacity: 0.8; }
-        .color-options { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-        .color-option { width: 32px; height: 32px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .color-option:hover { transform: scale(1.12); box-shadow: 0 4px 20px rgba(0,0,0,0.7); }
-        .color-option.selected { border-color: #ffffff; box-shadow: 0 0 30px rgba(255, 255, 255, 0.2); transform: scale(1.1); }
-        .color-option .check-mark { display: none; font-size: 14px; color: white; text-align: center; line-height: 32px; text-shadow: 0 0 15px rgba(0,0,0,0.9); }
-        .color-option.selected .check-mark { display: block; }
-        .font-size-control { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 6px 0; }
-        .font-size-control button { width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.05); color: #ffffff; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
-        .font-size-control button:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.4); }
-        .font-size-control button:active { transform: scale(0.9); }
-        .font-size-control .size-display { font-size: 16px; font-weight: bold; color: #ffffff; min-width: 40px; text-align: center; }
-        .btn-reset-colors { background: rgba(255, 0, 0, 0.15); border: 2px solid rgba(255, 51, 51, 0.3); color: #ff3333; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 6px; transition: all 0.3s ease; letter-spacing: 0.5px; }
-        .btn-reset-colors:hover { background: rgba(255, 0, 0, 0.25); border-color: #ff3333; }
-        
-        .game-scrollable-content::-webkit-scrollbar, #topics-screen::-webkit-scrollbar, #match-screen::-webkit-scrollbar, #voice-screen::-webkit-scrollbar { width: 3px; }
-        .game-scrollable-content::-webkit-scrollbar-track, #topics-screen::-webkit-scrollbar-track, #match-screen::-webkit-scrollbar-track, #voice-screen::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
-        .game-scrollable-content::-webkit-scrollbar-thumb, #topics-screen::-webkit-scrollbar-thumb, #match-screen::-webkit-scrollbar-thumb, #voice-screen::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
+        .btn-reset-colors:hover {
+            background: rgba(255, 0, 0, 0.25);
+            border-color: #ff3333;
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.15);
+        }
+
+        .config-btn-label, .match-btn-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.5;
+            text-align: center;
+            margin-top: 3px;
+        }
+        .config-btn-label { color: #00aa33; }
+        .match-btn-label { color: #ffaa00; }
+
+        .bottom-btn-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .word-balloon.speaking {
+            animation: speakGlow 0.6s ease;
+        }
+        @keyframes speakGlow {
+            0% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); }
+            50% { box-shadow: 0 0 40px rgba(255, 255, 255, 0.15); }
+            100% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); }
+        }
+
+        /* ===== PERMISSÃO DE MICROFONE - BOTÃO E INDICADOR ===== */
+        .mic-status {
+            display: none;
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid #ff3333;
+            border-radius: 12px;
+            padding: 10px;
+            margin: 5px 0;
+            text-align: center;
+            color: #ff3333;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .mic-status.active {
+            display: block;
+            animation: micPulse 1.5s ease infinite;
+        }
+        @keyframes micPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .mic-permission-btn {
+            background: rgba(0, 255, 102, 0.1);
+            border: 2px solid #00ff66;
+            color: #00ff66;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 5px;
+        }
+        .mic-permission-btn:hover {
+            background: rgba(0, 255, 102, 0.2);
+            box-shadow: 0 0 30px rgba(0, 255, 102, 0.15);
+        }
     </style>
 </head>
 <body>
 
-<button class="back-btn-bottom" id="backBtn" onclick="showTopicsScreen()">←</button>
+<!-- ===== BOTÃO DE PERMISSÃO DO MICROFONE (aparece apenas se necessário) ===== -->
+<div id="micPermissionBanner" style="display: none; padding: 10px; text-align: center; background: rgba(0,0,0,0.9); border-bottom: 2px solid #ff3333; position: sticky; top: 0; z-index: 999;">
+    <div style="color: #ff3333; font-weight: bold; margin-bottom: 5px;">🎤 Permissão de Microfone Necessária</div>
+    <button class="mic-permission-btn" onclick="requestMicrophonePermission()">🔊 Conceder Acesso ao Microfone</button>
+    <div style="color: #888; font-size: 12px; margin-top: 5px;">Necessário para funcionalidades de voz</div>
+</div>
 
 <div class="container" id="appContainer">
     <div id="topics-screen" class="screen active">
         <h2>✨ Formando as Frases</h2>
-        <div class="counter-banner">⚡ Áudio com Google TTS</div>
+        <div class="counter-banner">⚡ Banco de Dados Atualizado</div>
+        
         <div id="topics-list"></div>
+        
         <div class="stats-wrapper">
             <button class="btn-show-stats" onclick="toggleDatabaseStats()">📊 Carregar Laudo de Dados</button>
             <div id="stats-report-box" class="stats-report-box"></div>
@@ -311,32 +1068,33 @@
 
     <div id="game-screen" class="screen">
         <div class="game-scrollable-content">
+            <div>
+                <span class="back-link" onclick="showTopicsScreen()">⬅ Voltar</span>
+            </div>
+            
             <div class="top-challenge">
-                <div class="phrase-counter" id="phrase-counter">Frase 1 de 3</div>
-                
-                <div class="phrase-container" id="phrase-container">
-                    <div class="phrase-item" id="phrase-1">Carregando...</div>
-                    <div class="phrase-item hidden" id="phrase-2">Carregando...</div>
-                </div>
-                
-                <div class="audio-status-bar" id="audio-status-bar">🔊 Clique nos balões para ouvir</div>
+                <div class="phrase-pt" id="phrase-pt">Carregando...</div>
                 
                 <div class="audio-controls-row">
-                    <button class="btn-audio-top btn-audio-user" onclick="speakUserSentence()">🔊 Ouvir Resposta</button>
-                    <button class="btn-audio-top" onclick="speakFullSentence()">🔊 Ouvir Frase</button>
-                    <button class="btn-audio-top" onclick="testAudio()" style="border-color: rgba(255,170,0,0.3); color:#ffaa44;">🎧 Teste</button>
+                    <button class="btn-audio-top btn-audio-user" onclick="speakUserSentence()">🔊 Ouvir Sua Resposta</button>
+                    <button class="btn-audio-top" onclick="speakFullSentence()">🔊 Ouvir Tudo</button>
                 </div>
             </div>
-            <div class="zone-title" id="track-number">Sua resposta (Frase 1):</div>
+
+            <div class="zone-title" id="track-number">Sua resposta:</div>
+            
             <div class="construction-zone" id="construction-zone"></div>
             <div class="success-text-box" id="success-text-box"></div>
+
             <div class="zone-header-row">
                 <div class="zone-title">📚 Banco de palavras:</div>
                 <button class="btn-pesca" id="btn-pesca" onclick="togglePescaMode()">🪝 Botão de Pesca</button>
             </div>
             <div class="words-zone" id="words-zone"></div>
+
             <div class="status-container" id="status-message"></div>
         </div>
+
         <div class="control-panel">
             <button class="action-btn btn-check" id="check-btn" onclick="checkAnswer()">✅ Verificar Resposta</button>
             <button class="action-btn btn-next" id="next-btn" onclick="nextPhrase()">➜ Próxima Frase</button>
@@ -346,43 +1104,19 @@
             <div class="bottom-buttons-row">
                 <div class="bottom-btn-wrapper">
                     <button class="match-btn" id="matchBtn" onclick="openMatchGame()">🎯</button>
-                    <span class="match-btn-label btn-label">Match</span>
+                    <span class="match-btn-label">Match</span>
                 </div>
-                <div class="bottom-btn-wrapper">
-                    <button class="voice-btn" id="voiceBtn" onclick="openVoiceScreen()">🗣️</button>
-                    <span class="voice-btn-label btn-label">Voz</span>
-                </div>
+                
                 <div class="bottom-btn-wrapper">
                     <button class="config-btn" id="configBtn" onclick="toggleConfigModal()">⚙</button>
-                    <span class="config-btn-label btn-label">Config</span>
+                    <span class="config-btn-label">Config</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ===== TELA DE VOZES ===== -->
-<div id="voice-screen">
-    <div class="voice-header">
-        <h2>🗣️ Configurações de Voz</h2>
-        <button class="voice-close-btn" onclick="closeVoiceScreen()">✕</button>
-    </div>
-    <div id="voice-status-msg" style="text-align:center; color:rgba(255,255,255,0.5); font-size:12px; padding:8px; margin-bottom:10px; border-radius:8px; background:rgba(255,255,255,0.03);">
-        🔊 O áudio é gerado pelo Google TTS (requer internet)
-    </div>
-    <div class="voice-list" id="voice-list"></div>
-    
-    <div class="voice-test-area">
-        <div class="test-title">🎤 Teste Rápido</div>
-        <div class="test-row">
-            <input type="text" id="testVoiceInput" placeholder="Digite uma frase em inglês..." value="Hello, how are you today?">
-            <button class="btn-test-voice" id="btnTestVoice" onclick="testCustomVoice()">🔊 Falar</button>
-        </div>
-        <div class="test-status" id="testVoiceStatus">Digite uma frase e clique em "Falar"</div>
-    </div>
-</div>
-
-<!-- ===== MATCH SCREEN ===== -->
+<!-- Tela do Jogo de Combinação -->
 <div id="match-screen">
     <div class="match-header">
         <h2>🎯 Match - Combine as Palavras</h2>
@@ -397,271 +1131,202 @@
     </div>
 </div>
 
-<!-- ===== CONFIG MODAL ===== -->
+<!-- Modal de Configuração -->
 <div class="config-modal" id="configModal">
     <div class="config-modal-content">
         <button class="config-modal-close" onclick="toggleConfigModal()">✕</button>
         <h3>⚙ Configurações</h3>
         
-        <div class="config-section">
-            <label>🎨 Cor da Fonte dos Balões</label>
+        <div class="color-picker-group">
+            <label>🎨 Cor da Letra dos Balões</label>
             <div class="color-options" id="textColorOptions"></div>
         </div>
-        
-        <div class="config-section">
-            <label>🎨 Cor do Fundo dos Balões</label>
-            <div class="color-options" id="bgBalloonColorOptions"></div>
-        </div>
-        
-        <div class="config-section">
-            <label>🎨 Cor do Fundo da Tela</label>
+
+        <div class="color-picker-group">
+            <label>🖼 Cor de Fundo</label>
             <div class="color-options" id="bgColorOptions"></div>
         </div>
-        
-        <div class="config-section">
-            <label>🔤 Tamanho da Fonte Geral</label>
-            <div class="font-size-control">
-                <button onclick="adjustFontSize('general', -1)">−</button>
-                <span class="size-display" id="generalFontSize">16</span>
-                <button onclick="adjustFontSize('general', 1)">+</button>
-            </div>
-        </div>
-        
-        <div class="config-section">
-            <label>🔤 Tamanho da Fonte dos Balões</label>
-            <div class="font-size-control">
-                <button onclick="adjustFontSize('balloon', -1)">−</button>
-                <span class="size-display" id="balloonFontSize">15</span>
-                <button onclick="adjustFontSize('balloon', 1)">+</button>
-            </div>
-        </div>
-        
-        <div class="config-section">
-            <label>🔤 Tamanho da Fonte do Match Game</label>
-            <div class="font-size-control">
-                <button onclick="adjustFontSize('match', -1)">−</button>
-                <span class="size-display" id="matchFontSize">16</span>
-                <button onclick="adjustFontSize('match', 1)">+</button>
-            </div>
-        </div>
-        
-        <div class="config-section">
-            <button class="btn-reset-colors" onclick="resetAllSettings()">🔄 Restaurar Padrões</button>
-        </div>
-        
-        <div class="config-section">
-            <button class="btn-reset-colors" onclick="resetProgress()" style="background:rgba(255, 165, 0, 0.15); border-color: rgba(255, 165, 0, 0.3); color: #ffaa00;">🗑️ Resetar Progresso</button>
-        </div>
+
+        <button class="btn-reset-colors" onclick="resetColors()">🔄 Restaurar Cores Padrão</button>
     </div>
 </div>
 
 <script>
-    // ============================================================
-    // 1. SISTEMA DE ÁUDIO - Google TTS (Funciona no Chrome e APK)
-    // ============================================================
+    // =============================================
+    // ===== SISTEMA DE PERMISSÕES PARA ANDROID =====
+    // =============================================
     
-    function setAudioStatus(text, type = '') {
-        const el = document.getElementById('audio-status-bar');
-        if (el) {
-            el.textContent = text;
-            el.className = 'audio-status-bar ' + type;
-        }
-    }
-    
-    function speakText(text) {
-        if (!text || text.trim() === '') return;
+    // 1. Verificar e solicitar permissões ao carregar
+    async function checkAndRequestPermissions() {
+        console.log('🔍 Verificando permissões...');
         
-        let cleanText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, '').trim();
-        if (cleanText === '') return;
+        // Verifica se é um ambiente Android (WebView ou navegador)
+        const isAndroid = /android/i.test(navigator.userAgent);
+        const isChrome = /chrome/i.test(navigator.userAgent);
         
-        setAudioStatus('🔊 Falando: ' + cleanText, 'loading');
-        
-        try {
-            // Usar Google TTS
-            const url = 'https://translate.google.com/translate_tts?ie=UTF-8&q=' + 
-                        encodeURIComponent(cleanText) + '&tl=en&client=tw-ob';
-            const audio = new Audio(url);
-            audio.preload = 'auto';
+        if (isAndroid || isChrome) {
+            console.log('📱 Ambiente Android/Chrome detectado');
             
-            audio.onloadeddata = function() {
-                audio.play().then(() => {
-                    setAudioStatus('✅ ' + cleanText, 'success');
-                }).catch(() => {
-                    setAudioStatus('⚠️ Erro ao reproduzir', 'error');
-                });
-            };
-            
-            audio.onerror = function() {
-                setAudioStatus('⚠️ Erro no áudio', 'error');
-            };
-            
-            audio.load();
-            
-            setTimeout(() => {
-                if (!audio.ended && !audio.paused) {
-                    try { audio.pause(); } catch(e) {}
+            // Solicita permissão de áudio (necessário para speech synthesis)
+            try {
+                // Tenta criar um contexto de áudio para solicitar permissão
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioContext.state === 'suspended') {
+                    await audioContext.resume();
                 }
-            }, 5000);
-            
-        } catch(e) {
-            setAudioStatus('⚠️ Erro: ' + e.message, 'error');
-        }
-        
-        // Destacar balões
-        document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
-            if (el.textContent.toLowerCase() === cleanText.toLowerCase()) {
-                el.classList.add('speaking');
-                setTimeout(() => el.classList.remove('speaking'), 1000);
+                console.log('✅ Permissão de áudio concedida');
+            } catch (e) {
+                console.log('⚠️ Erro ao solicitar permissão de áudio:', e);
             }
-        });
+            
+            // Solicita permissão de microfone (se disponível)
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                stream.getTracks().forEach(track => track.stop());
+                console.log('✅ Permissão de microfone concedida');
+                document.getElementById('micPermissionBanner').style.display = 'none';
+            } catch (err) {
+                console.log('⚠️ Permissão de microfone negada ou indisponível:', err);
+                // Mostra banner para solicitar permissão manualmente
+                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                    document.getElementById('micPermissionBanner').style.display = 'block';
+                }
+            }
+        }
+        
+        // Verifica localStorage (permissão de armazenamento)
+        try {
+            localStorage.setItem('permission_test', 'ok');
+            localStorage.removeItem('permission_test');
+            console.log('✅ Permissão de armazenamento (localStorage) OK');
+        } catch (e) {
+            console.log('⚠️ Permissão de armazenamento negada:', e);
+        }
     }
     
-    // ===== Funções de teste =====
-    function testAudio() {
-        setAudioStatus('🎧 Testando áudio...', 'loading');
-        speakText('Hello, this is a test');
+    // 2. Função para solicitar permissão de microfone manualmente
+    async function requestMicrophonePermission() {
+        const banner = document.getElementById('micPermissionBanner');
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            stream.getTracks().forEach(track => track.stop());
+            banner.style.display = 'none';
+            alert('✅ Permissão de microfone concedida com sucesso!');
+            console.log('✅ Permissão de microfone concedida manualmente');
+        } catch (err) {
+            console.log('❌ Erro ao conceder permissão:', err);
+            alert('❌ Não foi possível acessar o microfone. Verifique as configurações do seu dispositivo.');
+        }
+    }
+    
+    // 3. Inicializar permissões
+    document.addEventListener('DOMContentLoaded', () => {
+        // Pequeno delay para garantir que tudo está carregado
         setTimeout(() => {
-            setAudioStatus('✅ Teste concluído', 'success');
-        }, 2000);
-    }
+            checkAndRequestPermissions();
+        }, 500);
+    });
     
-    function testCustomVoice() {
-        const input = document.getElementById('testVoiceInput');
-        const status = document.getElementById('testVoiceStatus');
-        
-        let text = input.value.trim();
-        if (!text) {
-            status.textContent = '⚠️ Digite uma frase para testar!';
-            status.style.color = '#ffaa44';
-            return;
+    // 4. Verificar permissões quando a página ganha foco (para Android)
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            checkAndRequestPermissions();
         }
-        
-        status.textContent = '🔊 Falando: "' + text + '"...';
-        status.style.color = '#00aaff';
-        speakText(text);
-        
-        setTimeout(() => {
-            status.textContent = '✅ Áudio reproduzido com sucesso!';
-            status.style.color = '#00ff66';
-        }, 2000 + (text.length * 50));
-    }
+    });
     
-    // ============================================================
-    // 2. FUNÇÕES PÚBLICAS
-    // ============================================================
-    function speakWord(word) {
-        speakText(word);
-    }
-    
-    function speakFullSentence() {
-        const currentPhrase = getCurrentPhrase();
-        if (currentPhrase) {
-            speakText(currentPhrase.en);
+    // 5. Função para testar áudio (Speech Synthesis)
+    function testAudioPermission() {
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance('Teste de áudio');
+            utterance.lang = 'pt-BR';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+            console.log('🔊 Teste de áudio iniciado');
+        } else {
+            console.log('❌ Speech Synthesis não disponível');
         }
     }
     
-    function speakUserSentence() {
-        if (selectedWords.length === 0) {
-            setAudioStatus('⚠️ Nenhuma palavra selecionada', 'error');
-            return;
-        }
-        const userTxt = selectedWords.join(" ");
-        speakText(userTxt);
-    }
-
-    // ============================================================
-    // 3. TELA DE VOZES
-    // ============================================================
-    function openVoiceScreen() {
-        document.getElementById('voice-screen').classList.add('active');
-        document.getElementById('voiceBtn').classList.add('active');
-        renderVoiceList();
-    }
+    // =============================================
+    // ===== SEU CÓDIGO ORIGINAL AQUI =====
+    // (mantido exatamente como estava)
+    // =============================================
     
-    function closeVoiceScreen() {
-        document.getElementById('voice-screen').classList.remove('active');
-        document.getElementById('voiceBtn').classList.remove('active');
-    }
+    // ===== CONFIGURAÇÕES DE CORES COM SALVAMENTO =====
+    const STORAGE_KEY = 'wordGameColors';
     
-    function renderVoiceList() {
-        const container = document.getElementById('voice-list');
-        container.innerHTML = `
-            <div style="text-align:center; padding:20px; color:rgba(255,255,255,0.3);">
-                <p style="font-size:24px; margin-bottom:10px;">🔊</p>
-                <p style="font-size:14px; color:#ffffff;">Google TTS</p>
-                <p style="font-size:12px; margin-top:8px; color:rgba(255,255,255,0.3);">Voz gerada pela Google (requer internet)</p>
-                <button onclick="testAudio()" style="margin-top:12px; padding:8px 24px; border-radius:20px; background:rgba(255,170,0,0.15); color:#ffaa44; border:1px solid rgba(255,170,0,0.3); font-size:14px; cursor:pointer;">🎧 Testar Áudio</button>
-                <div style="margin-top:12px; padding:8px; border-radius:8px; background:rgba(255,255,255,0.03); font-size:11px; color:rgba(255,255,255,0.2);">
-                    Áudio via Google Translate TTS
-                </div>
-            </div>
-        `;
-    }
-    
-    // ============================================================
-    // 4. CONFIGURAÇÕES
-    // ============================================================
-    const STORAGE_KEY = 'wordGameSettings';
-    const PROGRESS_KEY = 'wordGameProgress';
-    
-    function loadSavedSettings() {
+    function loadSavedColors() {
         try {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 const parsed = JSON.parse(saved);
                 return parsed;
             }
-        } catch (e) {}
-        return {
-            textColor: '#00ff22',
-            bgBalloonColor: '#1a1a1a',
-            bgColor: '#000000',
-            generalFontSize: 16,
-            balloonFontSize: 15,
-            matchFontSize: 16
-        };
+        } catch (e) {
+            console.log('Erro ao carregar cores salvas');
+        }
+        return { textColor: '#00ff22', bgColor: '#000000' };
     }
-    
-    const settings = loadSavedSettings();
-    
-    function saveSettings() {
+
+    const colorConfig = loadSavedColors();
+
+    function saveColors() {
         try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-        } catch (e) {}
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                textColor: colorConfig.textColor,
+                bgColor: colorConfig.bgColor
+            }));
+        } catch (e) {
+            console.log('Erro ao salvar cores');
+        }
     }
-    
+
     const colorPalettes = {
-        text: ['#00ff22', '#00ff66', '#00ffaa', '#00ddff', '#ff00ff', '#ff6600', '#ffcc00', '#ffffff', '#00ff88', '#ff3366', '#ffaa00', '#66ff00', '#00ffff', '#ff44ff', '#ff0066', '#ff8800'],
-        bgBalloon: ['#1a1a1a', '#0a0a0a', '#111111', '#2a1a2e', '#1a2a3e', '#0f1a2a', '#2d1a1a', '#1a1a2a', '#001a06', '#001104', '#0d0d0d', '#1a0a0a', '#0a1a0a', '#0a0a1a', '#2a2a2a', '#3a3a3a'],
+        text: ['#00ff22', '#00ff66', '#00ffaa', '#00ddff', '#00ccff', '#ff00ff', '#ff6600', '#ffcc00', '#ffffff', '#00ff88', '#ff3366', '#ffaa00', '#66ff00', '#00ffff', '#ff44ff', '#ff0066', '#ff8800'],
         bg: ['#000000', '#0a0a0a', '#111111', '#1a1a2e', '#16213e', '#0f3460', '#2d132c', '#1b1b2f', '#001a06', '#001104', '#0d0d0d', '#1a0a0a', '#0a1a0a', '#0a0a1a']
     };
-    
-    const defaultSettings = {
-        textColor: '#00ff22',
-        bgBalloonColor: '#1a1a1a',
-        bgColor: '#000000',
-        generalFontSize: 16,
-        balloonFontSize: 15,
-        matchFontSize: 16
-    };
 
+    const defaultColors = { textColor: '#00ff22', bgColor: '#000000' };
+
+    // ===== VARIÁVEIS DO MATCH GAME =====
+    let matchPairs = [];
+    let selectedMatchCard = null;
+    let matchedPairs = 0;
+    let matchCards = [];
+    let isProcessingMatch = false;
+
+    // ===== FUNÇÕES DE VOZ =====
+    function speakWord(word) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+            
+            document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
+                if (el.textContent.toLowerCase() === word.toLowerCase()) {
+                    el.classList.add('speaking');
+                    setTimeout(() => el.classList.remove('speaking'), 700);
+                }
+            });
+        }
+    }
+
+    // ===== FUNÇÕES DE CONFIGURAÇÃO =====
     function toggleConfigModal() {
         const modal = document.getElementById('configModal');
         const btn = document.getElementById('configBtn');
         modal.classList.toggle('active');
         btn.classList.toggle('active');
-        if (modal.classList.contains('active')) {
-            renderColorOptions();
-            updateFontSizeDisplays();
-        }
+        if (modal.classList.contains('active')) renderColorOptions();
     }
-    
+
     function renderColorOptions() {
-        renderColorOptionGroup('textColorOptions', colorPalettes.text, settings.textColor, 'text');
-        renderColorOptionGroup('bgBalloonColorOptions', colorPalettes.bgBalloon, settings.bgBalloonColor, 'bgBalloon');
-        renderColorOptionGroup('bgColorOptions', colorPalettes.bg, settings.bgColor, 'bg');
+        renderColorOptionGroup('textColorOptions', colorPalettes.text, colorConfig.textColor, 'text');
+        renderColorOptionGroup('bgColorOptions', colorPalettes.bg, colorConfig.bgColor, 'bg');
     }
-    
+
     function renderColorOptionGroup(containerId, colors, selectedColor, type) {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
@@ -677,16 +1342,15 @@
             check.style.color = isDark ? '#fff' : '#000';
             option.appendChild(check);
             option.onclick = () => {
-                if (type === 'text') { settings.textColor = color; applyTextColor(color); }
-                else if (type === 'bgBalloon') { settings.bgBalloonColor = color; applyBgBalloonColor(color); }
-                else if (type === 'bg') { settings.bgColor = color; applyBgColor(color); }
-                saveSettings();
+                if (type === 'text') { colorConfig.textColor = color; applyTextColor(color); }
+                else if (type === 'bg') { colorConfig.bgColor = color; applyBgColor(color); }
+                saveColors();
                 renderColorOptions();
             };
             container.appendChild(option);
         });
     }
-    
+
     function isDarkColor(color) {
         const hex = color.replace('#', '');
         const r = parseInt(hex.substr(0,2), 16);
@@ -694,237 +1358,356 @@
         const b = parseInt(hex.substr(4,2), 16);
         return (r * 0.299 + g * 0.587 + b * 0.114) < 128;
     }
-    
+
     function applyTextColor(color) {
-        document.querySelectorAll('.word-balloon:not(.pescado)').forEach(el => { el.style.color = color; });
-        document.querySelectorAll('.word-balloon.pescado').forEach(el => { el.style.color = '#ffff00'; });
-        document.querySelectorAll('.match-card:not(.matched)').forEach(el => { el.style.color = color; });
-    }
-    
-    function applyBgBalloonColor(color) {
         document.querySelectorAll('.word-balloon:not(.pescado)').forEach(el => { 
-            el.style.backgroundColor = color; 
+            el.style.color = color; 
         });
         document.querySelectorAll('.word-balloon.pescado').forEach(el => { 
-            el.style.backgroundColor = '#001a00'; 
+            el.style.color = '#ffff00'; 
         });
-        document.querySelectorAll('.match-card:not(.matched)').forEach(el => { 
-            el.style.backgroundColor = color; 
+        
+        document.querySelectorAll('.match-card:not(.matched)').forEach(el => {
+            el.style.color = color;
+            el.style.borderColor = color;
+        });
+        
+        document.querySelectorAll('h2, .zone-title, .counter-banner, .back-link, .btn-reveal, .revealed-answer-box, .stats-report-box, .btn-show-stats, .config-btn-label, .phrase-pt, .btn-audio-top, .btn-audio-user').forEach(el => {
+            if (el.tagName === 'H2') {
+                el.style.color = color;
+            } else if (el.classList.contains('zone-title')) {
+                el.style.color = color;
+            } else if (el.classList.contains('counter-banner')) {
+                el.style.color = color;
+            } else if (el.classList.contains('back-link')) {
+                el.style.color = color;
+            } else if (el.classList.contains('btn-reveal')) {
+                el.style.color = color;
+                el.style.borderColor = color;
+            } else if (el.classList.contains('revealed-answer-box')) {
+                el.style.color = color;
+                el.style.borderColor = color;
+            } else if (el.classList.contains('stats-report-box')) {
+                el.style.color = color;
+                el.style.borderColor = color;
+            } else if (el.classList.contains('btn-show-stats')) {
+                el.style.color = color;
+            } else if (el.classList.contains('config-btn-label')) {
+                el.style.color = color;
+            } else if (el.classList.contains('phrase-pt')) {
+                el.style.color = color;
+            } else if (el.classList.contains('btn-audio-top') || el.classList.contains('btn-audio-user')) {
+                el.style.color = color;
+                el.style.borderColor = color;
+            }
+        });
+        
+        document.querySelectorAll('.status-correct').forEach(el => {
+            el.style.color = color;
+        });
+        
+        document.querySelectorAll('.config-btn').forEach(el => {
+            el.style.color = color;
+            el.style.borderColor = color;
         });
     }
-    
+
     function applyBgColor(color) {
         document.getElementById('appContainer').style.backgroundColor = color;
         document.body.style.backgroundColor = color;
         document.getElementById('match-screen').style.backgroundColor = color;
-        document.getElementById('voice-screen').style.backgroundColor = color;
     }
-    
-    function adjustFontSize(type, delta) {
-        if (type === 'general') {
-            settings.generalFontSize = Math.max(10, Math.min(30, settings.generalFontSize + delta));
-            applyGeneralFontSize(settings.generalFontSize);
-        } else if (type === 'balloon') {
-            settings.balloonFontSize = Math.max(10, Math.min(30, settings.balloonFontSize + delta));
-            applyBalloonFontSize(settings.balloonFontSize);
-        } else if (type === 'match') {
-            settings.matchFontSize = Math.max(10, Math.min(30, settings.matchFontSize + delta));
-            applyMatchFontSize(settings.matchFontSize);
-        }
-        saveSettings();
-        updateFontSizeDisplays();
-    }
-    
-    function applyGeneralFontSize(size) {
-        document.querySelectorAll('h2, .counter-banner, .phrase-pt, .zone-title, .btn-reveal, .btn-audio-top, .btn-audio-user, .btn-pesca, .status-container, .btn-show-stats, .btn-label, .phrase-item, .phrase-counter, .voice-card .voice-name, .voice-card .voice-desc, .voice-status-badge, .voice-btn-action, #voice-status-msg, .voice-test-area .test-title, .voice-test-area .test-row input, .voice-test-area .test-row .btn-test-voice, .voice-test-area .test-status, .audio-status-bar').forEach(el => {
-            if (el.tagName === 'H2') { el.style.fontSize = (size + 2) + 'px'; }
-            else if (el.classList.contains('counter-banner')) { el.style.fontSize = (size - 6) + 'px'; }
-            else if (el.classList.contains('phrase-pt') || el.classList.contains('phrase-item')) { el.style.fontSize = (size + 2) + 'px'; }
-            else if (el.classList.contains('zone-title')) { el.style.fontSize = (size - 3) + 'px'; }
-            else if (el.classList.contains('btn-reveal')) { el.style.fontSize = (size - 3) + 'px'; }
-            else if (el.classList.contains('btn-audio-top') || el.classList.contains('btn-audio-user')) { el.style.fontSize = (size - 4) + 'px'; }
-            else if (el.classList.contains('btn-pesca')) { el.style.fontSize = (size - 5) + 'px'; }
-            else if (el.classList.contains('status-container')) { el.style.fontSize = (size - 2) + 'px'; }
-            else if (el.classList.contains('btn-show-stats')) { el.style.fontSize = (size - 4) + 'px'; }
-            else if (el.classList.contains('btn-label')) { el.style.fontSize = (size - 9) + 'px'; }
-            else if (el.classList.contains('phrase-counter')) { el.style.fontSize = (size - 5) + 'px'; }
-            else if (el.classList.contains('voice-name')) { el.style.fontSize = (size) + 'px'; }
-            else if (el.classList.contains('voice-desc')) { el.style.fontSize = (size - 4) + 'px'; }
-            else if (el.classList.contains('voice-status-badge')) { el.style.fontSize = (size - 6) + 'px'; }
-            else if (el.classList.contains('voice-btn-action')) { el.style.fontSize = (size - 4) + 'px'; }
-            else if (el.id === 'voice-status-msg') { el.style.fontSize = (size - 4) + 'px'; }
-            else if (el.classList.contains('test-title')) { el.style.fontSize = (size - 4) + 'px'; }
-            else if (el.classList.contains('test-status')) { el.style.fontSize = (size - 5) + 'px'; }
-            else if (el.classList.contains('audio-status-bar')) { el.style.fontSize = (size - 4) + 'px'; }
-        });
-        document.querySelectorAll('.action-btn').forEach(el => {
-            el.style.fontSize = (size - 1) + 'px';
-        });
-        document.getElementById('backBtn').style.fontSize = (size + 4) + 'px';
-    }
-    
-    function applyBalloonFontSize(size) {
-        document.querySelectorAll('.word-balloon').forEach(el => {
-            el.style.fontSize = size + 'px';
-        });
-        document.querySelectorAll('.construction-zone .word-balloon').forEach(el => {
-            el.style.fontSize = (size - 1) + 'px';
-        });
-        document.querySelectorAll('.words-zone .word-balloon').forEach(el => {
-            el.style.fontSize = (size - 2) + 'px';
-        });
-    }
-    
-    function applyMatchFontSize(size) {
-        document.querySelectorAll('.match-card').forEach(el => {
-            el.style.fontSize = size + 'px';
-        });
-    }
-    
-    function updateFontSizeDisplays() {
-        document.getElementById('generalFontSize').textContent = settings.generalFontSize;
-        document.getElementById('balloonFontSize').textContent = settings.balloonFontSize;
-        document.getElementById('matchFontSize').textContent = settings.matchFontSize;
-    }
-    
-    function resetAllSettings() {
-        settings.textColor = defaultSettings.textColor;
-        settings.bgBalloonColor = defaultSettings.bgBalloonColor;
-        settings.bgColor = defaultSettings.bgColor;
-        settings.generalFontSize = defaultSettings.generalFontSize;
-        settings.balloonFontSize = defaultSettings.balloonFontSize;
-        settings.matchFontSize = defaultSettings.matchFontSize;
-        
-        applyTextColor(settings.textColor);
-        applyBgBalloonColor(settings.bgBalloonColor);
-        applyBgColor(settings.bgColor);
-        applyGeneralFontSize(settings.generalFontSize);
-        applyBalloonFontSize(settings.balloonFontSize);
-        applyMatchFontSize(settings.matchFontSize);
-        
-        saveSettings();
+
+    function resetColors() {
+        colorConfig.textColor = defaultColors.textColor;
+        colorConfig.bgColor = defaultColors.bgColor;
+        applyTextColor(defaultColors.textColor);
+        applyBgColor(defaultColors.bgColor);
+        saveColors();
         renderColorOptions();
-        updateFontSizeDisplays();
     }
 
-    // ============================================================
-    // 5. PROGRESSO
-    // ============================================================
-    function loadProgress() {
-        try {
-            const saved = localStorage.getItem(PROGRESS_KEY);
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                return parsed;
-            }
-        } catch (e) {}
-        return null;
-    }
-    
-    function saveProgress(topicName, index, total) {
-        try {
-            const data = {
-                topic: topicName,
-                index: index,
-                total: total,
-                timestamp: new Date().toISOString()
-            };
-            localStorage.setItem(PROGRESS_KEY, JSON.stringify(data));
-        } catch (e) {}
-    }
-    
-    function clearProgress() {
-        localStorage.removeItem(PROGRESS_KEY);
-    }
-    
-    function resetProgress() {
-        if (confirm('⚠️ Tem certeza que deseja resetar todo o seu progresso?')) {
-            clearProgress();
-            alert('✅ Progresso resetado!');
-            showTopicsScreen();
-        }
-    }
-
-    // ============================================================
-    // 6. DICIONÁRIO E FRASES
-    // ============================================================
+    // ===== CÓDIGO DO JOGO PRINCIPAL =====
     const dictionary = {
-        "love": "amor",
-        "blind": "cego",
-        "the": "o/a",
-        "cat": "gato",
-        "is": "é/está",
-        "here": "aqui"
+        "keep": "Mantenha / Guarde / Fica", "your": "seu / sua", "head": "cabeça", "down": "abaixo / para baixo / chão", "up": "cima / atualizado", "sky": "céu",
+        "if": "Se", "i": "Eu", "ever": "alguma vez / já", "see": "ver / encontrar / até", "you": "você / vocês", "again": "de novo",
+        "i'll": "eu vou / eu irei / gosto de", "surely": "com certeza", "beat": "bater / vencer", "never": "nunca / tinha", "help": "ajuda / ajudar / ajudá-lo / nos ajudar",
+        "weve": "nós estamos / nós temos / acabo de", "been": "sido / estado / ficado / querendo", "flat": "plano / direto", "to": "para / me / se / de", "the": "o / a / os / as",
+        "boards": "flancos / tábuas", "since": "desde", "last": "última / ontem / finalmente / Nossa", "night": "noite", "morning": "manhã", "day": "dia",
+        "take": "leve / pegue / vá / aceitar / aceitamos", "it": "isso / esquentá-lo / mentido", "easy": "calma / fácil", "hard": "difícil / duro", "fast": "rápido", "we": "nós / a gente",
+        "dont": "não / fico", "have": "ter / precisa / tenho / venho / aceita", "play": "jogar / brincar", "rough": "sujo / bruto / áspero", "clean": "limpo",
+        "smooth": "suave", "good": "bom / atento / coisas / ótimo", "eye": "olho", "for": "para / por / me", "this": "este / isto / essa / esta", "one": "um / existe",
+        "now": "agora", "bad": "ruim / mau / gênio", "look": "olhar / veja", "whats": "o que é / o que está / Qual é", "going": "indo / rolando / acontecendo / voltar",
+        "on": "em / sobre / comigo / pista", "here": "aqui", "there": "lá", "doing": "fazendo", "only": "única / só", "thing": "coisa",
+        "like": "gostar / agrada / gostaria / quero", "about": "sobre / a respeito de / chato", "not": "não", "seeing": "ver / enxergando", "love": "amar / amor / adoro / adoramos / adoram / amo",
+        "happy": "feliz", "think": "acho / creio / pensa", "he": "ele", "really": "realmente / pode", "did": "fez / realmente (ênfase)",
+        "need": "precisar / necessito", "me": "mim / me / comigo", "want": "querer", "always": "sempre", "are": "estão / são",
+        "kidding": "brincando / zoando", "serious": "sério", "playing": "jogando / brincando", "mean": "quer dizer / pretende / querendo / são",
+        "tell": "dizer / conte / conte-nos", "still": "ainda", "know": "sabe / saber / conhece / conheço", "understand": "entender", "say": "dizer / falar",
+        "why": "por que", "make": "fez / fazer / faz", "all": "tudo / todos", "that": "isso / aquilo / que", "with": "com",
+        "no": "sem / nenhum / não", "purpose": "motivo / propósito", "reason": "razão", "lets": "vamos", "go": "ir / curtir / seguir",
+        "forget": "esquecer", "pretend": "fingir", "happened": "aconteceu", "remember": "lembrar / me lembrar", "talked": "falaram / conversaram / falo",
+        "fancy": "fizeram a cabeça / chique", "ugly": "feio", "told": "disse / contou / falou", "got": "fiquei / consegui / separam",
+        "confused": "confuso (a)", "clear": "claro", "sure": "certeza", "so": "então / estou", "theres": "há / tem",
+        "nothing": "nada", "more": "mais", "talk": "conversar", "anything": "any / qualquer coisa / nada", "try": "tente / tentar / tentaria",
+        "nose": "nariz", "out": "fora / sinto", "of": "de / das", "my": "meu / minha / as minhas / com meu / seu", "business": "negócio / vida", "eyes": "olhos",
+        "in": "em / dentro / primeiro / de", "crazy": "louco (a) / maluca", "right": "certo / direita", "stay": "ficar / permaneça", "should": "deveríamos",
+        "be": "ser / estar", "very": "muito / importantes", "grateful": "gratos", "could": "pudesse / poderia / gostar", "give": "dar / arranjar",
+        "us": "nos / nós", "food": "alimentação / comida", "somewhere": "um lugar", "sleep": "dormir", "water": "água",
+        "house": "casa", "but": "mas", "stop": "parar", "next": "próxima", "time": "vez / tempo", "little": "pouquinho / meio",
+        "less": "menos", "something": "algo", "amazing": "surpreendente / incrível", "tour": "sua / viagem", "trip": "viagem",
+        "boring": "chato", "seemed": "parecia", "lied": "mentido", "bit": "um pouco", "too": "também",
+        "truth": "verdade", "speak": "falar", "proud": "orgulhoso / orgulho", "sad": "triste", "angry": "bravo / irritado",
+        "yourselves": "vocês mesmos / se / protejam-se", "run": "correr", "open": "abrir", "expect": "espero / aguardo", "trust": "confie / confiar",
+        "doubt": "duvidar", "charge": "no comando / assume", "till": "até que", "come": "volte / venha", "leave": "sair / deixar",
+        "called": "blefei / chamei", "his": "dele / seu / o que / gênio / seus", "bluff": "blefe / blefei", "lost": "perdi / perdido", "true": "verdadeiro / mentira",
+        "undervalued": "subestimei / desvalorizei", "many": "muitos / de vocês", "knew": "sabia", "get": "pegue / leve / dou", "lane": "pista / faixa",
+        "left": "esquerda", "car": "carro", "well": "bem / resolvida / equilibrada / discreto", "finally": "finalmente / acabo", "figured": "descobri / decifrei",
+        "am": "sou / o que", "name": "nome / nomes", "them": "os / eles / por eles", "home": "casa", "office": "escritório", "school": "escola",
+        "doesnt": "não", "sense": "sentido / senso", "was": "foi / era / tinha", "worst": "pior", "saw": "vi", "best": "melhor",
+        "lonesome": "sozinha / solitária", "life": "vida", "way": "maneira / caminho / jeito", "recognized": "reconhecido",
+        "care": "importo / ligo", "hurts": "atingir / machucar", "mind": "importar / opinião / sinto", "shouldnt": "não devia",
+        "getting": "ficando / se arrumando", "ready": "arrumando / pronto", "sleeping": "dormindo", "will": "aceita / irá / que",
+        "woman": "mulher", "lawful": "legítima", "wedded": "casada", "wife": "esposa", "husband": "marido",
+        "friend": "amigo", "yes": "sim", "as": "como / enquanto", "long": "enquanto / longo / tempo", "both": "ambos",
+        "shall": "irão / devem", "live": "viver / nos", "matter": "importa", "happens": "aconteça", "die": "morrer",
+        "word": "palavra", "money": "dinheiro", "hand": "mão", "heart": "coração", "beats": "bater / bate",
+        "stops": "para", "said": "dito / dizem / falar", "defeated": "vencido / derrotado", "youre": "você é / você está",
+        "hide": "esconder / escondê-lo", "listen": "ouça", "specially": "especialmente", "what": "o que / da vida / de", "brace": "protejam",
+        "show": "mostrar", "find": "encontrar", "before": "antes", "outside": "fora", "working": "trabalhando", "how": "como / faz", "betray": "trair", "such": "tal / um", "enemy": "inimigo",
+        "hi": "Oi", "meet": "conhecer / encontrar / conhecê-lo / apresentar", "sorry": "Desculpa / Desculpe", 
+        "heard": "ouvi / escutei / falar", "lot": "muito / bastante", "hope": "espero / esperança",
+        "believe": "acredite / crer / nada", "looking": "olhando / procurando / querendo", "forward": "ansioso / adiante", 
+        "see": "ver / até", "later": "mais tarde / depois", "brothers": "irmãos", "sister": "irmã", "oldest": "mais velho",
+        "middle": "meio", "youngest": "mais novo (a) / caçula", "child": "criança / filho / único/a", "doctor": "médico / profissional", "lives": "mora / vive",
+        "father": "pai", "parents": "pais / falecido(s)", "divorced": "divorciados / separam / separado/divorciado", "deceased": "falecidos / falecido(s)", "family": "família / parentes / da família",
+        "children": "filhos", "kids": "crianças / filhos", "marriage": "casamento / do primeiro", "single": "solteiro / solteiro/casado/separado/divorciado", "married": "casado / casado/a",
+        "separated": "separado (a) / separados / separam", "important": "important / importantes", "world": "mundo / tudo", "comes": "vem", "first": "primeiro", 
+        "kind": "tipo / meio", "black": "preto / negra", "sheep": "ovelha", "along": "bem", "complicated": "complicada (o) / complicada", 
+        "spoken": "falou / falado / falo", "falling": "briga / queda / brigou", "terms": "termos / nos falamos", "questions": "perguntas", "someone": "alguém",
+        "big": "grande", "small": "pequena / caçula", "does": "faz", "real": "real / verdadeiro / figura", "character": "figura / caráter / personalidade / das pessoas", "old": "velho", "close": "próximo / íntimo",
+        "count": "contar", "nice": "simpático / legal", "cool": "legal / maneiro", "fun": "divertido / se divertir", "humor": "humor", "earth": "terra / chão",
+        "enjoy": "aproveitar / curtir", "loves": "ama / adora / uma", "party": "festa", "center": "centro / das", "attention": "atenção / atenções", "instincts": "instintos", "admit": "admitir / Admito", "wrong": "errado",
+        "afraid": "medo / receio / tenho", "obligations": "obrigações / dever", "terrible": "péssimo / terrível", "names": "nomes", "judge": "juiz / Conheço", "rounded": "equilibrado / bem resolvido / tudo", "current": "atualizados / atual / me",
+        "events": "eventos", "learner": "aprendiz / rápido", "bother": "incomodar / fica", "basically": "basicamente / é", "player": "jogador / equipe / trabalhar", "try": "tentar / Gosto", "feet": "pés", "cintura": "waist",
+        "belt": "cintura / cinto", "thinks": "pensa / só", "people": "pessoas", "strange": "esquisito / estranho / esquisitos", "sensitive": "sensível", "charming": "charmoso", "charismatic": "carismático",
+        "picky": "exigente / fresco / chato", "clothes": "roupas", "gift": "dom / presente", "excell": "destaca / brilha / ótimo", "excells": "destaca / brilha / ótimo", "able": "capaz / poder", "pain": "dor / sofrimento / porre", "stubborn": "teimoso",
+        "temper": "gênio / temperamento", "expensive": "caro / alto (gosto) / coisas", "taste": "gosto / caras", "himself": "si mesmo", "herself": "si mesma / si mesmo", "yourself": "você mesmo / você", "control": "controle / controlar/ter",
+        "likes": "gosta", "clouds": "nuvens", "joao": "João", "silvia": "Silvia", "has": "me / tem", "her": "sua / o que / gênio / de", "she": "ela", "they": "eles / adoram / não / se", "their": "seus", "them": "eles / por eles", "once": "uma", "flow": "não / esquento", "keep": "mantenho / cumpro / fico / mantém", "keeps": "é / fica", "with": "com / com seu / da", "comes": "vem", "out": "da vida / o que / fora"
     };
 
     const pdfPhrasesDatabase = {
-        "Teste": [
-            { frase1: { en: "Love is blind.", pt: "O amor é cego." }, frase2: { en: "The cat is here.", pt: "O gato está aqui." } },
-            { frase1: { en: "The cat is here.", pt: "O gato está aqui." }, frase2: { en: "Love is blind.", pt: "O amor é cego." } },
-            { frase1: { en: "Love is blind.", pt: "O amor é cego." }, frase2: { en: "The cat is here.", pt: "O gato está aqui." } }
+        "Expressões de Impacto": [
+            {en: "Keep your head down!", pt: "Mantenha sua cabeça abaixada!", extra: ["up", "sky"]},
+            {en: "If I ever see you again, I'll surely beat you!", pt: "Se eu te encontrar de novo, vou te bater, com certeza!", extra: ["never", "help"]},
+            {en: "We've been flat to the boards since last night.", pt: "Estamos sendo destruídos pelos flancos desde ontem à noite.", extra: ["morning", "day"]},
+            {en: "Take it easy!", pt: "Vá com calma!", extra: ["hard", "fast"]},
+            {en: "We don't have to play rough!", pt: "A gente não precisa jogar sujo!", extra: ["clean", "smooth"]},
+            {en: "Keep your good eye for this one now!", pt: "Fica de olho atento para esse, agora!", extra: ["bad", "look"]}
+        ],
+        "Diálogos e Confrontos": [
+            {en: "What's going on here?", pt: "O que está acontecendo aqui?", extra: ["there", "doing"]},
+            {en: "The only thing I don't like about is not seeing you!", pt: "A única coisa que não me agrada é não ver você!", extra: ["love", "happy"]},
+            {en: "I don't think he ever really did need me!", pt: "Não creio que, realmente, ele precisasse de mim!", extra: ["want", "always"]},
+            {en: "Are you kidding?", pt: "Vocês estão brincando?", extra: ["serious", "playing"]},
+            {en: "You mean to tell me you still don't know?", pt: "Você está querendo me dizer que ainda não sabe?", extra: ["understand", "say"]},
+            {en: "Why did you make all that, with no purpose?", pt: "Por que você fez tudo isso, sem qualquer motivo?", extra: ["reason", "good"]}
+        ],
+        "Ações e Decisões": [
+            {en: "Let's go to forget all this and pretend it never happened!", pt: "Vamos esquecer tudo isso, e fingir que não aconteceu!", extra: ["remember", "always"]},
+            {en: "They talked fancy to me.", pt: "Eles fizeram a minha cabeça.", extra: ["ugly", "told"]},
+            {en: "I got confused!", pt: "Fiquei confuso (a)!", extra: ["clear", "sure"]},
+            {en: "So, there's nothing more to say.", pt: "Então, não temos mais o que conversar.", extra: ["talk", "anything"]},
+            {en: "Try to keep your nose out of my business!", pt: "Tente manter seu nariz fora do meu negócio!", extra: ["eyes", "in"]},
+            {en: "You're crazy if you think I'm going back!", pt: "Você é louco se pensa que eu vou voltar!", extra: ["right", "stay"]}
+        ],
+        "Relações e Sentimentos": [
+            {en: "We should be very grateful if you could give us food and somewhere to sleep this night.", pt: "Ficaríamos muito gratos se o senhor pudesse nos arranjar alimentação e um lugar para dormir esta noite.", extra: ["water", "house"]},
+            {en: "We could try to help you, but...", pt: "Poderíamos tentar ajudá-lo, mas....", extra: ["stop", "now"]},
+            {en: "On the next time you could try to help us a little more.", pt: "Na próxima vez vocês poderiam tentar nos ajudar um pouquinho mais.", extra: ["less", "never"]},
+            {en: "Tell us something amazing about tour trip!", pt: "Conte-nos algo surpreendente sobre a sua viagem!", extra: ["boring", "bad"]},
+            {en: "You seemed to have lied a bit too!", pt: "Você parecia ter mentido um pouco também!", extra: ["truth", "speak"]},
+            {en: "I'm so proud of you!", pt: "Estou muito orgulhoso de você!", extra: ["sad", "angry"]}
+        ],
+        "Comandos e Defesas": [
+            {en: "Why you'd try to hide it?", pt: "Por que você tentaria escondê-lo?", extra: ["show", "find"]},
+            {en: "Listen specially to what I'm saying now!", pt: "Ouça, especialmente, o que estou dizendo agora!", extra: ["see", "before"]},
+            {en: "Brace yourselves!", pt: "Protejam-se!", extra: ["run", "open"]},
+            {en: "I need and only expect you trust on me.", pt: "Necessito e espero que você confie em mim.", extra: ["doubt", "know"]},
+            {en: "You're in charge till I come back!", pt: "Você assume até que eu volte.", extra: ["leave", "go"]},
+            {en: "I called his bluff, that's all!", pt: "Eu blefei com ele é isso!", extra: ["true", "lost"]}
+        ],
+        "Situações do Dia a Dia": [
+            {en: "What do you think is going on here?", pt: "O que você acha que está rolando aqui?", extra: ["outside", "working"]},
+            {en: "How could I betray such a friend?", pt: "Como eu poderia trair um amigo assim?", extra: ["help", "enemy"]},
+            {en: "The truth is that I undervalued many of you!", pt: "A verdade é que eu subestimei muitos de vocês!", extra: ["like", "knew"]},
+            {en: "Get the right lane!", pt: "Pegue a pista da direita!", extra: ["left", "car"]},
+            {en: "Well, I've finally figured out who I am!", pt: "Bem, acabo de descobrir, finalmente, quem sou!", extra: ["lost", "name"]},
+            {en: "Then get them home!", pt: "Então, leve-os para casa!", extra: ["office", "school"]}
+        ],
+        "Desafios Avançados": [
+            {en: "It doesn't make any sense!", pt: "Não faz nenhum sentido!", extra: ["true", "clear"]},
+            {en: "It was the worst thing I ever saw!", pt: "Foi a pior coisa que já vi!", extra: ["best", "good"]},
+            {en: "I've never been lonesome in my life!", pt: "Nunca tinha ficado sozinha na minha vida!", extra: ["happy", "always"]},
+            {en: "That's not the way I'd like to be recognized!", pt: "Não é desta maneira que eu gostaria de ser reconhecido!", extra: ["love", "see"]},
+            {en: "I don't care if he hurts me!", pt: "Eu não me importo se ele me atingir!", extra: ["mind", "stop"]},
+            {en: "Shouldn't you be getting ready?", pt: "Você não devia estar se arrumando?", extra: ["sleeping", "now"]}
+        ],
+        "Expressões de Casamento": [
+            {en: "Will you have this woman to be your lawful wedded wife?", pt: "Você aceita esta mulher como sua legítima esposa ?", extra: ["husband", "friend"]},
+            {en: "Yes, as long as both shall live, no matter what happens!", pt: "Sim, 'ATÉ QUE A MORTE NOS SEPARE', não importa o que aconteça!", extra: ["die", "never"]},
+            {en: "You have my word!", pt: "Você (s) tem a minha palavra!", extra: ["money", "hand"]},
+            {en: "As long as my heart beats!", pt: "Enquanto meu coração bater!", extra: ["stops", "head"]},
+            {en: "He is said never been defeated!", pt: "Dizem que ele nunca foi vencido!", extra: ["always", "lost"]}
+        ],
+        "Saudações e Apresentações": [
+            {en: "Hi.", pt: "Oi.", extra: ["hello", "there"]},
+            {en: "How are you?", pt: "Tudo bem? / Tudo bom?", extra: ["fine", "bad"]},
+            {en: "How are you doing?", pt: "Tudo bem? / Tudo bom?", extra: ["fine", "bad"]},
+            {en: "What's your name?", pt: "Qual é o seu nome?", extra: ["last", "who"]},
+            {en: "Sorry, what was your name again?", pt: "Desculpe, qual é mesmo o seu nome?", extra: ["remember", "know"]},
+            {en: "Hi, I'm...", pt: "Oi, eu sou...", extra: ["this", "here"]},
+            {en: "Nice to meet you.", pt: "Prazer.", extra: ["good", "see"]},
+            {en: "Do you know Joao?", pt: "Você conhece o João?", extra: ["him", "see"]},
+            {en: "I'd like you to meet...", pt: "Eu quero lhe apresentar o...", extra: ["show", "tell"]},
+            {en: "I've heard a lot about you.", pt: "Já ouvi falar muito de você.", extra: ["said", "never"]},
+            {en: "Silvia has told me a lot about you.", pt: "A Silvia já me falou muito sobre você.", extra: ["us", "nothing"]},
+            {en: "All good, I hope.", pt: "Coisas boas, eu espero.", extra: ["bad", "always"]},
+            {en: "Don't believe it. It's not true.", pt: "Não acredite em nada. É tudo mentira.", extra: ["right", "clear"]},
+            {en: "I've been looking forward to meeting you.", pt: "Estava querendo muito conhecê-lo.", extra: ["before", "never"]},
+            {en: "At last! We meet!", pt: "Nossa! Finalmente vou conhecer você!", extra: ["first", "good"]},
+            {en: "Nice meeting you.", pt: "Gostei de conhecê-lo.", extra: ["bad", "great"]},
+            {en: "See you later.", pt: "Até mais. / Até logo.", extra: ["tomorrow", "now"]}
+        ],
+        "Falando Sobre Família": [
+            {en: "I have two brothers and one sister.", pt: "Eu tenho dois irmãos e uma irmã.", extra: ["three", "none"]},
+            {en: "I'm the oldest.", pt: "Eu sou o mais velho.", extra: ["youngest", "middle"]},
+            {en: "I'm in the middle.", pt: "Eu sou a/o do meio.", extra: ["oldest", "first"]},
+            {en: "I'm the youngest.", pt: "Sou o/a caçula.", extra: ["last", "child"]},
+            {en: "I'm an only child.", pt: "Sou filho único.", extra: ["brother", "many"]},
+            {en: "My sister is a doctor.", pt: "Minha irmã é médica.", extra: ["teacher", "lives"]},
+            {en: "My father lives in Fortaleza.", pt: "Meu pai mora em Fortaleza.", extra: ["mother", "city"]},
+            {en: "Are your parents divorced?", pt: "Seus pais são separados?", extra: ["married", "together"]},
+            {en: "My parents are deceased.", pt: "Meus pais são falecidos.", extra: ["alive", "here"]},
+            {en: "Do you have any family around here?", pt: "Você tem parentes por aqui?", extra: ["friends", "house"]},
+            {en: "Do you have any children?", pt: "Você tem filhos?", extra: ["car", "money"]},
+            {en: "Do you have any kids?", pt: "Você tem filhos?", extra: ["cats", "dogs"]},
+            {en: "I have two kids from my first marriage.", pt: "Eu tenho dois filhos do primeiro casamento.", extra: ["wife", "second"]},
+            {en: "Are you single?", pt: "Você é solteiro?", extra: ["married", "divorced"]},
+            {en: "Are you married?", pt: "Você é casado?", extra: ["single", "separated"]},
+            {en: "We're separated.", pt: "Nós estamos separados.", extra: ["together", "happy"]},
+            {en: "We're divorced.", pt: "Nós somos divorciados.", extra: ["married", "friends"]},
+            {en: "My family is very important to me.", pt: "Minha família é muito importante para mim.", extra: ["job", "money"]},
+            {en: "To me, my family comes first.", pt: "Para mim, a família vem em primeiro lugar.", extra: ["second", "last"]},
+            {en: "I'm kind of the black sheep of the family.", pt: "Eu sou meio que a ovelha negra da família.", extra: ["white", "good"]},
+            {en: "I get along very well with my family.", pt: "Eu me dou muito bem com a minha família.", extra: ["bad", "nothing"]},
+            {en: "My family is a bit complicated.", pt: "Minha família é um pouco complicada.", extra: ["easy", "clear"]},
+            {en: "I haven't spoken to my father in years.", pt: "Faz anos que não falo com o meu pai.", extra: ["days", "months"]},
+            {en: "My sister and I had a falling out.", pt: "Eu e minha irmã brigamos.", extra: ["brother", "love"]},
+            {en: "We're not on speaking terms.", pt: "Nós não nos falamos.", extra: ["good", "always"]},
+            {en: "Any questions about my family?", pt: "Alguma pergunta sobre a minha família?", extra: ["friends", "life"]}
+        ],
+        "Personalidade e Caráter": [
+            {en: "She's a real character.", pt: "Ela é uma figura.", extra: ["fake", "boring"]},
+            {en: "He's a nice guy.", pt: "Ele é um cara simpático.", extra: ["bad", "ugly"]},
+            {en: "She's very nice.", pt: "Ela é muito simpática.", extra: ["mean", "old"]},
+            {en: "He's cool.", pt: "Ele é legal. / Ele é maneiro.", extra: ["hot", "bad"]},
+            {en: "She's cool.", pt: "Ela é legal. / Ela é maneira.", extra: ["warm", "charming"]},
+            {en: "He's fun to be with.", pt: "É divertido passar o tempo com ele.", extra: ["boring", "sad"]},
+            {en: "He has a great sense of humor.", pt: "Ele tem um ótimo senso de humor.", extra: ["bad", "no"]},
+            {en: "She's very down to earth.", pt: "Ela é muito pé no chão.", extra: ["sky", "crazy"]},
+            {en: "He enjoys life.", pt: "Ele aproveita a vida.", extra: ["hates", "work"]},
+            {en: "She loves to party.", pt: "Ela adora uma festa.", extra: ["sleep", "study"]},
+            {en: "He loves to be the center of attention.", pt: "Ele adora ser o centro das atenções.", extra: ["hide", "corner"]},
+            {en: "I trust my instincts.", pt: "Eu confio nos meus instintos.", extra: ["doubt", "people"]},
+            {en: "I can admit when I'm wrong.", pt: "Admito quando estou errado.", extra: ["right", "never"]},
+            {en: "I'm not afraid of hard work.", pt: "Não tenho medo de trabalho duro.", extra: ["easy", "lazy"]},
+            {en: "I take my obligations very seriously.", pt: "Levo minhas obrigações muito a sério.", extra: ["lightly", "never"]},
+            {en: "I'm terrible with names.", pt: "Sou péssimo para nomes.", extra: ["good", "faces"]},
+            {en: "I think I'm a good judge of character.", pt: "Acho que conheço bem o caráter das pessoas.", extra: ["bad", "no"]},
+            {en: "I'm a well rounded person.", pt: "Sou uma pessoa bem resolvida / equilibrada.", extra: ["unbalanced", "square"]},
+            {en: "I keep current with current events.", pt: "Mantenho-me atualizado com os eventos atuais.", extra: ["past", "forget"]},
+            {en: "I'm a fast learner.", pt: "Sou um aprendiz rápido.", extra: ["slow", "no"]},
+            {en: "I don't let things bother me.", pt: "Não deixo as coisas me incomodarem.", extra: ["always", "make"]},
+            {en: "I'm basically a team player.", pt: "Basicamente, gosto de trabalhar em equipe.", extra: ["alone", "solo"]},
+            {en: "I try to keep my feet on the ground.", pt: "Tento manter os meus pés no chão.", extra: ["head", "clouds"]},
+            {en: "He thinks he's someone big.", pt: "Ele pensa que é grande coisa.", extra: ["small", "nobody"]},
+            {en: "People think I'm strange.", pt: "As pessoas me acham esquisito.", extra: ["normal", "nice"]},
+            {en: "He's very sensitive.", pt: "Ele é muito sensível.", extra: ["hard", "cold"]},
+            {en: "He's very charming.", pt: "Ele é muito charmoso.", extra: ["ugly", "boring"]},
+            {en: "He's very charismatic.", pt: "Ele é muito carismático.", extra: ["quiet", "mean"]},
+            {en: "She's very picky about her clothes.", pt: "Ela é muito exigente / fresca com as roupas dela.", extra: ["easy", "loose"]},
+            {en: "He has a gift for languages.", pt: "Ele tem o dom para línguas.", extra: ["no", "bad"]},
+            {en: "She excells in everything she does.", pt: "Ela se destaca em tudo o que faz.", extra: ["fails", "nothing"]},
+            {en: "He's able to control himself.", pt: "Ele é capaz de se controlar.", extra: ["unable", "lose"]},
+            {en: "He has a stubborn streak.", pt: "Ele tem um lado teimoso.", extra: ["easy", "smooth"]},
+            {en: "He has a terrible temper.", pt: "Ele tem um gênio terrível.", extra: ["good", "calm"]},
+            {en: "She has expensive taste.", pt: "Ela tem gosto por coisas caras.", extra: ["cheap", "low"]},
+            {en: "He likes to keep to himself.", pt: "Ele gosta de ficar na dele.", extra: ["party", "crowd"]},
+            {en: "She keeps her emotions to herself.", pt: "Ela guarda as emoções para si mesma.", extra: ["show", "speak"]},
+            {en: "He always keeps his word.", pt: "Ele sempre cumpre a palavra dele.", extra: ["breaks", "lies"]},
+            {en: "He keeps his room clean.", pt: "Ele mantém o quarto dele limpo.", extra: ["dirty", "messy"]},
+            {en: "She keeps out of trouble.", pt: "Ela fica fora de confusão.", extra: ["in", "always"]},
+            {en: "He keeps out of my way.", pt: "Ele não fica no meu caminho.", extra: ["in", "front"]}
         ]
     };
 
-    // ============================================================
-    // 7. JOGO PRINCIPAL
-    // ============================================================
-    let selectedTopic = "", playlistPhrases = [], currentPhraseIndex = 0;
-    let selectedWords = [], currentFrase = 1;
-    let frase1Completed = false, frase2Completed = false;
-    let pescaMode = false, draggedIndex = null;
-    let allWords = [];
-    let totalPhrases = 0;
+    let selectedTopic = "";
+    let playlistPhrases = [];
+    let currentPhraseIndex = 0;
+    let selectedWords = [];
+    let pescaMode = false;
+    let draggedIndex = null;
 
-    // ============================================================
-    // 8. MATCH GAME
-    // ============================================================
-    let matchPairs = [], selectedMatchCard = null, matchedPairs = 0, matchCards = [], isProcessingMatch = false;
-
+    // ===== JOGO DE COMBINAÇÃO (MATCH GAME) =====
     function openMatchGame() {
         document.getElementById('match-screen').classList.add('active');
         document.getElementById('matchBtn').classList.add('active');
-        document.getElementById('backBtn').classList.add('hidden');
         resetMatchGame();
-        setTimeout(() => { 
-            applyTextColor(settings.textColor);
-            applyBgBalloonColor(settings.bgBalloonColor);
-            applyBgColor(settings.bgColor);
+        setTimeout(() => {
+            applyTextColor(colorConfig.textColor);
+            applyBgColor(colorConfig.bgColor);
         }, 100);
     }
-    
+
     function closeMatchGame() {
         document.getElementById('match-screen').classList.remove('active');
         document.getElementById('matchBtn').classList.remove('active');
-        document.getElementById('backBtn').classList.remove('hidden');
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     }
-    
+
     function resetMatchGame() {
         const wordList = Object.keys(dictionary);
-        const numPairs = Math.min(13, wordList.length);
+        const numPairs = Math.min(Math.floor(Math.random() * 5) + 8, wordList.length);
         const shuffledWords = wordList.sort(() => Math.random() - 0.5);
         const selectedWordsForMatch = shuffledWords.slice(0, numPairs);
+        
         matchPairs = [];
         selectedWordsForMatch.forEach(word => {
             const translation = dictionary[word] || word;
             const cleanTranslation = translation.split('/')[0].trim();
             matchPairs.push({ en: word, pt: cleanTranslation, id: word });
         });
+
         matchCards = [];
         matchPairs.forEach(pair => {
             matchCards.push({ type: 'en', word: pair.en, pairId: pair.id });
             matchCards.push({ type: 'pt', word: pair.pt, pairId: pair.id });
         });
         matchCards.sort(() => Math.random() - 0.5);
+
         matchedPairs = 0;
         selectedMatchCard = null;
         isProcessingMatch = false;
         document.getElementById('matchWinMessage').style.display = 'none';
+        
         renderMatchGame();
     }
-    
+
     function renderMatchGame() {
         const grid = document.getElementById('matchGrid');
         grid.innerHTML = '';
+        
         matchCards.forEach((card, index) => {
             const div = document.createElement('div');
             div.className = 'match-card';
@@ -932,33 +1715,65 @@
             div.dataset.index = index;
             div.dataset.pairId = card.pairId;
             div.dataset.type = card.type;
-            if (!card.matched) { 
-                div.style.color = settings.textColor;
-                div.style.backgroundColor = settings.bgBalloonColor;
-                div.style.fontSize = settings.matchFontSize + 'px';
+            
+            if (!card.matched) {
+                div.style.color = colorConfig.textColor;
+                div.style.borderColor = colorConfig.textColor;
             }
-            if (card.matched) { div.classList.add('matched'); }
+            
+            if (card.matched) {
+                div.classList.add('matched');
+            }
+            
             div.onclick = () => handleMatchCardClick(index);
             grid.appendChild(div);
         });
+
         const totalPairs = matchPairs.length;
         document.getElementById('matchStats').textContent = `Pares: ${matchedPairs} / ${totalPairs}`;
+        
         if (matchedPairs === totalPairs && totalPairs > 0) {
             document.getElementById('matchWinMessage').style.display = 'block';
-            speakText('Congratulations! You matched all pairs!');
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance('Congratulations! You matched all pairs!');
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
         }
     }
-    
+
     function handleMatchCardClick(index) {
         if (isProcessingMatch) return;
+        
         const card = matchCards[index];
         if (card.matched) return;
-        if (selectedMatchCard === index) { selectedMatchCard = null; renderMatchGame(); return; }
-        if (selectedMatchCard === null) { selectedMatchCard = index; const grid = document.getElementById('matchGrid'); const elements = grid.children; elements[index].classList.add('selected'); return; }
+        
+        if (selectedMatchCard === index) {
+            selectedMatchCard = null;
+            renderMatchGame();
+            return;
+        }
+        
+        if (selectedMatchCard === null) {
+            selectedMatchCard = index;
+            const grid = document.getElementById('matchGrid');
+            const elements = grid.children;
+            elements[index].classList.add('selected');
+            return;
+        }
+        
         const firstCard = matchCards[selectedMatchCard];
         const secondCard = card;
+        
         if (firstCard.pairId === secondCard.pairId && firstCard.type !== secondCard.type) {
-            firstCard.matched = true; secondCard.matched = true; matchedPairs++; selectedMatchCard = null; isProcessingMatch = false; renderMatchGame();
+            firstCard.matched = true;
+            secondCard.matched = true;
+            matchedPairs++;
+            selectedMatchCard = null;
+            isProcessingMatch = false;
+            renderMatchGame();
             speakWord(firstCard.type === 'en' ? firstCard.word : secondCard.word);
         } else {
             isProcessingMatch = true;
@@ -966,57 +1781,44 @@
             const elements = grid.children;
             elements[selectedMatchCard].classList.add('wrong');
             elements[index].classList.add('wrong');
-            setTimeout(() => { selectedMatchCard = null; isProcessingMatch = false; renderMatchGame(); }, 600);
+            
+            setTimeout(() => {
+                selectedMatchCard = null;
+                isProcessingMatch = false;
+                renderMatchGame();
+            }, 600);
         }
     }
 
-    // ============================================================
-    // 9. FUNÇÕES DO JOGO
-    // ============================================================
-    function getCurrentPhrase() {
-        const entry = playlistPhrases[currentPhraseIndex];
-        if (!entry) return null;
-        if (currentFrase === 1) return entry.frase1;
-        else return entry.frase2;
-    }
-
-    function getAllWordsFromPhrases(entry) {
-        const words1 = entry.frase1.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
-        const words2 = entry.frase2.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
-        let all = [...words1, ...words2];
-        let unique = [];
-        all.forEach(w => {
-            if (!unique.map(x => x.toLowerCase()).includes(w.toLowerCase())) {
-                unique.push(w);
-            }
-        });
-        return unique;
+    // ===== INICIALIZAÇÃO DO JOGO PRINCIPAL =====
+    function init() {
+        renderTopics();
+        showTopicsScreen();
+        setupDragAndDropEvents();
+        applyTextColor(colorConfig.textColor);
+        applyBgColor(colorConfig.bgColor);
+        
+        // Teste de áudio ao iniciar
+        setTimeout(() => {
+            testAudioPermission();
+        }, 1000);
     }
 
     function renderTopics() {
         const listContainer = document.getElementById("topics-list");
         listContainer.innerHTML = "";
-        
-        const progress = loadProgress();
-        
+
         const mistoBtn = document.createElement("button");
         mistoBtn.className = "topic-card misto-btn";
         mistoBtn.innerText = "🔀 MODO MISTO CRÍTICO";
         mistoBtn.onclick = () => startTopic("MISTO");
         listContainer.appendChild(mistoBtn);
-        
+
         for (let topicName in pdfPhrasesDatabase) {
             const count = pdfPhrasesDatabase[topicName].length;
             const btn = document.createElement("button");
             btn.className = "topic-card";
-            
-            let progressText = `(${count})`;
-            if (progress && progress.topic === topicName) {
-                const completed = progress.index;
-                progressText = `(${completed}/${count}) 🟢`;
-            }
-            
-            btn.innerText = `${topicName} ${progressText}`;
+            btn.innerText = `${topicName} (${count})`;
             btn.onclick = () => startTopic(topicName);
             listContainer.appendChild(btn);
         }
@@ -1024,22 +1826,22 @@
 
     function toggleDatabaseStats() {
         const box = document.getElementById("stats-report-box");
-        if (box.style.display === "block") { box.style.display = "none"; return; }
-        let totalPhrases = 0;
-        for (let cat in pdfPhrasesDatabase) { totalPhrases += pdfPhrasesDatabase[cat].length; }
-        let totalWords = Object.keys(dictionary).length;
-        const progress = loadProgress();
-        let progressInfo = 'Nenhum progresso salvo';
-        if (progress) {
-            progressInfo = `Tópico: ${progress.topic}, Frase: ${progress.index + 1} de ${progress.total}`;
+        if (box.style.display === "block") {
+            box.style.display = "none";
+            return;
         }
+
+        let totalPhrases = 0;
+        for (let cat in pdfPhrasesDatabase) {
+            totalPhrases += pdfPhrasesDatabase[cat].length;
+        }
+
+        let totalWords = Object.keys(dictionary).length;
+
         box.innerHTML = `
-            <p style='color:#ffffff; margin-bottom:6px;'>📂 LAUDO CENTRAL DE SISTEMA:</p>
-            <p>Total de Pares de Frases: <span style='color:#00ff66; font-size:16px;'>${totalPhrases}</span></p>
-            <p>Total de Palavras: <span style='color:#00ff66; font-size:16px;'>${totalWords}</span></p>
-            <p style='margin-top:6px; color:#ffaa00;'>📊 Progresso: ${progressInfo}</p>
-            <p style='margin-top:6px; color:#00aaff;'>🔊 Áudio: Google TTS</p>
-            <p style='margin-top:6px; color:#00aa33;'>✅ Banco de Dados para Testes!</p>
+            <p style='color:#00ff22; margin-bottom:8px;'>📂 LAUDO CENTRAL DE SISTEMA:</p>
+            <p>Total de Frases: <span style='color:#ffffff; font-size:20px;'>${totalPhrases}</span></p>
+            <p>Total de Palavras: <span style='color:#ffffff; font-size:20px;'>${totalWords}</span></p>
         `;
         box.style.display = "block";
     }
@@ -1048,81 +1850,93 @@
         selectedTopic = "";
         document.getElementById("topics-screen").classList.add("active");
         document.getElementById("game-screen").classList.remove("active");
-        document.getElementById("backBtn").classList.remove('hidden');
         renderTopics();
     }
 
     function startTopic(topicName) {
         selectedTopic = topicName;
+        
         let sourcePhrases = [];
         if (topicName === "MISTO") {
-            for (let cat in pdfPhrasesDatabase) { sourcePhrases = sourcePhrases.concat(pdfPhrasesDatabase[cat]); }
+            for (let cat in pdfPhrasesDatabase) {
+                sourcePhrases = sourcePhrases.concat(pdfPhrasesDatabase[cat]);
+            }
         } else {
             sourcePhrases = pdfPhrasesDatabase[topicName] || [];
         }
+
         playlistPhrases = [...sourcePhrases];
-        if (playlistPhrases.length === 0) { alert("Nenhuma frase encontrada!"); return; }
-        
-        totalPhrases = playlistPhrases.length;
-        
-        const progress = loadProgress();
-        let startIndex = 0;
-        if (progress && progress.topic === topicName && progress.index < totalPhrases) {
-            startIndex = progress.index;
+
+        if (playlistPhrases.length === 0) {
+            alert("Nenhuma frase encontrada!");
+            return;
         }
+
+        playlistPhrases.sort(() => Math.random() - 0.5);
         
-        if (!progress || progress.topic !== topicName) {
-            playlistPhrases.sort(() => Math.random() - 0.5);
-        }
-        
-        currentPhraseIndex = startIndex;
+        currentPhraseIndex = 0;
         document.getElementById("topics-screen").classList.remove("active");
         document.getElementById("game-screen").classList.add("active");
-        document.getElementById("backBtn").classList.remove('hidden');
+        
         loadPhrase();
     }
 
     function loadPhrase() {
         if (currentPhraseIndex >= playlistPhrases.length) {
-            alert("🎉 Parabéns! Você completou todas as frases!");
-            clearProgress();
+            alert("Fim do bloco! Retornando ao painel central.");
             showTopicsScreen();
             return;
         }
-        
+
         selectedWords = [];
-        currentFrase = 1;
-        frase1Completed = false;
-        frase2Completed = false;
         pescaMode = false;
         document.getElementById("btn-pesca").classList.remove("active");
+        
         document.getElementById("status-message").innerHTML = "";
         document.getElementById("revealed-answer").style.display = "none";
         document.getElementById("revealed-answer").innerText = "";
+        
         document.getElementById("check-btn").style.display = "block";
         document.getElementById("next-btn").style.display = "none";
+        
         document.getElementById("construction-zone").style.display = "flex";
         document.getElementById("success-text-box").style.display = "none";
-        document.getElementById("success-text-box").className = "success-text-box";
-        
-        const entry = playlistPhrases[currentPhraseIndex];
-        
-        document.getElementById('phrase-counter').textContent = `Frase ${currentPhraseIndex + 1} de ${playlistPhrases.length}`;
-        
-        const phrase1El = document.getElementById("phrase-1");
-        const phrase2El = document.getElementById("phrase-2");
-        phrase1El.textContent = `📝 ${entry.frase1.pt}`;
-        phrase1El.className = "phrase-item";
-        phrase2El.textContent = `📝 ${entry.frase2.pt}`;
-        phrase2El.className = "phrase-item hidden";
-        
-        allWords = getAllWordsFromPhrases(entry);
-        allWords.sort(() => Math.random() - 0.5);
-        
-        document.getElementById("track-number").innerText = `Frase ${currentPhraseIndex + 1} de ${playlistPhrases.length} - Frase 1:`;
+
+        const currentPhrase = playlistPhrases[currentPhraseIndex];
+        document.getElementById("phrase-pt").innerText = currentPhrase.pt;
+        document.getElementById("track-number").innerText = `Frase ${currentPhraseIndex + 1} de ${playlistPhrases.length}:`;
+
         renderZones();
+    }
+
+    function getCleanWordsList(phraseObj) {
+        let cleanEn = phraseObj.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "");
+        let rawWords = cleanEn.split(" ").filter(w => w.trim() !== "");
         
-        saveProgress(selectedTopic, currentPhraseIndex, playlistPhrases.length);
+        let pool = [...rawWords];
+        if (phraseObj.extra) {
+            phraseObj.extra.forEach(ex => {
+                if (ex.trim() !== "") pool.push(ex);
+            });
+        }
+
+        let uniquePool = [];
+        pool.forEach(w => {
+            if(!uniquePool.map(x => x.toLowerCase()).includes(w.toLowerCase())){
+                uniquePool.push(w);
+            }
+        });
+
+        const backupDistractors = ["there", "ready", "always", "together", "nothing", "day", "night", "more", "less", "here", "now", "then", "from", "into", "about", "after", "before", "between"];
+        
+        while(uniquePool.length < (rawWords.length * 2) + 4) {
+            let randW = backupDistractors[Math.floor(Math.random() * backupDistractors.length)];
+            if(!uniquePool.map(x => x.toLowerCase()).includes(randW.toLowerCase())) {
+                uniquePool.push(randW);
+            }
+        }
+
+        return uniquePool.sort(() => Math.random() - 0.5);
     }
 
     function renderZones() {
@@ -1130,70 +1944,46 @@
         constructZone.innerHTML = "";
         
         selectedWords.forEach((word, index) => {
-            const balloon = createBalloon(word, index, true);
-            constructZone.appendChild(balloon);
-        });
-        
-        const wordsZone = document.getElementById("words-zone");
-        wordsZone.innerHTML = "";
-        
-        const usedWords = selectedWords.map(w => w.toLowerCase());
-        const availableWords = allWords.filter(w => !usedWords.includes(w.toLowerCase()));
-        
-        availableWords.forEach(word => {
-            const btn = createBalloon(word, -1, false);
-            btn.onclick = () => { 
-                speakWord(word); 
-                selectedWords.push(word); 
-                renderZones(); 
-                if(pescaMode) { togglePescaMode(); } 
-            };
-            if (pescaMode) {
-                btn.classList.add("pescado");
-                btn.style.color = '#ffff00';
-                const lower = word.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "");
-                if (dictionary[lower]) { btn.innerText = `${word} (${dictionary[lower]})`; }
-            }
-            wordsZone.appendChild(btn);
-        });
-        
-        const entry = playlistPhrases[currentPhraseIndex];
-        if (currentFrase === 1) {
-            document.getElementById("track-number").innerText = `Frase ${currentPhraseIndex + 1} de ${playlistPhrases.length} - Frase 1:`;
-        } else {
-            document.getElementById("track-number").innerText = `Frase ${currentPhraseIndex + 1} de ${playlistPhrases.length} - Frase 2:`;
-        }
-        
-        applyTextColor(settings.textColor);
-        applyBgBalloonColor(settings.bgBalloonColor);
-        applyBalloonFontSize(settings.balloonFontSize);
-    }
-
-    function createBalloon(word, index, inConstruction) {
-        const balloon = document.createElement("span");
-        balloon.className = "word-balloon";
-        balloon.innerText = word;
-        balloon.draggable = inConstruction;
-        if (inConstruction) {
+            const balloon = document.createElement("span");
+            balloon.className = "word-balloon";
+            balloon.innerText = word;
+            balloon.draggable = true;
             balloon.dataset.index = index;
-            balloon.style.color = settings.textColor;
-            balloon.style.backgroundColor = settings.bgBalloonColor;
-            balloon.style.fontSize = (settings.balloonFontSize - 1) + 'px';
+
+            balloon.style.color = colorConfig.textColor;
+
             balloon.onclick = (e) => {
                 if (balloon.classList.contains('dragged-active')) return;
                 speakWord(word);
-                if (!balloon.classList.contains('dragging')) { 
-                    selectedWords.splice(index, 1); 
-                    renderZones(); 
+                if (!balloon.classList.contains('dragging')) {
+                    selectedWords.splice(index, 1);
+                    renderZones();
                 }
             };
-            balloon.addEventListener('dragstart', (e) => { draggedIndex = index; balloon.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
-            balloon.addEventListener('dragend', () => { balloon.classList.remove('dragging'); draggedIndex = null; renderZones(); });
-            balloon.addEventListener('pointerdown', (e) => { balloon.setPointerCapture(e.pointerId); draggedIndex = index; balloon.classList.add('dragging'); balloon.classList.add('dragged-active'); });
+
+            balloon.addEventListener('dragstart', (e) => {
+                draggedIndex = index;
+                balloon.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+
+            balloon.addEventListener('dragend', () => {
+                balloon.classList.remove('dragging');
+                draggedIndex = null;
+                renderZones();
+            });
+
+            balloon.addEventListener('pointerdown', (e) => {
+                balloon.setPointerCapture(e.pointerId);
+                draggedIndex = index;
+                balloon.classList.add('dragging');
+                balloon.classList.add('dragged-active');
+            });
+
             balloon.addEventListener('pointermove', (e) => {
                 if (draggedIndex === null) return;
+                
                 const targetEl = document.elementFromPoint(e.clientX, e.clientY);
-                const constructZone = document.getElementById("construction-zone");
                 if (targetEl && targetEl.classList.contains('word-balloon') && targetEl.parentNode === constructZone) {
                     const targetIndex = parseInt(targetEl.dataset.index);
                     if (targetIndex !== draggedIndex && !isNaN(targetIndex)) {
@@ -1204,20 +1994,56 @@
                     }
                 }
             });
+
             balloon.addEventListener('pointerup', (e) => {
                 if (draggedIndex !== null) {
                     balloon.releasePointerCapture(e.pointerId);
                     draggedIndex = null;
-                    setTimeout(() => { balloon.classList.remove('dragged-active'); }, 50);
+                    setTimeout(() => {
+                        balloon.classList.remove('dragged-active');
+                    }, 50);
                     renderZones();
                 }
             });
-        } else {
-            balloon.style.color = settings.textColor;
-            balloon.style.backgroundColor = settings.bgBalloonColor;
-            balloon.style.fontSize = (settings.balloonFontSize - 2) + 'px';
-        }
-        return balloon;
+
+            constructZone.appendChild(balloon);
+        });
+
+        const currentPhrase = playlistPhrases[currentPhraseIndex];
+        const poolWords = getCleanWordsList(currentPhrase);
+        const wordsZone = document.getElementById("words-zone");
+        wordsZone.innerHTML = "";
+
+        poolWords.forEach(word => {
+            const isSelected = selectedWords.map(w => w.toLowerCase()).includes(word.toLowerCase());
+            if (!isSelected) {
+                const btn = document.createElement("span");
+                btn.className = "word-balloon";
+                btn.innerText = word;
+                
+                btn.style.color = colorConfig.textColor;
+                
+                btn.onclick = () => {
+                    speakWord(word);
+                    selectedWords.push(word);
+                    renderZones();
+                    if(pescaMode) {
+                        togglePescaMode();
+                    }
+                };
+                
+                if (pescaMode) {
+                    btn.classList.add("pescado");
+                    btn.style.color = '#ffff00';
+                    let lower = word.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "");
+                    if (dictionary[lower]) {
+                        btn.innerText = `${word} (${dictionary[lower]})`;
+                    }
+                }
+
+                wordsZone.appendChild(btn);
+            }
+        });
     }
 
     function renderZonesSilently(container) {
@@ -1226,19 +2052,20 @@
             const idx = parseInt(child.dataset.index);
             if (idx !== draggedIndex) {
                 child.innerText = selectedWords[idx];
-                child.style.color = settings.textColor;
-                child.style.backgroundColor = settings.bgBalloonColor;
-                child.style.fontSize = (settings.balloonFontSize - 1) + 'px';
+                child.style.color = colorConfig.textColor;
             }
         });
         children.forEach((child, index) => {
             child.dataset.index = index;
-            if (index === draggedIndex) { child.innerText = selectedWords[index]; }
+            if (index === draggedIndex) {
+                child.innerText = selectedWords[index];
+            }
         });
     }
 
     function setupDragAndDropEvents() {
         const constructZone = document.getElementById("construction-zone");
+
         constructZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             const targetEl = e.target;
@@ -1257,126 +2084,98 @@
     function togglePescaMode() {
         pescaMode = !pescaMode;
         const btn = document.getElementById("btn-pesca");
-        if (pescaMode) { btn.classList.add("active"); } else { btn.classList.remove("active"); }
+        if (pescaMode) {
+            btn.classList.add("active");
+        } else {
+            btn.classList.remove("active");
+        }
         renderZones();
     }
 
     function checkAnswer() {
-        const currentPhrase = getCurrentPhrase();
-        if (!currentPhrase) return;
-        
+        const currentPhrase = playlistPhrases[currentPhraseIndex];
         const currentAnswer = selectedWords.join(" ").trim().toLowerCase();
         const cleanTarget = currentPhrase.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g,"").trim().toLowerCase();
         const statusMsg = document.getElementById("status-message");
-        
+
         if (currentAnswer === cleanTarget) {
             statusMsg.innerHTML = '<span class="status-correct">✔ Conectado à Matrix! Ordem perfeita!</span>';
+            document.getElementById("check-btn").style.display = "none";
+            document.getElementById("next-btn").style.display = "block";
             
-            if (currentFrase === 1) {
-                frase1Completed = true;
-                currentFrase = 2;
-                selectedWords = [];
-                
-                const phrase1El = document.getElementById("phrase-1");
-                phrase1El.className = "phrase-item completed";
-                phrase1El.innerHTML = `✅ ${phrase1El.textContent}`;
-                
-                const phrase2El = document.getElementById("phrase-2");
-                phrase2El.className = "phrase-item revealed";
-                
-                document.getElementById("track-number").innerText = `Frase ${currentPhraseIndex + 1} de ${playlistPhrases.length} - Frase 2:`;
-                document.getElementById("status-message").innerHTML = '<span style="color:#00ff66;">🎯 Frase 1 concluída! Agora monte a Frase 2.</span>';
-                document.getElementById("check-btn").style.display = "block";
-                
-                renderZones();
-                
-            } else if (currentFrase === 2) {
-                frase2Completed = true;
-                document.getElementById("check-btn").style.display = "none";
-                document.getElementById("next-btn").style.display = "block";
-                
-                const constructionZone = document.getElementById("construction-zone");
-                const successTextBox = document.getElementById("success-text-box");
-                constructionZone.style.display = "none";
-                
-                const entry = playlistPhrases[currentPhraseIndex];
-                successTextBox.className = "success-text-box completed";
-                successTextBox.innerHTML = `
-                    <div style="color:#00ff66; font-size:20px;">🎉 PARABÉNS! Você completou as 2 frases! 🎉</div>
-                    <div class="phrase-completed"><span class="check">✅</span> ${entry.frase1.en}</div>
-                    <div class="phrase-completed"><span class="check">✅</span> ${entry.frase2.en}</div>
-                `;
-                successTextBox.style.display = "flex";
-                
-                speakText(entry.frase1.en);
-                setTimeout(() => speakText(entry.frase2.en), 2000);
-                
-                const phrase2El = document.getElementById("phrase-2");
-                phrase2El.className = "phrase-item completed";
-                phrase2El.innerHTML = `✅ ${phrase2El.textContent}`;
-                
-                setTimeout(() => {
-                    currentPhraseIndex++;
-                    loadPhrase();
-                }, 3000);
-            }
+            const constructionZone = document.getElementById("construction-zone");
+            const successTextBox = document.getElementById("success-text-box");
+            
+            constructionZone.style.display = "none"; 
+            successTextBox.innerText = currentPhrase.en; 
+            successTextBox.style.display = "flex"; 
+            
+            speak(currentPhrase.en);
         } else {
             statusMsg.innerHTML = '<span class="status-wrong">❌ Erro no sistema! Tente outra sequência.</span>';
         }
     }
 
     function revealAnswer() {
-        const currentPhrase = getCurrentPhrase();
-        if (!currentPhrase) return;
+        const currentPhrase = playlistPhrases[currentPhraseIndex];
         const box = document.getElementById("revealed-answer");
-        if(box.style.display === "block") { box.style.display = "none"; } 
-        else { 
-            box.innerText = `Resposta Correta (Frase ${currentFrase}): ${currentPhrase.en}`; 
-            box.style.display = "block"; 
+        if(box.style.display === "block") {
+            box.style.display = "none";
+        } else {
+            box.innerText = `Resposta Correta: ${currentPhrase.en}`;
+            box.style.display = "block";
         }
     }
 
-    function nextPhrase() { 
-        currentPhraseIndex++; 
-        loadPhrase(); 
+    function nextPhrase() {
+        currentPhraseIndex++;
+        loadPhrase();
     }
 
-    // ============================================================
-    // 10. INICIALIZAÇÃO
-    // ============================================================
-    function init() {
-        renderTopics();
-        showTopicsScreen();
-        setupDragAndDropEvents();
-        
-        applyTextColor(settings.textColor);
-        applyBgBalloonColor(settings.bgBalloonColor);
-        applyBgColor(settings.bgColor);
-        applyGeneralFontSize(settings.generalFontSize);
-        applyBalloonFontSize(settings.balloonFontSize);
-        applyMatchFontSize(settings.matchFontSize);
-        
-        const progress = loadProgress();
-        if (progress && progress.topic) {
-            if (pdfPhrasesDatabase[progress.topic] || progress.topic === "MISTO") {
-                console.log(`📊 Carregando progresso salvo: ${progress.topic} - Frase ${progress.index + 1} de ${progress.total}`);
+    function speak(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            for (let i = 0; i < 3; i++) {
                 setTimeout(() => {
-                    startTopic(progress.topic);
-                }, 500);
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    window.speechSynthesis.speak(utterance);
+                }, i * 1400); 
             }
         }
-        
-        setAudioStatus('🔊 Google TTS - Clique nos balões', '');
-        
-        console.log('🎮 Aplicativo inicializado com sucesso!');
-        console.log('🔊 Áudio: Google TTS');
-        console.log('📊 Configurações carregadas:', settings);
-        if (progress) {
-            console.log('📊 Progresso salvo:', progress);
+    }
+
+    function speakFullSentence() {
+        const currentPhrase = playlistPhrases[currentPhraseIndex];
+        if (currentPhrase) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(currentPhrase.en);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+            }
         }
     }
 
-    document.addEventListener('DOMContentLoaded', init);
+    function speakUserSentence() {
+        if (selectedWords.length === 0) return;
+        const userTxt = selectedWords.join(" ");
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(userTxt);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85;
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    // Inicializar após carregar tudo
+    document.addEventListener('DOMContentLoaded', () => {
+        init();
+    });
 </script>
+
 </body>
 </html>
