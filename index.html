@@ -4,1100 +4,215 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Formando as Frases</title>
-    
-    <!-- ===== META TAGS PARA ANDROID ===== -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#000000">
-    <meta name="msapplication-navbutton-color" content="#000000">
-    
     <style>
-        /* ===== SEU CSS AQUI (mantido igual) ===== */
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
-
-        html, body {
-            height: 100%;
-            width: 100%;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #000000;
-            color: #00ff66;
-            user-select: none;
-            overflow: hidden;
-            transition: background-color 0.4s ease, color 0.4s ease;
-        }
-
-        .container {
-            width: 100%;
-            height: 100%;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            transition: background-color 0.4s ease;
-        }
-
-        ::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 255, 34, 0.05);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(0, 255, 34, 0.3);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 255, 34, 0.6);
-        }
-
-        h2 { 
-            text-align: center; 
-            color: #00ff22; 
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 0px 0px 20px rgba(0, 255, 34, 0.5);
-            margin-top: 5px;
-            font-size: 26px;
-            font-weight: 800;
-            transition: color 0.4s ease;
-        }
-
-        .counter-banner {
-            text-align: center;
-            color: #00aa33;
-            font-size: 13px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.7;
-            transition: color 0.4s ease;
-        }
-
-        .screen { 
-            display: none; 
-            flex-direction: column;
-            width: 100%;
-            height: 100%;
-            flex: 1;
-        }
+        /* ===== ESTILOS COMPLETOS ===== */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #000000; color: #00ff66; user-select: none; overflow: hidden; transition: background-color 0.4s ease, color 0.4s ease; }
+        .container { width: 100%; height: 100%; padding: 10px; display: flex; flex-direction: column; gap: 8px; transition: background-color 0.4s ease; overflow: hidden; }
+        
+        /* HEADER */
+        h2 { text-align: center; color: #00ff22; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0px 0px 20px rgba(0, 255, 34, 0.5); margin-top: 2px; font-size: 18px; font-weight: 800; transition: color 0.4s ease; }
+        .counter-banner { text-align: center; color: #00aa33; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; transition: color 0.4s ease; }
+        
+        /* SCREENS */
+        .screen { display: none; flex-direction: column; width: 100%; height: 100%; flex: 1; overflow: hidden; }
         .screen.active { display: flex; }
-
-        #topics-screen {
-            overflow-y: auto;
-            gap: 14px;
-        }
-
-        #topics-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding-bottom: 10px;
-        }
-
-        .topic-card {
-            background: rgba(0, 20, 5, 0.85);
-            border: 2px solid #004411;
-            padding: 18px 22px; 
-            border-radius: 16px;
-            cursor: pointer;
-            font-size: 24px; 
-            font-weight: bold;
-            border-left: 10px solid #00ff22; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-            text-align: left;
-            color: #ffffff;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            min-height: 70px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        .topic-card:hover {
-            transform: scale(1.02);
-            border-left-color: #00ff88;
-            box-shadow: 0 6px 25px rgba(0, 255, 34, 0.15);
-        }
-        .topic-card:active {
-            transform: scale(0.98);
-        }
-
-        .topic-card.misto-btn {
-            background: rgba(0, 255, 100, 0.12);
-            border-left-color: #00ff66; 
-            border-color: rgba(0, 255, 102, 0.3);
-            color: #00ff66;
-            text-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
-        }
-
-        #game-screen {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            justify-content: space-between;
-        }
+        #topics-screen { overflow-y: auto; gap: 8px; padding-bottom: 10px; }
+        #topics-list { display: flex; flex-direction: column; gap: 6px; padding-bottom: 6px; }
+        
+        /* TOPIC CARDS */
+        .topic-card { background: rgba(0, 20, 5, 0.85); border: 2px solid #004411; padding: 12px 16px; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; border-left: 8px solid #00ff22; box-shadow: 0 4px 15px rgba(0,0,0,0.8); text-align: left; color: #ffffff; width: 100%; display: flex; align-items: center; min-height: 50px; transition: all 0.3s ease; backdrop-filter: blur(10px); }
+        .topic-card:hover { transform: scale(1.01); border-left-color: #00ff88; box-shadow: 0 6px 25px rgba(0, 255, 34, 0.15); }
+        .topic-card:active { transform: scale(0.98); }
+        .topic-card.misto-btn { background: rgba(0, 255, 100, 0.12); border-left-color: #00ff66; border-color: rgba(0, 255, 102, 0.3); color: #00ff66; text-shadow: 0 0 15px rgba(0, 255, 102, 0.4); font-size: 15px; }
+        
+        /* GAME SCREEN */
+        #game-screen { display: none; flex-direction: column; height: 100%; overflow: hidden; }
         #game-screen.active { display: flex; }
-
-        .game-scrollable-content {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            padding-bottom: 14px;
-            padding-right: 2px;
-        }
-
-        .top-challenge {
-            background: rgba(0, 15, 5, 0.6);
-            border: 2px solid rgba(0, 68, 17, 0.6);
-            padding: 18px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            backdrop-filter: blur(8px);
-            transition: border-color 0.4s ease;
-        }
-
-        .phrase-pt {
-            font-size: 26px;
-            font-weight: bold;
-            text-align: center;
-            line-height: 1.4;
-            color: #ffffff; 
-            text-shadow: 0 2px 10px rgba(0,255,34,0.3);
-            word-wrap: break-word;
-            transition: color 0.4s ease;
-        }
-
-        .audio-controls-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            margin-top: 5px;
-            gap: 10px;
-        }
-
-        .btn-audio-top {
-            background: rgba(0, 255, 102, 0.08);
-            color: #00ff66;
-            border: 2px solid rgba(0, 255, 102, 0.3);
-            padding: 10px 16px;
-            font-size: 17px; 
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            flex: 1; 
-            text-align: center;
-            text-shadow: 0 0 5px rgba(0, 255, 102, 0.2);
-            transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease;
-            backdrop-filter: blur(4px);
-        }
-        .btn-audio-top:hover {
-            background: rgba(0, 255, 102, 0.15);
-            border-color: #00ff66;
-        }
-        .btn-audio-top:active {
-            transform: scale(0.95);
-        }
-
-        .btn-audio-user {
-            color: #00ff22;
-            border-color: rgba(0, 255, 34, 0.3);
-        }
-
-        .zone-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 5px;
-        }
-
-        .zone-title {
-            font-size: 18px;
-            color: #00aa33;
-            text-transform: uppercase;
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(0, 170, 51, 0.2);
-            transition: color 0.4s ease;
-        }
-
-        .btn-pesca {
-            background: rgba(0, 17, 4, 0.8);
-            color: #00dd44;
-            border: 2px solid rgba(0, 68, 17, 0.6);
-            padding: 8px 18px;
-            font-size: 15px;
-            font-weight: bold;
-            border-radius: 25px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease;
-            backdrop-filter: blur(4px);
-        }
-        .btn-pesca:hover {
-            border-color: #00dd44;
-            box-shadow: 0 0 20px rgba(0, 221, 68, 0.15);
-        }
-        .btn-pesca.active {
-            background: rgba(0, 51, 10, 0.8);
-            color: #00ff66;
-            border-color: #00ff66;
-            box-shadow: 0 0 25px rgba(0, 255, 102, 0.3);
-        }
-
-        .construction-zone {
-            background: rgba(0, 5, 2, 0.7);
-            border: 2px dashed rgba(0, 255, 34, 0.3);
-            border-radius: 16px;
-            min-height: 300px;
-            padding: 16px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-content: flex-start;
-            position: relative;
-            transition: border-color 0.4s ease;
-            backdrop-filter: blur(4px);
-        }
-
-        .success-text-box {
-            display: none;
-            background: rgba(0, 255, 102, 0.05);
-            border: 2px solid #00ff66;
-            border-radius: 16px;
-            min-height: 300px;
-            padding: 18px;
-            font-size: 26px;
-            font-weight: bold;
-            color: #00ff66;
-            text-align: center;
-            align-items: center;
-            justify-content: center;
-            text-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
-            backdrop-filter: blur(4px);
-            transition: color 0.4s ease, border-color 0.4s ease;
-        }
-
-        .words-zone {
-            background: rgba(0, 10, 4, 0.4);
-            border: 2px solid rgba(0, 68, 17, 0.4);
-            border-radius: 16px;
-            min-height: 160px;
-            padding: 16px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: flex-start;
-            align-content: flex-start;
-            transition: border-color 0.4s ease;
-            backdrop-filter: blur(4px);
-        }
-
-        /* ===== BALÕES DO JOGO DAS PALAVRAS ===== */
-        .word-balloon {
-            padding: 14px 22px; 
-            font-size: 28px; 
-            font-weight: 900;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-            display: inline-block;
-            user-select: none;
-            position: relative;
-            max-width: 100%;
-            word-wrap: break-word;
-            touch-action: none;
-            transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease;
-            background: #0a0a0a;
-            border: 2px solid #1a1a1a;
-            color: #00ff22;
-            text-shadow: 0 0 20px rgba(0, 255, 34, 0.15);
-            letter-spacing: 0.5px;
-            line-height: 1.3;
-        }
-        .word-balloon:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 6px 30px rgba(0,0,0,0.8);
-            border-color: #2a2a2a;
-        }
-        .word-balloon:active {
-            transform: scale(0.93);
-        }
-
-        .construction-zone .word-balloon {
-            background: #0a0a0a;
-            border: 2px solid #1a1a1a;
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5);
-            cursor: grab;
-            color: #00ff22;
-            transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-        .construction-zone .word-balloon:hover {
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7);
-            border-color: #2a2a2a;
-        }
-        .construction-zone .word-balloon:active {
-            cursor: grabbing;
-            transform: scale(0.93);
-        }
-
-        .words-zone .word-balloon {
-            background: #0a0a0a;
-            border: 2px solid #1a1a1a;
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4);
-            color: #00ffaa;
-            transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-        .words-zone .word-balloon:hover {
-            border-color: #2a2a2a;
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
-        }
-
-        .word-balloon.dragging {
-            opacity: 0.4;
-            border: 2px dashed #ffff00 !important;
-            background: rgba(255, 255, 0, 0.05) !important;
-            transform: scale(0.9);
-        }
-
-        .word-balloon.pescado {
-            background: #001a00 !important;
-            color: #ffff00 !important;
-            border-color: #2a2a00 !important;
-            box-shadow: 0 0 30px rgba(255, 255, 0, 0.15) !important;
-            animation: pescaGlow 1s ease infinite alternate;
-        }
-
-        @keyframes pescaGlow {
-            0% { box-shadow: 0 0 15px rgba(255, 255, 0, 0.1); }
-            100% { box-shadow: 0 0 35px rgba(255, 255, 0, 0.25); }
-        }
-
-        .status-container {
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            min-height: 28px;
-            margin: 5px 0;
-            padding: 5px;
-        }
-        .status-correct { 
-            color: #00ff66; 
-            text-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
-            animation: statusPop 0.5s ease;
-            transition: color 0.4s ease;
-        }
-        .status-wrong { 
-            color: #ff3333; 
-            text-shadow: 0 0 20px rgba(255, 51, 51, 0.4);
-            animation: statusShake 0.5s ease;
-        }
-
-        @keyframes statusPop {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        @keyframes statusShake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
-        }
-
-        .control-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding-top: 10px;
-            border-top: 2px solid rgba(0, 255, 34, 0.08);
-            background: transparent;
-            align-items: center;
-            width: 100%;
-            position: relative;
-        }
-
-        .action-btn {
-            width: 90%;
-            max-width: 500px;
-            padding: 14px 20px; 
-            color: #000000;
-            border: none;
-            border-radius: 30px;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-            display: block;
-            transition: all 0.3s ease;
-            letter-spacing: 1px;
-        }
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8);
-        }
-        .action-btn:active {
-            transform: scale(0.97);
-        }
+        .game-scrollable-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-bottom: 8px; padding-right: 2px; }
         
-        .btn-check { 
-            background: linear-gradient(135deg, #00aa22 0%, #00ff66 100%); 
-            color: #000000;
-            font-weight: 800;
-        }
-        .btn-next { 
-            background: linear-gradient(135deg, #00ddff 0%, #00ffaa 100%); 
-            color: #000000; 
-            display: none;
-            font-weight: 800;
-        }
+        /* TOP CHALLENGE */
+        .top-challenge { background: rgba(0, 15, 5, 0.6); border: 2px solid rgba(0, 68, 17, 0.6); padding: 10px 12px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 8px; backdrop-filter: blur(8px); transition: border-color 0.4s ease; }
+        .phrase-pt { font-size: 18px; font-weight: bold; text-align: center; line-height: 1.3; color: #ffffff; text-shadow: 0 2px 10px rgba(0,255,34,0.3); word-wrap: break-word; transition: color 0.4s ease; }
         
-        .btn-reveal {
-            background: rgba(0, 17, 4, 0.8);
-            border: 2px solid rgba(0, 68, 17, 0.6);
-            padding: 10px 18px;
-            font-size: 16px;
-            color: #00ff22;
-            backdrop-filter: blur(4px);
-            transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease;
-        }
-        .btn-reveal:hover {
-            border-color: #00ff22;
-            background: rgba(0, 255, 34, 0.1);
-        }
-
-        .revealed-answer-box {
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #00ff66;
-            color: #00ff66;
-            padding: 14px;
-            border-radius: 16px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            display: none;
-            word-wrap: break-word;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 0 30px rgba(0, 255, 102, 0.15);
-            backdrop-filter: blur(4px);
-            transition: color 0.4s ease, border-color 0.4s ease;
-        }
-
-        .back-link {
-            display: inline-block;
-            color: #00ff22;
-            font-weight: bold;
-            font-size: 20px;
-            cursor: pointer;
-            margin-bottom: 4px;
-            text-shadow: 0 0 10px rgba(0, 255, 34, 0.2);
-            transition: all 0.3s ease, color 0.4s ease;
-            padding: 5px 10px;
-            border-radius: 10px;
-        }
-        .back-link:hover {
-            background: rgba(0, 255, 34, 0.05);
-            text-shadow: 0 0 20px rgba(0, 255, 34, 0.4);
-        }
-
-        .stats-wrapper {
-            text-align: center;
-            padding: 10px 0 20px 0;
-            margin-top: 5px;
-        }
-        .btn-show-stats {
-            background: rgba(0, 0, 0, 0.8);
-            color: #00aa33;
-            border: 2px dashed rgba(0, 68, 17, 0.5);
-            padding: 10px 20px;
-            font-size: 15px;
-            font-weight: bold;
-            border-radius: 25px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease;
-            backdrop-filter: blur(4px);
-        }
-        .btn-show-stats:hover {
-            border-color: #00aa33;
-            box-shadow: 0 0 20px rgba(0, 170, 51, 0.15);
-        }
-        .stats-report-box {
-            display: none;
-            background: rgba(0, 10, 3, 0.9);
-            border: 2px solid #00ff22;
-            padding: 16px;
-            border-radius: 16px;
-            margin: 10px auto 0 auto;
-            font-size: 16px;
-            color: #00ff22;
-            font-weight: bold;
-            text-align: left;
-            line-height: 1.6;
-            max-width: 550px;
-            box-shadow: 0 0 30px rgba(0, 255, 34, 0.1);
-            backdrop-filter: blur(4px);
-            transition: color 0.4s ease, border-color 0.4s ease;
-        }
-
-        .bottom-buttons-row {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            padding: 0 5px;
-            position: relative;
-        }
-
-        .config-btn {
-            background: rgba(0, 20, 5, 0.85);
-            border: 2px solid #00ff66;
-            border-radius: 50%;
-            width: 52px;
-            height: 52px;
-            font-size: 26px;
-            color: #00ff66;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 25px rgba(0, 255, 102, 0.15);
-            transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease;
-            z-index: 10;
-            backdrop-filter: blur(4px);
-        }
-        .config-btn:hover {
-            transform: scale(1.1) rotate(60deg);
-            box-shadow: 0 0 35px rgba(0, 255, 102, 0.3);
-        }
-        .config-btn.active {
-            background: #00ff66;
-            color: #000000;
-            box-shadow: 0 0 40px rgba(0, 255, 102, 0.5);
-        }
-
-        .match-btn {
-            background: rgba(20, 20, 5, 0.85);
-            border: 2px solid #ffaa00;
-            border-radius: 50%;
-            width: 52px;
-            height: 52px;
-            font-size: 24px;
-            color: #ffaa00;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 25px rgba(255, 170, 0, 0.15);
-            transition: all 0.3s ease;
-            z-index: 10;
-            backdrop-filter: blur(4px);
-        }
-        .match-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 35px rgba(255, 170, 0, 0.3);
-        }
-        .match-btn.active {
-            background: #ffaa00;
-            color: #000000;
-            box-shadow: 0 0 40px rgba(255, 170, 0, 0.5);
-        }
-
-        /* ===== TELA DO JOGO DE COMBINAÇÃO ===== */
-        #match-screen {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background: #000000;
-            z-index: 500;
-            padding: 16px;
-            overflow-y: auto;
-            transition: background-color 0.4s ease;
-        }
-        #match-screen.active {
-            display: flex;
-        }
-
-        .match-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0 15px 0;
-            border-bottom: 2px solid rgba(255, 170, 0, 0.2);
-            margin-bottom: 15px;
-        }
-        .match-header h2 {
-            color: #ffaa00;
-            text-shadow: 0 0 30px rgba(255, 170, 0, 0.3);
-            font-size: 22px;
-            margin: 0;
-            letter-spacing: 2px;
-            transition: color 0.4s ease;
-        }
-        .match-close-btn {
-            background: rgba(255, 170, 0, 0.1);
-            border: 2px solid #ffaa00;
-            color: #ffaa00;
-            font-size: 24px;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-        .match-close-btn:hover {
-            background: #ffaa00;
-            color: #000000;
-            transform: rotate(90deg);
-        }
-
-        .match-stats {
-            color: #ffaa00;
-            text-align: center;
-            font-size: 16px;
-            margin-bottom: 15px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-shadow: 0 0 15px rgba(255, 170, 0, 0.15);
-            transition: color 0.4s ease;
-        }
-
-        .match-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            flex: 1;
-        }
-
-        /* ===== CARDS DO MATCH GAME - MESMO ESTILO DOS BALÕES ===== */
-        .match-card {
-            background: #0a0a0a;
-            border: 2px solid #1a1a1a;
-            border-radius: 30px;
-            padding: 14px 10px;
-            text-align: center;
-            font-size: 28px;
-            font-weight: 900;
-            color: #00ff22;
-            cursor: pointer;
-            transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            word-wrap: break-word;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            position: relative;
-            backdrop-filter: blur(4px);
-            text-shadow: 0 0 20px rgba(0, 255, 34, 0.15);
-            letter-spacing: 0.5px;
-            line-height: 1.3;
-        }
-        .match-card:hover {
-            transform: translateY(-3px) scale(1.02);
-            border-color: #2a2a2a;
-            box-shadow: 0 6px 25px rgba(0,0,0,0.7);
-        }
-        .match-card:active {
-            transform: scale(0.95);
-        }
-        .match-card.selected {
-            border-color: #ffaa00;
-            box-shadow: 0 0 40px rgba(255, 170, 0, 0.3);
-            transform: scale(1.04);
-        }
-        .match-card.matched {
-            background: rgba(0, 26, 0, 0.6);
-            border-color: #00ff66;
-            color: #00ff66;
-            cursor: default;
-            opacity: 0.3;
-            transform: scale(0.92);
-            pointer-events: none;
-            animation: matchPop 0.6s ease;
-        }
-        .match-card.matched::after {
-            content: "✓";
-            position: absolute;
-            top: 5px;
-            right: 15px;
-            font-size: 24px;
-            color: #00ff66;
-            text-shadow: 0 0 30px rgba(0, 255, 102, 0.5);
-        }
-
-        @keyframes matchPop {
-            0% { transform: scale(1.3); opacity: 0.8; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(0.92); opacity: 0.3; }
-        }
-
-        .match-card.wrong {
-            animation: wrongShake 0.5s ease;
-            border-color: #ff3333;
-            box-shadow: 0 0 40px rgba(255, 51, 51, 0.25);
-        }
-        @keyframes wrongShake {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-12px); }
-            40% { transform: translateX(12px); }
-            60% { transform: translateX(-8px); }
-            80% { transform: translateX(8px); }
-        }
-
-        .match-controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255, 170, 0, 0.15);
-        }
-        .match-controls button {
-            padding: 12px 28px;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s ease;
-            letter-spacing: 1px;
-        }
-        .match-controls button:hover {
-            transform: translateY(-2px);
-        }
-        .match-controls button:active {
-            transform: scale(0.95);
-        }
-        .btn-match-reset {
-            background: linear-gradient(135deg, #ffaa00, #ffcc44);
-            color: #000000;
-            font-weight: 800;
-        }
-        .btn-match-reset:hover {
-            box-shadow: 0 6px 30px rgba(255, 170, 0, 0.4);
-        }
-        .btn-match-close {
-            background: rgba(51, 51, 51, 0.8);
-            color: #ffaa00;
-            border: 2px solid rgba(255, 170, 0, 0.3) !important;
-        }
-        .btn-match-close:hover {
-            background: rgba(255, 170, 0, 0.15);
-            border-color: #ffaa00 !important;
-        }
-
-        .match-win-message {
-            display: none;
-            text-align: center;
-            color: #ffaa00;
-            font-size: 30px;
-            font-weight: bold;
-            padding: 20px;
-            text-shadow: 0 0 40px rgba(255, 170, 0, 0.4);
-            animation: winPulse 1.5s ease infinite alternate;
-        }
-        @keyframes winPulse {
-            0% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); }
-            100% { transform: scale(1.05); text-shadow: 0 0 60px rgba(255, 170, 0, 0.6); }
-        }
-
-        /* Modal de Configuração */
-        .config-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.88);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s ease;
-            backdrop-filter: blur(8px);
-        }
-        .config-modal.active {
-            display: flex;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .config-modal-content {
-            background: rgba(0, 15, 5, 0.95);
-            border: 2px solid rgba(0, 255, 102, 0.2);
-            border-radius: 20px;
-            padding: 30px 25px;
-            max-width: 420px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 0 60px rgba(0, 255, 102, 0.08);
-            backdrop-filter: blur(10px);
-            transition: border-color 0.4s ease;
-        }
-
-        .config-modal-content h3 {
-            color: #00ff66;
-            text-align: center;
-            font-size: 22px;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
-            transition: color 0.4s ease;
-        }
-
-        .config-modal-close {
-            float: right;
-            background: transparent;
-            border: none;
-            color: #00ff66;
-            font-size: 28px;
-            cursor: pointer;
-            padding: 0 8px;
-            line-height: 1;
-            transition: all 0.3s ease, color 0.4s ease;
-        }
-        .config-modal-close:hover {
-            color: #ffffff;
-            transform: rotate(90deg);
-        }
-
-        .color-picker-group {
-            margin-bottom: 22px;
-        }
-
-        .color-picker-group label {
-            display: block;
-            color: #00ff66;
-            font-size: 14px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-            opacity: 0.8;
-            transition: color 0.4s ease;
-        }
-
-        .color-picker-group .color-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .color-option {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-        .color-option:hover {
-            transform: scale(1.15);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.7);
-        }
-        .color-option.selected {
-            border-color: #ffffff;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-            transform: scale(1.12);
-        }
-
-        .color-option .check-mark {
-            display: none;
-            font-size: 18px;
-            color: white;
-            text-align: center;
-            line-height: 42px;
-            text-shadow: 0 0 15px rgba(0,0,0,0.9);
-        }
-        .color-option.selected .check-mark {
-            display: block;
-        }
-
-        .btn-reset-colors {
-            background: rgba(255, 0, 0, 0.15);
-            border: 2px solid rgba(255, 51, 51, 0.3);
-            color: #ff3333;
-            padding: 12px 20px;
-            border-radius: 14px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            transition: all 0.3s ease;
-            letter-spacing: 1px;
-        }
-        .btn-reset-colors:hover {
-            background: rgba(255, 0, 0, 0.25);
-            border-color: #ff3333;
-            box-shadow: 0 0 30px rgba(255, 51, 51, 0.15);
-        }
-
-        .config-btn-label, .match-btn-label {
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.5;
-            text-align: center;
-            margin-top: 3px;
-        }
+        /* AUDIO CONTROLS */
+        .audio-controls-row { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 2px; gap: 6px; }
+        .btn-audio-top { background: rgba(0, 255, 102, 0.08); color: #00ff66; border: 2px solid rgba(0, 255, 102, 0.3); padding: 6px 10px; font-size: 12px; font-weight: bold; border-radius: 10px; cursor: pointer; flex: 1; text-align: center; text-shadow: 0 0 5px rgba(0, 255, 102, 0.2); transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; backdrop-filter: blur(4px); }
+        .btn-audio-top:hover { background: rgba(0, 255, 102, 0.15); border-color: #00ff66; }
+        .btn-audio-top:active { transform: scale(0.95); }
+        .btn-audio-user { color: #00ff22; border-color: rgba(0, 255, 34, 0.3); }
+        
+        /* ZONE HEADER */
+        .zone-header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
+        .zone-title { font-size: 13px; color: #00aa33; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(0, 170, 51, 0.2); transition: color 0.4s ease; }
+        .btn-pesca { background: rgba(0, 17, 4, 0.8); color: #00dd44; border: 2px solid rgba(0, 68, 17, 0.6); padding: 4px 12px; font-size: 11px; font-weight: bold; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; backdrop-filter: blur(4px); }
+        .btn-pesca:hover { border-color: #00dd44; box-shadow: 0 0 20px rgba(0, 221, 68, 0.15); }
+        .btn-pesca.active { background: rgba(0, 51, 10, 0.8); color: #00ff66; border-color: #00ff66; box-shadow: 0 0 25px rgba(0, 255, 102, 0.3); }
+        
+        /* CONSTRUCTION ZONE */
+        .construction-zone { background: rgba(0, 5, 2, 0.7); border: 2px dashed rgba(0, 255, 34, 0.3); border-radius: 12px; min-height: 100px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; position: relative; transition: border-color 0.4s ease; backdrop-filter: blur(4px); }
+        .success-text-box { display: none; background: rgba(0, 255, 102, 0.05); border: 2px solid #00ff66; border-radius: 12px; min-height: 100px; padding: 12px; font-size: 18px; font-weight: bold; color: #00ff66; text-align: center; align-items: center; justify-content: center; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); backdrop-filter: blur(4px); transition: color 0.4s ease, border-color 0.4s ease; }
+        
+        /* WORDS ZONE */
+        .words-zone { background: rgba(0, 10, 4, 0.4); border: 2px solid rgba(0, 68, 17, 0.4); border-radius: 12px; min-height: 80px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; align-content: flex-start; transition: border-color 0.4s ease; backdrop-filter: blur(4px); }
+        
+        /* WORD BALLOONS */
+        .word-balloon { padding: 6px 12px; font-size: 15px; font-weight: 800; border-radius: 20px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.6); display: inline-block; user-select: none; position: relative; max-width: 100%; word-wrap: break-word; touch-action: none; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease; background: #0a0a0a; border: 2px solid #1a1a1a; color: #00ff22; text-shadow: 0 0 20px rgba(0, 255, 34, 0.15); letter-spacing: 0.3px; line-height: 1.2; }
+        .word-balloon:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 30px rgba(0,0,0,0.8); border-color: #2a2a2a; }
+        .word-balloon:active { transform: scale(0.93); }
+        .construction-zone .word-balloon { background: #0a0a0a; border: 2px solid #1a1a1a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5); cursor: grab; color: #00ff22; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease; font-size: 14px; padding: 5px 10px; }
+        .construction-zone .word-balloon:hover { box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7); border-color: #2a2a2a; }
+        .construction-zone .word-balloon:active { cursor: grabbing; transform: scale(0.93); }
+        .words-zone .word-balloon { background: #0a0a0a; border: 2px solid #1a1a1a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4); color: #00ffaa; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease; font-size: 13px; padding: 4px 10px; }
+        .words-zone .word-balloon:hover { border-color: #2a2a2a; box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6); }
+        .word-balloon.dragging { opacity: 0.4; border: 2px dashed #ffff00 !important; background: rgba(255, 255, 0, 0.05) !important; transform: scale(0.9); }
+        .word-balloon.pescado { background: #001a00 !important; color: #ffff00 !important; border-color: #2a2a00 !important; box-shadow: 0 0 30px rgba(255, 255, 0, 0.15) !important; animation: pescaGlow 1s ease infinite alternate; }
+        @keyframes pescaGlow { 0% { box-shadow: 0 0 15px rgba(255, 255, 0, 0.1); } 100% { box-shadow: 0 0 35px rgba(255, 255, 0, 0.25); } }
+        
+        /* STATUS */
+        .status-container { text-align: center; font-size: 14px; font-weight: bold; min-height: 20px; margin: 2px 0; padding: 3px; }
+        .status-correct { color: #00ff66; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); animation: statusPop 0.5s ease; transition: color 0.4s ease; }
+        .status-wrong { color: #ff3333; text-shadow: 0 0 20px rgba(255, 51, 51, 0.4); animation: statusShake 0.5s ease; }
+        @keyframes statusPop { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes statusShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+        
+        /* CONTROL PANEL */
+        .control-panel { display: flex; flex-direction: column; gap: 5px; padding-top: 6px; border-top: 2px solid rgba(0, 255, 34, 0.08); background: transparent; align-items: center; width: 100%; position: relative; }
+        .action-btn { width: 100%; max-width: 500px; padding: 10px 16px; color: #000000; border: none; border-radius: 25px; font-size: 15px; font-weight: bold; cursor: pointer; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6); display: block; transition: all 0.3s ease; letter-spacing: 0.5px; }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8); }
+        .action-btn:active { transform: scale(0.97); }
+        .btn-check { background: linear-gradient(135deg, #00aa22 0%, #00ff66 100%); color: #000000; font-weight: 800; }
+        .btn-next { background: linear-gradient(135deg, #00ddff 0%, #00ffaa 100%); color: #000000; display: none; font-weight: 800; }
+        .btn-reveal { background: rgba(0, 17, 4, 0.8); border: 2px solid rgba(0, 68, 17, 0.6); padding: 6px 14px; font-size: 13px; color: #00ff22; backdrop-filter: blur(4px); transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; border-radius: 20px; }
+        .btn-reveal:hover { border-color: #00ff22; background: rgba(0, 255, 34, 0.1); }
+        .revealed-answer-box { background: rgba(0, 0, 0, 0.9); border: 2px solid #00ff66; color: #00ff66; padding: 10px; border-radius: 12px; text-align: center; font-size: 14px; font-weight: bold; display: none; word-wrap: break-word; width: 100%; max-width: 500px; box-shadow: 0 0 30px rgba(0, 255, 102, 0.15); backdrop-filter: blur(4px); transition: color 0.4s ease, border-color 0.4s ease; }
+        
+        /* BACK LINK */
+        .back-link { display: inline-block; color: #00ff22; font-weight: bold; font-size: 14px; cursor: pointer; margin-bottom: 2px; text-shadow: 0 0 10px rgba(0, 255, 34, 0.2); transition: all 0.3s ease, color 0.4s ease; padding: 3px 8px; border-radius: 8px; }
+        .back-link:hover { background: rgba(0, 255, 34, 0.05); text-shadow: 0 0 20px rgba(0, 255, 34, 0.4); }
+        
+        /* STATS */
+        .stats-wrapper { text-align: center; padding: 6px 0 12px 0; margin-top: 2px; }
+        .btn-show-stats { background: rgba(0, 0, 0, 0.8); color: #00aa33; border: 2px dashed rgba(0, 68, 17, 0.5); padding: 6px 14px; font-size: 12px; font-weight: bold; border-radius: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; backdrop-filter: blur(4px); }
+        .btn-show-stats:hover { border-color: #00aa33; box-shadow: 0 0 20px rgba(0, 170, 51, 0.15); }
+        .stats-report-box { display: none; background: rgba(0, 10, 3, 0.9); border: 2px solid #00ff22; padding: 12px; border-radius: 12px; margin: 6px auto 0 auto; font-size: 13px; color: #00ff22; font-weight: bold; text-align: left; line-height: 1.5; max-width: 550px; box-shadow: 0 0 30px rgba(0, 255, 34, 0.1); backdrop-filter: blur(4px); transition: color 0.4s ease, border-color 0.4s ease; }
+        
+        /* BOTTOM BUTTONS */
+        .bottom-buttons-row { display: flex; justify-content: space-around; width: 100%; padding: 0 5px; position: relative; gap: 10px; }
+        .config-btn { background: rgba(0, 20, 5, 0.85); border: 2px solid #00ff66; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; color: #00ff66; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(0, 255, 102, 0.15); transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; z-index: 10; backdrop-filter: blur(4px); }
+        .config-btn:hover { transform: scale(1.1) rotate(60deg); box-shadow: 0 0 35px rgba(0, 255, 102, 0.3); }
+        .config-btn.active { background: #00ff66; color: #000000; box-shadow: 0 0 40px rgba(0, 255, 102, 0.5); }
+        .match-btn { background: rgba(20, 20, 5, 0.85); border: 2px solid #ffaa00; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; color: #ffaa00; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(255, 170, 0, 0.15); transition: all 0.3s ease; z-index: 10; backdrop-filter: blur(4px); }
+        .match-btn:hover { transform: scale(1.1); box-shadow: 0 0 35px rgba(255, 170, 0, 0.3); }
+        .match-btn.active { background: #ffaa00; color: #000000; box-shadow: 0 0 40px rgba(255, 170, 0, 0.5); }
+        .config-btn-label, .match-btn-label { font-size: 7px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5; text-align: center; margin-top: 2px; }
         .config-btn-label { color: #00aa33; }
         .match-btn-label { color: #ffaa00; }
-
-        .bottom-btn-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .word-balloon.speaking {
-            animation: speakGlow 0.6s ease;
-        }
-        @keyframes speakGlow {
-            0% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); }
-            50% { box-shadow: 0 0 40px rgba(255, 255, 255, 0.15); }
-            100% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); }
-        }
-
-        /* ===== BOTÃO DE ATIVAÇÃO DE ÁUDIO (FIX PARA WEB2APP) ===== */
-        .audio-activation-banner {
-            display: none;
-            background: rgba(255, 170, 0, 0.15);
-            border: 2px solid #ffaa00;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 10px;
-            text-align: center;
-            animation: pulseBanner 2s ease infinite;
-        }
-        .audio-activation-banner.active {
-            display: block;
-        }
-        .audio-activation-banner p {
-            color: #ffaa00;
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .audio-activation-banner button {
-            background: linear-gradient(135deg, #ffaa00, #ffcc44);
-            color: #000000;
-            border: none;
-            padding: 14px 30px;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .audio-activation-banner button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 40px rgba(255, 170, 0, 0.3);
-        }
-        .audio-activation-banner button:active {
-            transform: scale(0.95);
-        }
-
-        @keyframes pulseBanner {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
+        .bottom-btn-wrapper { display: flex; flex-direction: column; align-items: center; }
+        
+        /* MATCH SCREEN */
+        #match-screen { display: none; flex-direction: column; height: 100%; width: 100%; position: fixed; top: 0; left: 0; background: #000000; z-index: 500; padding: 12px; overflow-y: auto; transition: background-color 0.4s ease; }
+        #match-screen.active { display: flex; }
+        .match-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 0 10px 0; border-bottom: 2px solid rgba(255, 170, 0, 0.2); margin-bottom: 10px; }
+        .match-header h2 { color: #ffaa00; text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); font-size: 18px; margin: 0; letter-spacing: 2px; transition: color 0.4s ease; }
+        .match-close-btn { background: rgba(255, 170, 0, 0.1); border: 2px solid #ffaa00; color: #ffaa00; font-size: 18px; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .match-close-btn:hover { background: #ffaa00; color: #000000; transform: rotate(90deg); }
+        .match-stats { color: #ffaa00; text-align: center; font-size: 13px; margin-bottom: 10px; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255, 170, 0, 0.15); transition: color 0.4s ease; }
+        .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; }
+        .match-card { background: #0a0a0a; border: 2px solid #1a1a1a; border-radius: 20px; padding: 10px 8px; text-align: center; font-size: 16px; font-weight: 800; color: #00ff22; cursor: pointer; transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; min-height: 50px; display: flex; align-items: center; justify-content: center; word-wrap: break-word; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; backdrop-filter: blur(4px); text-shadow: 0 0 20px rgba(0, 255, 34, 0.15); letter-spacing: 0.3px; line-height: 1.2; }
+        .match-card:hover { transform: translateY(-2px) scale(1.01); border-color: #2a2a2a; box-shadow: 0 6px 25px rgba(0,0,0,0.7); }
+        .match-card:active { transform: scale(0.95); }
+        .match-card.selected { border-color: #ffaa00; box-shadow: 0 0 40px rgba(255, 170, 0, 0.3); transform: scale(1.03); }
+        .match-card.matched { background: rgba(0, 26, 0, 0.6); border-color: #00ff66; color: #00ff66; cursor: default; opacity: 0.3; transform: scale(0.92); pointer-events: none; animation: matchPop 0.6s ease; }
+        .match-card.matched::after { content: "✓"; position: absolute; top: 2px; right: 10px; font-size: 18px; color: #00ff66; text-shadow: 0 0 30px rgba(0, 255, 102, 0.5); }
+        @keyframes matchPop { 0% { transform: scale(1.3); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.92); opacity: 0.3; } }
+        .match-card.wrong { animation: wrongShake 0.5s ease; border-color: #ff3333; box-shadow: 0 0 40px rgba(255, 51, 51, 0.25); }
+        @keyframes wrongShake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-10px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); } }
+        .match-controls { display: flex; gap: 8px; justify-content: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 170, 0, 0.15); }
+        .match-controls button { padding: 8px 18px; border-radius: 25px; font-size: 13px; font-weight: bold; cursor: pointer; border: none; transition: all 0.3s ease; letter-spacing: 0.5px; }
+        .match-controls button:hover { transform: translateY(-2px); }
+        .match-controls button:active { transform: scale(0.95); }
+        .btn-match-reset { background: linear-gradient(135deg, #ffaa00, #ffcc44); color: #000000; font-weight: 800; }
+        .btn-match-reset:hover { box-shadow: 0 6px 30px rgba(255, 170, 0, 0.4); }
+        .btn-match-close { background: rgba(51, 51, 51, 0.8); color: #ffaa00; border: 2px solid rgba(255, 170, 0, 0.3) !important; }
+        .btn-match-close:hover { background: rgba(255, 170, 0, 0.15); border-color: #ffaa00 !important; }
+        .match-win-message { display: none; text-align: center; color: #ffaa00; font-size: 22px; font-weight: bold; padding: 12px; text-shadow: 0 0 40px rgba(255, 170, 0, 0.4); animation: winPulse 1.5s ease infinite alternate; }
+        @keyframes winPulse { 0% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); } 100% { transform: scale(1.04); text-shadow: 0 0 60px rgba(255, 170, 0, 0.6); } }
+        
+        /* CONFIG MODAL */
+        .config-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.88); z-index: 1000; justify-content: center; align-items: center; animation: fadeIn 0.3s ease; backdrop-filter: blur(8px); }
+        .config-modal.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .config-modal-content { background: rgba(0, 15, 5, 0.95); border: 2px solid rgba(0, 255, 102, 0.2); border-radius: 16px; padding: 20px 18px; max-width: 380px; width: 92%; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 60px rgba(0, 255, 102, 0.08); backdrop-filter: blur(10px); transition: border-color 0.4s ease; }
+        .config-modal-content h3 { color: #00ff66; text-align: center; font-size: 18px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(0, 255, 102, 0.2); transition: color 0.4s ease; }
+        .config-modal-close { float: right; background: transparent; border: none; color: #00ff66; font-size: 22px; cursor: pointer; padding: 0 6px; line-height: 1; transition: all 0.3s ease, color 0.4s ease; }
+        .config-modal-close:hover { color: #ffffff; transform: rotate(90deg); }
+        .color-picker-group { margin-bottom: 14px; }
+        .color-picker-group label { display: block; color: #00ff66; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; opacity: 0.8; transition: color 0.4s ease; }
+        .color-picker-group .color-options { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .color-option { width: 32px; height: 32px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .color-option:hover { transform: scale(1.12); box-shadow: 0 4px 20px rgba(0,0,0,0.7); }
+        .color-option.selected { border-color: #ffffff; box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); transform: scale(1.1); }
+        .color-option .check-mark { display: none; font-size: 14px; color: white; text-align: center; line-height: 32px; text-shadow: 0 0 15px rgba(0,0,0,0.9); }
+        .color-option.selected .check-mark { display: block; }
+        .btn-reset-colors { background: rgba(255, 0, 0, 0.15); border: 2px solid rgba(255, 51, 51, 0.3); color: #ff3333; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 6px; transition: all 0.3s ease; letter-spacing: 0.5px; }
+        .btn-reset-colors:hover { background: rgba(255, 0, 0, 0.25); border-color: #ff3333; box-shadow: 0 0 30px rgba(255, 51, 51, 0.15); }
+        
+        /* ANIMATIONS */
+        .word-balloon.speaking { animation: speakGlow 0.6s ease; }
+        @keyframes speakGlow { 0% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); } 50% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.12); } 100% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); } }
+        
+        /* SCROLLBAR */
+        .game-scrollable-content::-webkit-scrollbar, #topics-screen::-webkit-scrollbar { width: 3px; }
+        .game-scrollable-content::-webkit-scrollbar-track, #topics-screen::-webkit-scrollbar-track { background: rgba(0, 255, 34, 0.03); border-radius: 10px; }
+        .game-scrollable-content::-webkit-scrollbar-thumb, #topics-screen::-webkit-scrollbar-thumb { background: rgba(0, 255, 34, 0.2); border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<!-- ===== BANNER DE ATIVAÇÃO DE ÁUDIO (FIX PARA WEB2APP) ===== -->
-<div id="audioActivationBanner" class="audio-activation-banner">
-    <p>🔊 Toque aqui para ativar o áudio do aplicativo!</p>
-    <button onclick="activateAudio()">🔊 ATIVAR ÁUDIO</button>
-    <p style="font-size: 12px; color: #888; margin-top: 8px;">Necessário para ouvir as palavras e frases</p>
-</div>
-
 <div class="container" id="appContainer">
+    <!-- TELA DE TÓPICOS -->
     <div id="topics-screen" class="screen active">
         <h2>✨ Formando as Frases</h2>
-        <div class="counter-banner">⚡ Banco de Dados Atualizado</div>
-        
+        <div class="counter-banner">⚡ Estrutura para Testes</div>
         <div id="topics-list"></div>
-        
         <div class="stats-wrapper">
             <button class="btn-show-stats" onclick="toggleDatabaseStats()">📊 Carregar Laudo de Dados</button>
             <div id="stats-report-box" class="stats-report-box"></div>
         </div>
     </div>
 
+    <!-- TELA DO JOGO -->
     <div id="game-screen" class="screen">
         <div class="game-scrollable-content">
-            <div>
-                <span class="back-link" onclick="showTopicsScreen()">⬅ Voltar</span>
-            </div>
-            
+            <div><span class="back-link" onclick="showTopicsScreen()">⬅ Voltar</span></div>
             <div class="top-challenge">
                 <div class="phrase-pt" id="phrase-pt">Carregando...</div>
-                
                 <div class="audio-controls-row">
                     <button class="btn-audio-top btn-audio-user" onclick="speakUserSentence()">🔊 Ouvir Sua Resposta</button>
                     <button class="btn-audio-top" onclick="speakFullSentence()">🔊 Ouvir Tudo</button>
                 </div>
             </div>
-
             <div class="zone-title" id="track-number">Sua resposta:</div>
-            
             <div class="construction-zone" id="construction-zone"></div>
             <div class="success-text-box" id="success-text-box"></div>
-
             <div class="zone-header-row">
                 <div class="zone-title">📚 Banco de palavras:</div>
                 <button class="btn-pesca" id="btn-pesca" onclick="togglePescaMode()">🪝 Botão de Pesca</button>
             </div>
             <div class="words-zone" id="words-zone"></div>
-
             <div class="status-container" id="status-message"></div>
         </div>
-
         <div class="control-panel">
             <button class="action-btn btn-check" id="check-btn" onclick="checkAnswer()">✅ Verificar Resposta</button>
             <button class="action-btn btn-next" id="next-btn" onclick="nextPhrase()">➜ Próxima Frase</button>
             <button class="action-btn btn-reveal" id="reveal-btn" onclick="revealAnswer()">👁 Ver Resposta</button>
             <div class="revealed-answer-box" id="revealed-answer"></div>
-            
             <div class="bottom-buttons-row">
                 <div class="bottom-btn-wrapper">
                     <button class="match-btn" id="matchBtn" onclick="openMatchGame()">🎯</button>
                     <span class="match-btn-label">Match</span>
                 </div>
-                
                 <div class="bottom-btn-wrapper">
                     <button class="config-btn" id="configBtn" onclick="toggleConfigModal()">⚙</button>
                     <span class="config-btn-label">Config</span>
@@ -1107,7 +222,7 @@
     </div>
 </div>
 
-<!-- Tela do Jogo de Combinação -->
+<!-- TELA MATCH -->
 <div id="match-screen">
     <div class="match-header">
         <h2>🎯 Match - Combine as Palavras</h2>
@@ -1122,253 +237,42 @@
     </div>
 </div>
 
-<!-- Modal de Configuração -->
+<!-- MODAL CONFIG -->
 <div class="config-modal" id="configModal">
     <div class="config-modal-content">
         <button class="config-modal-close" onclick="toggleConfigModal()">✕</button>
         <h3>⚙ Configurações</h3>
-        
         <div class="color-picker-group">
             <label>🎨 Cor da Letra dos Balões</label>
             <div class="color-options" id="textColorOptions"></div>
         </div>
-
         <div class="color-picker-group">
             <label>🖼 Cor de Fundo</label>
             <div class="color-options" id="bgColorOptions"></div>
         </div>
-
         <button class="btn-reset-colors" onclick="resetColors()">🔄 Restaurar Cores Padrão</button>
     </div>
 </div>
 
 <script>
-    // =============================================
-    // ===== FIX PARA ÁUDIO NO WEB2APP =====
-    // =============================================
-    
-    let audioActivated = false;
-    let audioContext = null;
-    
-    // Função para ativar o áudio (chamada pelo botão)
-    function activateAudio() {
-        try {
-            // 1. Criar e ativar AudioContext
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-            
-            // 2. Testar Speech Synthesis
-            if ('speechSynthesis' in window) {
-                // Cancela qualquer fala pendente
-                window.speechSynthesis.cancel();
-                
-                // Tenta falar algo para ativar
-                const utterance = new SpeechSynthesisUtterance('Áudio ativado com sucesso!');
-                utterance.lang = 'pt-BR';
-                utterance.rate = 0.9;
-                window.speechSynthesis.speak(utterance);
-                
-                console.log('✅ Áudio ativado com sucesso!');
-            }
-            
-            // 3. Esconder o banner
-            document.getElementById('audioActivationBanner').classList.remove('active');
-            audioActivated = true;
-            
-            // 4. Mostrar mensagem de sucesso
-            const statusMsg = document.getElementById('status-message');
-            if (statusMsg) {
-                statusMsg.innerHTML = '<span class="status-correct">🔊 Áudio ativado! Toque nas palavras para ouvir.</span>';
-                setTimeout(() => {
-                    statusMsg.innerHTML = '';
-                }, 3000);
-            }
-            
-        } catch (e) {
-            console.log('❌ Erro ao ativar áudio:', e);
-            alert('❌ Não foi possível ativar o áudio. Verifique as permissões do aplicativo.');
-        }
-    }
-    
-    // Função para verificar se o áudio está ativo
-    function isAudioActive() {
-        return audioActivated || ('speechSynthesis' in window && window.speechSynthesis.speaking);
-    }
-    
-    // Sobrescrever a função speak para verificar ativação
-    const originalSpeak = window.speak;
-    window.speak = function(text) {
-        if (!isAudioActive()) {
-            // Mostra o banner se o áudio não estiver ativo
-            document.getElementById('audioActivationBanner').classList.add('active');
-            const statusMsg = document.getElementById('status-message');
-            if (statusMsg) {
-                statusMsg.innerHTML = '<span class="status-wrong">🔇 Clique em "ATIVAR ÁUDIO" para ouvir!</span>';
-                setTimeout(() => {
-                    statusMsg.innerHTML = '';
-                }, 3000);
-            }
-            return;
-        }
-        
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'en-US';
-                    utterance.rate = 0.85;
-                    window.speechSynthesis.speak(utterance);
-                }, i * 1400);
-            }
-        }
-    };
-    
-    // Sobrescrever speakWord
-    const originalSpeakWord = window.speakWord;
-    window.speakWord = function(word) {
-        if (!isAudioActive()) {
-            document.getElementById('audioActivationBanner').classList.add('active');
-            return;
-        }
-        
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
-            
-            document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
-                if (el.textContent.toLowerCase() === word.toLowerCase()) {
-                    el.classList.add('speaking');
-                    setTimeout(() => el.classList.remove('speaking'), 700);
-                }
-            });
-        }
-    };
-    
-    // Sobrescrever speakFullSentence
-    const originalSpeakFull = window.speakFullSentence;
-    window.speakFullSentence = function() {
-        if (!isAudioActive()) {
-            document.getElementById('audioActivationBanner').classList.add('active');
-            return;
-        }
-        
-        const currentPhrase = playlistPhrases ? playlistPhrases[currentPhraseIndex] : null;
-        if (currentPhrase) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(currentPhrase.en);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-    };
-    
-    // Sobrescrever speakUserSentence
-    const originalSpeakUser = window.speakUserSentence;
-    window.speakUserSentence = function() {
-        if (!isAudioActive()) {
-            document.getElementById('audioActivationBanner').classList.add('active');
-            return;
-        }
-        
-        if (selectedWords && selectedWords.length > 0) {
-            const userTxt = selectedWords.join(" ");
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(userTxt);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-    };
-    
-    // =============================================
-    // ===== DETECÇÃO DE AMBIENTE WEB2APP =====
-    // =============================================
-    
-    function detectWeb2App() {
-        const isWebView = /wv|webview|android|app/i.test(navigator.userAgent);
-        const isChrome = /chrome/i.test(navigator.userAgent);
-        const isWeb2App = /web2app/i.test(navigator.userAgent);
-        
-        console.log('📱 Ambiente detectado:', {
-            isWebView,
-            isChrome,
-            isWeb2App,
-            userAgent: navigator.userAgent
-        });
-        
-        // Se for WebView ou Web2App, mostrar banner de ativação
-        if (isWebView || isWeb2App) {
-            console.log('⚠️ Web2App detectado - Ativação manual de áudio necessária');
-            setTimeout(() => {
-                document.getElementById('audioActivationBanner').classList.add('active');
-            }, 1000);
-        } else {
-            // No Chrome, tenta ativar automaticamente
-            setTimeout(() => {
-                activateAudio();
-            }, 500);
-        }
-    }
-    
-    // =============================================
-    // ===== SEU CÓDIGO ORIGINAL AQUI =====
-    // (mantido exatamente como estava, com ajustes nas funções)
-    // =============================================
-    
-    // ===== CONFIGURAÇÕES DE CORES COM SALVAMENTO =====
+    // ============================================================
+    // 1. CONFIGURAÇÕES DE CORES
+    // ============================================================
     const STORAGE_KEY = 'wordGameColors';
-    
     function loadSavedColors() {
-        try {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                return parsed;
-            }
-        } catch (e) {
-            console.log('Erro ao carregar cores salvas');
-        }
+        try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) { const parsed = JSON.parse(saved); return parsed; } } catch (e) {}
         return { textColor: '#00ff22', bgColor: '#000000' };
     }
-
     const colorConfig = loadSavedColors();
-
     function saveColors() {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                textColor: colorConfig.textColor,
-                bgColor: colorConfig.bgColor
-            }));
-        } catch (e) {
-            console.log('Erro ao salvar cores');
-        }
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ textColor: colorConfig.textColor, bgColor: colorConfig.bgColor })); } catch (e) {}
     }
-
     const colorPalettes = {
         text: ['#00ff22', '#00ff66', '#00ffaa', '#00ddff', '#00ccff', '#ff00ff', '#ff6600', '#ffcc00', '#ffffff', '#00ff88', '#ff3366', '#ffaa00', '#66ff00', '#00ffff', '#ff44ff', '#ff0066', '#ff8800'],
         bg: ['#000000', '#0a0a0a', '#111111', '#1a1a2e', '#16213e', '#0f3460', '#2d132c', '#1b1b2f', '#001a06', '#001104', '#0d0d0d', '#1a0a0a', '#0a1a0a', '#0a0a1a']
     };
-
     const defaultColors = { textColor: '#00ff22', bgColor: '#000000' };
 
-    // ===== VARIÁVEIS DO MATCH GAME =====
-    let matchPairs = [];
-    let selectedMatchCard = null;
-    let matchedPairs = 0;
-    let matchCards = [];
-    let isProcessingMatch = false;
-
-    // ===== FUNÇÕES DE CONFIGURAÇÃO =====
     function toggleConfigModal() {
         const modal = document.getElementById('configModal');
         const btn = document.getElementById('configBtn');
@@ -1376,12 +280,10 @@
         btn.classList.toggle('active');
         if (modal.classList.contains('active')) renderColorOptions();
     }
-
     function renderColorOptions() {
         renderColorOptionGroup('textColorOptions', colorPalettes.text, colorConfig.textColor, 'text');
         renderColorOptionGroup('bgColorOptions', colorPalettes.bg, colorConfig.bgColor, 'bg');
     }
-
     function renderColorOptionGroup(containerId, colors, selectedColor, type) {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
@@ -1405,7 +307,6 @@
             container.appendChild(option);
         });
     }
-
     function isDarkColor(color) {
         const hex = color.replace('#', '');
         const r = parseInt(hex.substr(0,2), 16);
@@ -1413,66 +314,31 @@
         const b = parseInt(hex.substr(4,2), 16);
         return (r * 0.299 + g * 0.587 + b * 0.114) < 128;
     }
-
     function applyTextColor(color) {
-        document.querySelectorAll('.word-balloon:not(.pescado)').forEach(el => { 
-            el.style.color = color; 
-        });
-        document.querySelectorAll('.word-balloon.pescado').forEach(el => { 
-            el.style.color = '#ffff00'; 
-        });
-        
-        document.querySelectorAll('.match-card:not(.matched)').forEach(el => {
-            el.style.color = color;
-            el.style.borderColor = color;
-        });
-        
+        document.querySelectorAll('.word-balloon:not(.pescado)').forEach(el => { el.style.color = color; });
+        document.querySelectorAll('.word-balloon.pescado').forEach(el => { el.style.color = '#ffff00'; });
+        document.querySelectorAll('.match-card:not(.matched)').forEach(el => { el.style.color = color; el.style.borderColor = color; });
         document.querySelectorAll('h2, .zone-title, .counter-banner, .back-link, .btn-reveal, .revealed-answer-box, .stats-report-box, .btn-show-stats, .config-btn-label, .phrase-pt, .btn-audio-top, .btn-audio-user').forEach(el => {
-            if (el.tagName === 'H2') {
-                el.style.color = color;
-            } else if (el.classList.contains('zone-title')) {
-                el.style.color = color;
-            } else if (el.classList.contains('counter-banner')) {
-                el.style.color = color;
-            } else if (el.classList.contains('back-link')) {
-                el.style.color = color;
-            } else if (el.classList.contains('btn-reveal')) {
-                el.style.color = color;
-                el.style.borderColor = color;
-            } else if (el.classList.contains('revealed-answer-box')) {
-                el.style.color = color;
-                el.style.borderColor = color;
-            } else if (el.classList.contains('stats-report-box')) {
-                el.style.color = color;
-                el.style.borderColor = color;
-            } else if (el.classList.contains('btn-show-stats')) {
-                el.style.color = color;
-            } else if (el.classList.contains('config-btn-label')) {
-                el.style.color = color;
-            } else if (el.classList.contains('phrase-pt')) {
-                el.style.color = color;
-            } else if (el.classList.contains('btn-audio-top') || el.classList.contains('btn-audio-user')) {
-                el.style.color = color;
-                el.style.borderColor = color;
-            }
+            if (el.tagName === 'H2') { el.style.color = color; }
+            else if (el.classList.contains('zone-title')) { el.style.color = color; }
+            else if (el.classList.contains('counter-banner')) { el.style.color = color; }
+            else if (el.classList.contains('back-link')) { el.style.color = color; }
+            else if (el.classList.contains('btn-reveal')) { el.style.color = color; el.style.borderColor = color; }
+            else if (el.classList.contains('revealed-answer-box')) { el.style.color = color; el.style.borderColor = color; }
+            else if (el.classList.contains('stats-report-box')) { el.style.color = color; el.style.borderColor = color; }
+            else if (el.classList.contains('btn-show-stats')) { el.style.color = color; }
+            else if (el.classList.contains('config-btn-label')) { el.style.color = color; }
+            else if (el.classList.contains('phrase-pt')) { el.style.color = color; }
+            else if (el.classList.contains('btn-audio-top') || el.classList.contains('btn-audio-user')) { el.style.color = color; el.style.borderColor = color; }
         });
-        
-        document.querySelectorAll('.status-correct').forEach(el => {
-            el.style.color = color;
-        });
-        
-        document.querySelectorAll('.config-btn').forEach(el => {
-            el.style.color = color;
-            el.style.borderColor = color;
-        });
+        document.querySelectorAll('.status-correct').forEach(el => { el.style.color = color; });
+        document.querySelectorAll('.config-btn').forEach(el => { el.style.color = color; el.style.borderColor = color; });
     }
-
     function applyBgColor(color) {
         document.getElementById('appContainer').style.backgroundColor = color;
         document.body.style.backgroundColor = color;
         document.getElementById('match-screen').style.backgroundColor = color;
     }
-
     function resetColors() {
         colorConfig.textColor = defaultColors.textColor;
         colorConfig.bgColor = defaultColors.bgColor;
@@ -1482,287 +348,70 @@
         renderColorOptions();
     }
 
-    // ===== CÓDIGO DO JOGO PRINCIPAL =====
+    // ============================================================
+    // 2. DICIONÁRIO (APENAS UM EXEMPLO PARA TESTE)
+    // ============================================================
     const dictionary = {
-        "keep": "Mantenha / Guarde / Fica", "your": "seu / sua", "head": "cabeça", "down": "abaixo / para baixo / chão", "up": "cima / atualizado", "sky": "céu",
-        "if": "Se", "i": "Eu", "ever": "alguma vez / já", "see": "ver / encontrar / até", "you": "você / vocês", "again": "de novo",
-        "i'll": "eu vou / eu irei / gosto de", "surely": "com certeza", "beat": "bater / vencer", "never": "nunca / tinha", "help": "ajuda / ajudar / ajudá-lo / nos ajudar",
-        "weve": "nós estamos / nós temos / acabo de", "been": "sido / estado / ficado / querendo", "flat": "plano / direto", "to": "para / me / se / de", "the": "o / a / os / as",
-        "boards": "flancos / tábuas", "since": "desde", "last": "última / ontem / finalmente / Nossa", "night": "noite", "morning": "manhã", "day": "dia",
-        "take": "leve / pegue / vá / aceitar / aceitamos", "it": "isso / esquentá-lo / mentido", "easy": "calma / fácil", "hard": "difícil / duro", "fast": "rápido", "we": "nós / a gente",
-        "dont": "não / fico", "have": "ter / precisa / tenho / venho / aceita", "play": "jogar / brincar", "rough": "sujo / bruto / áspero", "clean": "limpo",
-        "smooth": "suave", "good": "bom / atento / coisas / ótimo", "eye": "olho", "for": "para / por / me", "this": "este / isto / essa / esta", "one": "um / existe",
-        "now": "agora", "bad": "ruim / mau / gênio", "look": "olhar / veja", "whats": "o que é / o que está / Qual é", "going": "indo / rolando / acontecendo / voltar",
-        "on": "em / sobre / comigo / pista", "here": "aqui", "there": "lá", "doing": "fazendo", "only": "única / só", "thing": "coisa",
-        "like": "gostar / agrada / gostaria / quero", "about": "sobre / a respeito de / chato", "not": "não", "seeing": "ver / enxergando", "love": "amar / amor / adoro / adoramos / adoram / amo",
-        "happy": "feliz", "think": "acho / creio / pensa", "he": "ele", "really": "realmente / pode", "did": "fez / realmente (ênfase)",
-        "need": "precisar / necessito", "me": "mim / me / comigo", "want": "querer", "always": "sempre", "are": "estão / são",
-        "kidding": "brincando / zoando", "serious": "sério", "playing": "jogando / brincando", "mean": "quer dizer / pretende / querendo / são",
-        "tell": "dizer / conte / conte-nos", "still": "ainda", "know": "sabe / saber / conhece / conheço", "understand": "entender", "say": "dizer / falar",
-        "why": "por que", "make": "fez / fazer / faz", "all": "tudo / todos", "that": "isso / aquilo / que", "with": "com",
-        "no": "sem / nenhum / não", "purpose": "motivo / propósito", "reason": "razão", "lets": "vamos", "go": "ir / curtir / seguir",
-        "forget": "esquecer", "pretend": "fingir", "happened": "aconteceu", "remember": "lembrar / me lembrar", "talked": "falaram / conversaram / falo",
-        "fancy": "fizeram a cabeça / chique", "ugly": "feio", "told": "disse / contou / falou", "got": "fiquei / consegui / separam",
-        "confused": "confuso (a)", "clear": "claro", "sure": "certeza", "so": "então / estou", "theres": "há / tem",
-        "nothing": "nada", "more": "mais", "talk": "conversar", "anything": "any / qualquer coisa / nada", "try": "tente / tentar / tentaria",
-        "nose": "nariz", "out": "fora / sinto", "of": "de / das", "my": "meu / minha / as minhas / com meu / seu", "business": "negócio / vida", "eyes": "olhos",
-        "in": "em / dentro / primeiro / de", "crazy": "louco (a) / maluca", "right": "certo / direita", "stay": "ficar / permaneça", "should": "deveríamos",
-        "be": "ser / estar", "very": "muito / importantes", "grateful": "gratos", "could": "pudesse / poderia / gostar", "give": "dar / arranjar",
-        "us": "nos / nós", "food": "alimentação / comida", "somewhere": "um lugar", "sleep": "dormir", "water": "água",
-        "house": "casa", "but": "mas", "stop": "parar", "next": "próxima", "time": "vez / tempo", "little": "pouquinho / meio",
-        "less": "menos", "something": "algo", "amazing": "surpreendente / incrível", "tour": "sua / viagem", "trip": "viagem",
-        "boring": "chato", "seemed": "parecia", "lied": "mentido", "bit": "um pouco", "too": "também",
-        "truth": "verdade", "speak": "falar", "proud": "orgulhoso / orgulho", "sad": "triste", "angry": "bravo / irritado",
-        "yourselves": "vocês mesmos / se / protejam-se", "run": "correr", "open": "abrir", "expect": "espero / aguardo", "trust": "confie / confiar",
-        "doubt": "duvidar", "charge": "no comando / assume", "till": "até que", "come": "volte / venha", "leave": "sair / deixar",
-        "called": "blefei / chamei", "his": "dele / seu / o que / gênio / seus", "bluff": "blefe / blefei", "lost": "perdi / perdido", "true": "verdadeiro / mentira",
-        "undervalued": "subestimei / desvalorizei", "many": "muitos / de vocês", "knew": "sabia", "get": "pegue / leve / dou", "lane": "pista / faixa",
-        "left": "esquerda", "car": "carro", "well": "bem / resolvida / equilibrada / discreto", "finally": "finalmente / acabo", "figured": "descobri / decifrei",
-        "am": "sou / o que", "name": "nome / nomes", "them": "os / eles / por eles", "home": "casa", "office": "escritório", "school": "escola",
-        "doesnt": "não", "sense": "sentido / senso", "was": "foi / era / tinha", "worst": "pior", "saw": "vi", "best": "melhor",
-        "lonesome": "sozinha / solitária", "life": "vida", "way": "maneira / caminho / jeito", "recognized": "reconhecido",
-        "care": "importo / ligo", "hurts": "atingir / machucar", "mind": "importar / opinião / sinto", "shouldnt": "não devia",
-        "getting": "ficando / se arrumando", "ready": "arrumando / pronto", "sleeping": "dormindo", "will": "aceita / irá / que",
-        "woman": "mulher", "lawful": "legítima", "wedded": "casada", "wife": "esposa", "husband": "marido",
-        "friend": "amigo", "yes": "sim", "as": "como / enquanto", "long": "enquanto / longo / tempo", "both": "ambos",
-        "shall": "irão / devem", "live": "viver / nos", "matter": "importa", "happens": "aconteça", "die": "morrer",
-        "word": "palavra", "money": "dinheiro", "hand": "mão", "heart": "coração", "beats": "bater / bate",
-        "stops": "para", "said": "dito / dizem / falar", "defeated": "vencido / derrotado", "youre": "você é / você está",
-        "hide": "esconder / escondê-lo", "listen": "ouça", "specially": "especialmente", "what": "o que / da vida / de", "brace": "protejam",
-        "show": "mostrar", "find": "encontrar", "before": "antes", "outside": "fora", "working": "trabalhando", "how": "como / faz", "betray": "trair", "such": "tal / um", "enemy": "inimigo",
-        "hi": "Oi", "meet": "conhecer / encontrar / conhecê-lo / apresentar", "sorry": "Desculpa / Desculpe", 
-        "heard": "ouvi / escutei / falar", "lot": "muito / bastante", "hope": "espero / esperança",
-        "believe": "acredite / crer / nada", "looking": "olhando / procurando / querendo", "forward": "ansioso / adiante", 
-        "see": "ver / até", "later": "mais tarde / depois", "brothers": "irmãos", "sister": "irmã", "oldest": "mais velho",
-        "middle": "meio", "youngest": "mais novo (a) / caçula", "child": "criança / filho / único/a", "doctor": "médico / profissional", "lives": "mora / vive",
-        "father": "pai", "parents": "pais / falecido(s)", "divorced": "divorciados / separam / separado/divorciado", "deceased": "falecidos / falecido(s)", "family": "família / parentes / da família",
-        "children": "filhos", "kids": "crianças / filhos", "marriage": "casamento / do primeiro", "single": "solteiro / solteiro/casado/separado/divorciado", "married": "casado / casado/a",
-        "separated": "separado (a) / separados / separam", "important": "important / importantes", "world": "mundo / tudo", "comes": "vem", "first": "primeiro", 
-        "kind": "tipo / meio", "black": "preto / negra", "sheep": "ovelha", "along": "bem", "complicated": "complicada (o) / complicada", 
-        "spoken": "falou / falado / falo", "falling": "briga / queda / brigou", "terms": "termos / nos falamos", "questions": "perguntas", "someone": "alguém",
-        "big": "grande", "small": "pequena / caçula", "does": "faz", "real": "real / verdadeiro / figura", "character": "figura / caráter / personalidade / das pessoas", "old": "velho", "close": "próximo / íntimo",
-        "count": "contar", "nice": "simpático / legal", "cool": "legal / maneiro", "fun": "divertido / se divertir", "humor": "humor", "earth": "terra / chão",
-        "enjoy": "aproveitar / curtir", "loves": "ama / adora / uma", "party": "festa", "center": "centro / das", "attention": "atenção / atenções", "instincts": "instintos", "admit": "admitir / Admito", "wrong": "errado",
-        "afraid": "medo / receio / tenho", "obligations": "obrigações / dever", "terrible": "péssimo / terrível", "names": "nomes", "judge": "juiz / Conheço", "rounded": "equilibrado / bem resolvido / tudo", "current": "atualizados / atual / me",
-        "events": "eventos", "learner": "aprendiz / rápido", "bother": "incomodar / fica", "basically": "basicamente / é", "player": "jogador / equipe / trabalhar", "try": "tentar / Gosto", "feet": "pés", "cintura": "waist",
-        "belt": "cintura / cinto", "thinks": "pensa / só", "people": "pessoas", "strange": "esquisito / estranho / esquisitos", "sensitive": "sensível", "charming": "charmoso", "charismatic": "carismático",
-        "picky": "exigente / fresco / chato", "clothes": "roupas", "gift": "dom / presente", "excell": "destaca / brilha / ótimo", "excells": "destaca / brilha / ótimo", "able": "capaz / poder", "pain": "dor / sofrimento / porre", "stubborn": "teimoso",
-        "temper": "gênio / temperamento", "expensive": "caro / alto (gosto) / coisas", "taste": "gosto / caras", "himself": "si mesmo", "herself": "si mesma / si mesmo", "yourself": "você mesmo / você", "control": "controle / controlar/ter",
-        "likes": "gosta", "clouds": "nuvens", "joao": "João", "silvia": "Silvia", "has": "me / tem", "her": "sua / o que / gênio / de", "she": "ela", "they": "eles / adoram / não / se", "their": "seus", "them": "eles / por eles", "once": "uma", "flow": "não / esquento", "keep": "mantenho / cumpro / fico / mantém", "keeps": "é / fica", "with": "com / com seu / da", "comes": "vem", "out": "da vida / o que / fora"
+        "love": "amor",
+        "blind": "cego"
     };
 
+    // ============================================================
+    // 3. BANCO DE FRASES (APENAS UMA FRASE PARA TESTE)
+    // ============================================================
     const pdfPhrasesDatabase = {
-        "Expressões de Impacto": [
-            {en: "Keep your head down!", pt: "Mantenha sua cabeça abaixada!", extra: ["up", "sky"]},
-            {en: "If I ever see you again, I'll surely beat you!", pt: "Se eu te encontrar de novo, vou te bater, com certeza!", extra: ["never", "help"]},
-            {en: "We've been flat to the boards since last night.", pt: "Estamos sendo destruídos pelos flancos desde ontem à noite.", extra: ["morning", "day"]},
-            {en: "Take it easy!", pt: "Vá com calma!", extra: ["hard", "fast"]},
-            {en: "We don't have to play rough!", pt: "A gente não precisa jogar sujo!", extra: ["clean", "smooth"]},
-            {en: "Keep your good eye for this one now!", pt: "Fica de olho atento para esse, agora!", extra: ["bad", "look"]}
-        ],
-        "Diálogos e Confrontos": [
-            {en: "What's going on here?", pt: "O que está acontecendo aqui?", extra: ["there", "doing"]},
-            {en: "The only thing I don't like about is not seeing you!", pt: "A única coisa que não me agrada é não ver você!", extra: ["love", "happy"]},
-            {en: "I don't think he ever really did need me!", pt: "Não creio que, realmente, ele precisasse de mim!", extra: ["want", "always"]},
-            {en: "Are you kidding?", pt: "Vocês estão brincando?", extra: ["serious", "playing"]},
-            {en: "You mean to tell me you still don't know?", pt: "Você está querendo me dizer que ainda não sabe?", extra: ["understand", "say"]},
-            {en: "Why did you make all that, with no purpose?", pt: "Por que você fez tudo isso, sem qualquer motivo?", extra: ["reason", "good"]}
-        ],
-        "Ações e Decisões": [
-            {en: "Let's go to forget all this and pretend it never happened!", pt: "Vamos esquecer tudo isso, e fingir que não aconteceu!", extra: ["remember", "always"]},
-            {en: "They talked fancy to me.", pt: "Eles fizeram a minha cabeça.", extra: ["ugly", "told"]},
-            {en: "I got confused!", pt: "Fiquei confuso (a)!", extra: ["clear", "sure"]},
-            {en: "So, there's nothing more to say.", pt: "Então, não temos mais o que conversar.", extra: ["talk", "anything"]},
-            {en: "Try to keep your nose out of my business!", pt: "Tente manter seu nariz fora do meu negócio!", extra: ["eyes", "in"]},
-            {en: "You're crazy if you think I'm going back!", pt: "Você é louco se pensa que eu vou voltar!", extra: ["right", "stay"]}
-        ],
-        "Relações e Sentimentos": [
-            {en: "We should be very grateful if you could give us food and somewhere to sleep this night.", pt: "Ficaríamos muito gratos se o senhor pudesse nos arranjar alimentação e um lugar para dormir esta noite.", extra: ["water", "house"]},
-            {en: "We could try to help you, but...", pt: "Poderíamos tentar ajudá-lo, mas....", extra: ["stop", "now"]},
-            {en: "On the next time you could try to help us a little more.", pt: "Na próxima vez vocês poderiam tentar nos ajudar um pouquinho mais.", extra: ["less", "never"]},
-            {en: "Tell us something amazing about tour trip!", pt: "Conte-nos algo surpreendente sobre a sua viagem!", extra: ["boring", "bad"]},
-            {en: "You seemed to have lied a bit too!", pt: "Você parecia ter mentido um pouco também!", extra: ["truth", "speak"]},
-            {en: "I'm so proud of you!", pt: "Estou muito orgulhoso de você!", extra: ["sad", "angry"]}
-        ],
-        "Comandos e Defesas": [
-            {en: "Why you'd try to hide it?", pt: "Por que você tentaria escondê-lo?", extra: ["show", "find"]},
-            {en: "Listen specially to what I'm saying now!", pt: "Ouça, especialmente, o que estou dizendo agora!", extra: ["see", "before"]},
-            {en: "Brace yourselves!", pt: "Protejam-se!", extra: ["run", "open"]},
-            {en: "I need and only expect you trust on me.", pt: "Necessito e espero que você confie em mim.", extra: ["doubt", "know"]},
-            {en: "You're in charge till I come back!", pt: "Você assume até que eu volte.", extra: ["leave", "go"]},
-            {en: "I called his bluff, that's all!", pt: "Eu blefei com ele é isso!", extra: ["true", "lost"]}
-        ],
-        "Situações do Dia a Dia": [
-            {en: "What do you think is going on here?", pt: "O que você acha que está rolando aqui?", extra: ["outside", "working"]},
-            {en: "How could I betray such a friend?", pt: "Como eu poderia trair um amigo assim?", extra: ["help", "enemy"]},
-            {en: "The truth is that I undervalued many of you!", pt: "A verdade é que eu subestimei muitos de vocês!", extra: ["like", "knew"]},
-            {en: "Get the right lane!", pt: "Pegue a pista da direita!", extra: ["left", "car"]},
-            {en: "Well, I've finally figured out who I am!", pt: "Bem, acabo de descobrir, finalmente, quem sou!", extra: ["lost", "name"]},
-            {en: "Then get them home!", pt: "Então, leve-os para casa!", extra: ["office", "school"]}
-        ],
-        "Desafios Avançados": [
-            {en: "It doesn't make any sense!", pt: "Não faz nenhum sentido!", extra: ["true", "clear"]},
-            {en: "It was the worst thing I ever saw!", pt: "Foi a pior coisa que já vi!", extra: ["best", "good"]},
-            {en: "I've never been lonesome in my life!", pt: "Nunca tinha ficado sozinha na minha vida!", extra: ["happy", "always"]},
-            {en: "That's not the way I'd like to be recognized!", pt: "Não é desta maneira que eu gostaria de ser reconhecido!", extra: ["love", "see"]},
-            {en: "I don't care if he hurts me!", pt: "Eu não me importo se ele me atingir!", extra: ["mind", "stop"]},
-            {en: "Shouldn't you be getting ready?", pt: "Você não devia estar se arrumando?", extra: ["sleeping", "now"]}
-        ],
-        "Expressões de Casamento": [
-            {en: "Will you have this woman to be your lawful wedded wife?", pt: "Você aceita esta mulher como sua legítima esposa ?", extra: ["husband", "friend"]},
-            {en: "Yes, as long as both shall live, no matter what happens!", pt: "Sim, 'ATÉ QUE A MORTE NOS SEPARE', não importa o que aconteça!", extra: ["die", "never"]},
-            {en: "You have my word!", pt: "Você (s) tem a minha palavra!", extra: ["money", "hand"]},
-            {en: "As long as my heart beats!", pt: "Enquanto meu coração bater!", extra: ["stops", "head"]},
-            {en: "He is said never been defeated!", pt: "Dizem que ele nunca foi vencido!", extra: ["always", "lost"]}
-        ],
-        "Saudações e Apresentações": [
-            {en: "Hi.", pt: "Oi.", extra: ["hello", "there"]},
-            {en: "How are you?", pt: "Tudo bem? / Tudo bom?", extra: ["fine", "bad"]},
-            {en: "How are you doing?", pt: "Tudo bem? / Tudo bom?", extra: ["fine", "bad"]},
-            {en: "What's your name?", pt: "Qual é o seu nome?", extra: ["last", "who"]},
-            {en: "Sorry, what was your name again?", pt: "Desculpe, qual é mesmo o seu nome?", extra: ["remember", "know"]},
-            {en: "Hi, I'm...", pt: "Oi, eu sou...", extra: ["this", "here"]},
-            {en: "Nice to meet you.", pt: "Prazer.", extra: ["good", "see"]},
-            {en: "Do you know Joao?", pt: "Você conhece o João?", extra: ["him", "see"]},
-            {en: "I'd like you to meet...", pt: "Eu quero lhe apresentar o...", extra: ["show", "tell"]},
-            {en: "I've heard a lot about you.", pt: "Já ouvi falar muito de você.", extra: ["said", "never"]},
-            {en: "Silvia has told me a lot about you.", pt: "A Silvia já me falou muito sobre você.", extra: ["us", "nothing"]},
-            {en: "All good, I hope.", pt: "Coisas boas, eu espero.", extra: ["bad", "always"]},
-            {en: "Don't believe it. It's not true.", pt: "Não acredite em nada. É tudo mentira.", extra: ["right", "clear"]},
-            {en: "I've been looking forward to meeting you.", pt: "Estava querendo muito conhecê-lo.", extra: ["before", "never"]},
-            {en: "At last! We meet!", pt: "Nossa! Finalmente vou conhecer você!", extra: ["first", "good"]},
-            {en: "Nice meeting you.", pt: "Gostei de conhecê-lo.", extra: ["bad", "great"]},
-            {en: "See you later.", pt: "Até mais. / Até logo.", extra: ["tomorrow", "now"]}
-        ],
-        "Falando Sobre Família": [
-            {en: "I have two brothers and one sister.", pt: "Eu tenho dois irmãos e uma irmã.", extra: ["three", "none"]},
-            {en: "I'm the oldest.", pt: "Eu sou o mais velho.", extra: ["youngest", "middle"]},
-            {en: "I'm in the middle.", pt: "Eu sou a/o do meio.", extra: ["oldest", "first"]},
-            {en: "I'm the youngest.", pt: "Sou o/a caçula.", extra: ["last", "child"]},
-            {en: "I'm an only child.", pt: "Sou filho único.", extra: ["brother", "many"]},
-            {en: "My sister is a doctor.", pt: "Minha irmã é médica.", extra: ["teacher", "lives"]},
-            {en: "My father lives in Fortaleza.", pt: "Meu pai mora em Fortaleza.", extra: ["mother", "city"]},
-            {en: "Are your parents divorced?", pt: "Seus pais são separados?", extra: ["married", "together"]},
-            {en: "My parents are deceased.", pt: "Meus pais são falecidos.", extra: ["alive", "here"]},
-            {en: "Do you have any family around here?", pt: "Você tem parentes por aqui?", extra: ["friends", "house"]},
-            {en: "Do you have any children?", pt: "Você tem filhos?", extra: ["car", "money"]},
-            {en: "Do you have any kids?", pt: "Você tem filhos?", extra: ["cats", "dogs"]},
-            {en: "I have two kids from my first marriage.", pt: "Eu tenho dois filhos do primeiro casamento.", extra: ["wife", "second"]},
-            {en: "Are you single?", pt: "Você é solteiro?", extra: ["married", "divorced"]},
-            {en: "Are you married?", pt: "Você é casado?", extra: ["single", "separated"]},
-            {en: "We're separated.", pt: "Nós estamos separados.", extra: ["together", "happy"]},
-            {en: "We're divorced.", pt: "Nós somos divorciados.", extra: ["married", "friends"]},
-            {en: "My family is very important to me.", pt: "Minha família é muito importante para mim.", extra: ["job", "money"]},
-            {en: "To me, my family comes first.", pt: "Para mim, a família vem em primeiro lugar.", extra: ["second", "last"]},
-            {en: "I'm kind of the black sheep of the family.", pt: "Eu sou meio que a ovelha negra da família.", extra: ["white", "good"]},
-            {en: "I get along very well with my family.", pt: "Eu me dou muito bem com a minha família.", extra: ["bad", "nothing"]},
-            {en: "My family is a bit complicated.", pt: "Minha família é um pouco complicada.", extra: ["easy", "clear"]},
-            {en: "I haven't spoken to my father in years.", pt: "Faz anos que não falo com o meu pai.", extra: ["days", "months"]},
-            {en: "My sister and I had a falling out.", pt: "Eu e minha irmã brigamos.", extra: ["brother", "love"]},
-            {en: "We're not on speaking terms.", pt: "Nós não nos falamos.", extra: ["good", "always"]},
-            {en: "Any questions about my family?", pt: "Alguma pergunta sobre a minha família?", extra: ["friends", "life"]}
-        ],
-        "Personalidade e Caráter": [
-            {en: "She's a real character.", pt: "Ela é uma figura.", extra: ["fake", "boring"]},
-            {en: "He's a nice guy.", pt: "Ele é um cara simpático.", extra: ["bad", "ugly"]},
-            {en: "She's very nice.", pt: "Ela é muito simpática.", extra: ["mean", "old"]},
-            {en: "He's cool.", pt: "Ele é legal. / Ele é maneiro.", extra: ["hot", "bad"]},
-            {en: "She's cool.", pt: "Ela é legal. / Ela é maneira.", extra: ["warm", "charming"]},
-            {en: "He's fun to be with.", pt: "É divertido passar o tempo com ele.", extra: ["boring", "sad"]},
-            {en: "He has a great sense of humor.", pt: "Ele tem um ótimo senso de humor.", extra: ["bad", "no"]},
-            {en: "She's very down to earth.", pt: "Ela é muito pé no chão.", extra: ["sky", "crazy"]},
-            {en: "He enjoys life.", pt: "Ele aproveita a vida.", extra: ["hates", "work"]},
-            {en: "She loves to party.", pt: "Ela adora uma festa.", extra: ["sleep", "study"]},
-            {en: "He loves to be the center of attention.", pt: "Ele adora ser o centro das atenções.", extra: ["hide", "corner"]},
-            {en: "I trust my instincts.", pt: "Eu confio nos meus instintos.", extra: ["doubt", "people"]},
-            {en: "I can admit when I'm wrong.", pt: "Admito quando estou errado.", extra: ["right", "never"]},
-            {en: "I'm not afraid of hard work.", pt: "Não tenho medo de trabalho duro.", extra: ["easy", "lazy"]},
-            {en: "I take my obligations very seriously.", pt: "Levo minhas obrigações muito a sério.", extra: ["lightly", "never"]},
-            {en: "I'm terrible with names.", pt: "Sou péssimo para nomes.", extra: ["good", "faces"]},
-            {en: "I think I'm a good judge of character.", pt: "Acho que conheço bem o caráter das pessoas.", extra: ["bad", "no"]},
-            {en: "I'm a well rounded person.", pt: "Sou uma pessoa bem resolvida / equilibrada.", extra: ["unbalanced", "square"]},
-            {en: "I keep current with current events.", pt: "Mantenho-me atualizado com os eventos atuais.", extra: ["past", "forget"]},
-            {en: "I'm a fast learner.", pt: "Sou um aprendiz rápido.", extra: ["slow", "no"]},
-            {en: "I don't let things bother me.", pt: "Não deixo as coisas me incomodarem.", extra: ["always", "make"]},
-            {en: "I'm basically a team player.", pt: "Basicamente, gosto de trabalhar em equipe.", extra: ["alone", "solo"]},
-            {en: "I try to keep my feet on the ground.", pt: "Tento manter os meus pés no chão.", extra: ["head", "clouds"]},
-            {en: "He thinks he's someone big.", pt: "Ele pensa que é grande coisa.", extra: ["small", "nobody"]},
-            {en: "People think I'm strange.", pt: "As pessoas me acham esquisito.", extra: ["normal", "nice"]},
-            {en: "He's very sensitive.", pt: "Ele é muito sensível.", extra: ["hard", "cold"]},
-            {en: "He's very charming.", pt: "Ele é muito charmoso.", extra: ["ugly", "boring"]},
-            {en: "He's very charismatic.", pt: "Ele é muito carismático.", extra: ["quiet", "mean"]},
-            {en: "She's very picky about her clothes.", pt: "Ela é muito exigente / fresca com as roupas dela.", extra: ["easy", "loose"]},
-            {en: "He has a gift for languages.", pt: "Ele tem o dom para línguas.", extra: ["no", "bad"]},
-            {en: "She excells in everything she does.", pt: "Ela se destaca em tudo o que faz.", extra: ["fails", "nothing"]},
-            {en: "He's able to control himself.", pt: "Ele é capaz de se controlar.", extra: ["unable", "lose"]},
-            {en: "He has a stubborn streak.", pt: "Ele tem um lado teimoso.", extra: ["easy", "smooth"]},
-            {en: "He has a terrible temper.", pt: "Ele tem um gênio terrível.", extra: ["good", "calm"]},
-            {en: "She has expensive taste.", pt: "Ela tem gosto por coisas caras.", extra: ["cheap", "low"]},
-            {en: "He likes to keep to himself.", pt: "Ele gosta de ficar na dele.", extra: ["party", "crowd"]},
-            {en: "She keeps her emotions to herself.", pt: "Ela guarda as emoções para si mesma.", extra: ["show", "speak"]},
-            {en: "He always keeps his word.", pt: "Ele sempre cumpre a palavra dele.", extra: ["breaks", "lies"]},
-            {en: "He keeps his room clean.", pt: "Ele mantém o quarto dele limpo.", extra: ["dirty", "messy"]},
-            {en: "She keeps out of trouble.", pt: "Ela fica fora de confusão.", extra: ["in", "always"]},
-            {en: "He keeps out of my way.", pt: "Ele não fica no meu caminho.", extra: ["in", "front"]}
+        "Teste": [
+            {en: "Love is blind.", pt: "O amor é cego.", extra: ["love", "blind"]}
         ]
     };
 
-    let selectedTopic = "";
-    let playlistPhrases = [];
-    let currentPhraseIndex = 0;
-    let selectedWords = [];
-    let pescaMode = false;
-    let draggedIndex = null;
+    // ============================================================
+    // 4. VARIÁVEIS DO JOGO PRINCIPAL
+    // ============================================================
+    let selectedTopic = "", playlistPhrases = [], currentPhraseIndex = 0, selectedWords = [], pescaMode = false, draggedIndex = null;
 
-    // ===== JOGO DE COMBINAÇÃO (MATCH GAME) =====
+    // ============================================================
+    // 5. MATCH GAME
+    // ============================================================
+    let matchPairs = [], selectedMatchCard = null, matchedPairs = 0, matchCards = [], isProcessingMatch = false;
+
     function openMatchGame() {
         document.getElementById('match-screen').classList.add('active');
         document.getElementById('matchBtn').classList.add('active');
         resetMatchGame();
-        setTimeout(() => {
-            applyTextColor(colorConfig.textColor);
-            applyBgColor(colorConfig.bgColor);
-        }, 100);
+        setTimeout(() => { applyTextColor(colorConfig.textColor); applyBgColor(colorConfig.bgColor); }, 100);
     }
-
     function closeMatchGame() {
         document.getElementById('match-screen').classList.remove('active');
         document.getElementById('matchBtn').classList.remove('active');
         if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     }
-
     function resetMatchGame() {
         const wordList = Object.keys(dictionary);
-        const numPairs = Math.min(Math.floor(Math.random() * 5) + 8, wordList.length);
+        const numPairs = Math.min(Math.floor(Math.random() * 3) + 2, wordList.length);
         const shuffledWords = wordList.sort(() => Math.random() - 0.5);
         const selectedWordsForMatch = shuffledWords.slice(0, numPairs);
-        
         matchPairs = [];
         selectedWordsForMatch.forEach(word => {
             const translation = dictionary[word] || word;
             const cleanTranslation = translation.split('/')[0].trim();
             matchPairs.push({ en: word, pt: cleanTranslation, id: word });
         });
-
         matchCards = [];
         matchPairs.forEach(pair => {
             matchCards.push({ type: 'en', word: pair.en, pairId: pair.id });
             matchCards.push({ type: 'pt', word: pair.pt, pairId: pair.id });
         });
         matchCards.sort(() => Math.random() - 0.5);
-
         matchedPairs = 0;
         selectedMatchCard = null;
         isProcessingMatch = false;
         document.getElementById('matchWinMessage').style.display = 'none';
-        
         renderMatchGame();
     }
-
     function renderMatchGame() {
         const grid = document.getElementById('matchGrid');
         grid.innerHTML = '';
-        
         matchCards.forEach((card, index) => {
             const div = document.createElement('div');
             div.className = 'match-card';
@@ -1770,23 +419,13 @@
             div.dataset.index = index;
             div.dataset.pairId = card.pairId;
             div.dataset.type = card.type;
-            
-            if (!card.matched) {
-                div.style.color = colorConfig.textColor;
-                div.style.borderColor = colorConfig.textColor;
-            }
-            
-            if (card.matched) {
-                div.classList.add('matched');
-            }
-            
+            if (!card.matched) { div.style.color = colorConfig.textColor; div.style.borderColor = colorConfig.textColor; }
+            if (card.matched) { div.classList.add('matched'); }
             div.onclick = () => handleMatchCardClick(index);
             grid.appendChild(div);
         });
-
         const totalPairs = matchPairs.length;
         document.getElementById('matchStats').textContent = `Pares: ${matchedPairs} / ${totalPairs}`;
-        
         if (matchedPairs === totalPairs && totalPairs > 0) {
             document.getElementById('matchWinMessage').style.display = 'block';
             if ('speechSynthesis' in window) {
@@ -1798,37 +437,16 @@
             }
         }
     }
-
     function handleMatchCardClick(index) {
         if (isProcessingMatch) return;
-        
         const card = matchCards[index];
         if (card.matched) return;
-        
-        if (selectedMatchCard === index) {
-            selectedMatchCard = null;
-            renderMatchGame();
-            return;
-        }
-        
-        if (selectedMatchCard === null) {
-            selectedMatchCard = index;
-            const grid = document.getElementById('matchGrid');
-            const elements = grid.children;
-            elements[index].classList.add('selected');
-            return;
-        }
-        
+        if (selectedMatchCard === index) { selectedMatchCard = null; renderMatchGame(); return; }
+        if (selectedMatchCard === null) { selectedMatchCard = index; const grid = document.getElementById('matchGrid'); const elements = grid.children; elements[index].classList.add('selected'); return; }
         const firstCard = matchCards[selectedMatchCard];
         const secondCard = card;
-        
         if (firstCard.pairId === secondCard.pairId && firstCard.type !== secondCard.type) {
-            firstCard.matched = true;
-            secondCard.matched = true;
-            matchedPairs++;
-            selectedMatchCard = null;
-            isProcessingMatch = false;
-            renderMatchGame();
+            firstCard.matched = true; secondCard.matched = true; matchedPairs++; selectedMatchCard = null; isProcessingMatch = false; renderMatchGame();
             speakWord(firstCard.type === 'en' ? firstCard.word : secondCard.word);
         } else {
             isProcessingMatch = true;
@@ -1836,37 +454,79 @@
             const elements = grid.children;
             elements[selectedMatchCard].classList.add('wrong');
             elements[index].classList.add('wrong');
-            
-            setTimeout(() => {
-                selectedMatchCard = null;
-                isProcessingMatch = false;
-                renderMatchGame();
-            }, 600);
+            setTimeout(() => { selectedMatchCard = null; isProcessingMatch = false; renderMatchGame(); }, 600);
         }
     }
 
-    // ===== INICIALIZAÇÃO DO JOGO PRINCIPAL =====
-    function init() {
-        renderTopics();
-        showTopicsScreen();
-        setupDragAndDropEvents();
-        applyTextColor(colorConfig.textColor);
-        applyBgColor(colorConfig.bgColor);
-        
-        // Detectar ambiente e configurar áudio
-        detectWeb2App();
+    // ============================================================
+    // 6. FUNÇÕES DE VOZ
+    // ============================================================
+    function speakWord(word) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+            document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
+                if (el.textContent.toLowerCase() === word.toLowerCase()) {
+                    el.classList.add('speaking');
+                    setTimeout(() => el.classList.remove('speaking'), 700);
+                }
+            });
+        }
     }
 
+    function speak(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    window.speechSynthesis.speak(utterance);
+                }, i * 1400);
+            }
+        }
+    }
+
+    function speakFullSentence() {
+        const currentPhrase = playlistPhrases[currentPhraseIndex];
+        if (currentPhrase) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(currentPhrase.en);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+    }
+
+    function speakUserSentence() {
+        if (selectedWords.length === 0) return;
+        const userTxt = selectedWords.join(" ");
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(userTxt);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85;
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    // ============================================================
+    // 7. FUNÇÕES PRINCIPAIS DO JOGO
+    // ============================================================
     function renderTopics() {
         const listContainer = document.getElementById("topics-list");
         listContainer.innerHTML = "";
-
         const mistoBtn = document.createElement("button");
         mistoBtn.className = "topic-card misto-btn";
         mistoBtn.innerText = "🔀 MODO MISTO CRÍTICO";
         mistoBtn.onclick = () => startTopic("MISTO");
         listContainer.appendChild(mistoBtn);
-
         for (let topicName in pdfPhrasesDatabase) {
             const count = pdfPhrasesDatabase[topicName].length;
             const btn = document.createElement("button");
@@ -1879,22 +539,15 @@
 
     function toggleDatabaseStats() {
         const box = document.getElementById("stats-report-box");
-        if (box.style.display === "block") {
-            box.style.display = "none";
-            return;
-        }
-
+        if (box.style.display === "block") { box.style.display = "none"; return; }
         let totalPhrases = 0;
-        for (let cat in pdfPhrasesDatabase) {
-            totalPhrases += pdfPhrasesDatabase[cat].length;
-        }
-
+        for (let cat in pdfPhrasesDatabase) { totalPhrases += pdfPhrasesDatabase[cat].length; }
         let totalWords = Object.keys(dictionary).length;
-
         box.innerHTML = `
-            <p style='color:#00ff22; margin-bottom:8px;'>📂 LAUDO CENTRAL DE SISTEMA:</p>
-            <p>Total de Frases: <span style='color:#ffffff; font-size:20px;'>${totalPhrases}</span></p>
-            <p>Total de Palavras: <span style='color:#ffffff; font-size:20px;'>${totalWords}</span></p>
+            <p style='color:#00ff22; margin-bottom:6px;'>📂 LAUDO CENTRAL DE SISTEMA:</p>
+            <p>Total de Frases: <span style='color:#ffffff; font-size:16px;'>${totalPhrases}</span></p>
+            <p>Total de Palavras: <span style='color:#ffffff; font-size:16px;'>${totalWords}</span></p>
+            <p style='margin-top:6px; color:#00aa33;'>✅ Banco de Dados para Testes!</p>
         `;
         box.style.display = "block";
     }
@@ -1908,134 +561,82 @@
 
     function startTopic(topicName) {
         selectedTopic = topicName;
-        
         let sourcePhrases = [];
         if (topicName === "MISTO") {
-            for (let cat in pdfPhrasesDatabase) {
-                sourcePhrases = sourcePhrases.concat(pdfPhrasesDatabase[cat]);
-            }
+            for (let cat in pdfPhrasesDatabase) { sourcePhrases = sourcePhrases.concat(pdfPhrasesDatabase[cat]); }
         } else {
             sourcePhrases = pdfPhrasesDatabase[topicName] || [];
         }
-
         playlistPhrases = [...sourcePhrases];
-
-        if (playlistPhrases.length === 0) {
-            alert("Nenhuma frase encontrada!");
-            return;
-        }
-
+        if (playlistPhrases.length === 0) { alert("Nenhuma frase encontrada!"); return; }
         playlistPhrases.sort(() => Math.random() - 0.5);
-        
         currentPhraseIndex = 0;
         document.getElementById("topics-screen").classList.remove("active");
         document.getElementById("game-screen").classList.add("active");
-        
         loadPhrase();
     }
 
     function loadPhrase() {
         if (currentPhraseIndex >= playlistPhrases.length) {
-            alert("Fim do bloco! Retornando ao painel central.");
+            alert("🎉 Fim do bloco! Retornando ao painel central.");
             showTopicsScreen();
             return;
         }
-
         selectedWords = [];
         pescaMode = false;
         document.getElementById("btn-pesca").classList.remove("active");
-        
         document.getElementById("status-message").innerHTML = "";
         document.getElementById("revealed-answer").style.display = "none";
         document.getElementById("revealed-answer").innerText = "";
-        
         document.getElementById("check-btn").style.display = "block";
         document.getElementById("next-btn").style.display = "none";
-        
         document.getElementById("construction-zone").style.display = "flex";
         document.getElementById("success-text-box").style.display = "none";
-
         const currentPhrase = playlistPhrases[currentPhraseIndex];
         document.getElementById("phrase-pt").innerText = currentPhrase.pt;
         document.getElementById("track-number").innerText = `Frase ${currentPhraseIndex + 1} de ${playlistPhrases.length}:`;
-
         renderZones();
     }
 
     function getCleanWordsList(phraseObj) {
         let cleanEn = phraseObj.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "");
         let rawWords = cleanEn.split(" ").filter(w => w.trim() !== "");
-        
         let pool = [...rawWords];
-        if (phraseObj.extra) {
-            phraseObj.extra.forEach(ex => {
-                if (ex.trim() !== "") pool.push(ex);
-            });
-        }
-
+        if (phraseObj.extra) { phraseObj.extra.forEach(ex => { if (ex.trim() !== "") pool.push(ex); }); }
         let uniquePool = [];
         pool.forEach(w => {
-            if(!uniquePool.map(x => x.toLowerCase()).includes(w.toLowerCase())){
-                uniquePool.push(w);
-            }
+            if(!uniquePool.map(x => x.toLowerCase()).includes(w.toLowerCase())){ uniquePool.push(w); }
         });
-
-        const backupDistractors = ["there", "ready", "always", "together", "nothing", "day", "night", "more", "less", "here", "now", "then", "from", "into", "about", "after", "before", "between"];
-        
+        const backupDistractors = ["there", "ready", "always", "together", "nothing", "day", "night", "more", "less", "here", "now", "then", "from", "into", "about", "after", "before", "between", "without", "through", "under", "over", "never", "ever", "just", "only"];
         while(uniquePool.length < (rawWords.length * 2) + 4) {
             let randW = backupDistractors[Math.floor(Math.random() * backupDistractors.length)];
             if(!uniquePool.map(x => x.toLowerCase()).includes(randW.toLowerCase())) {
                 uniquePool.push(randW);
             }
         }
-
         return uniquePool.sort(() => Math.random() - 0.5);
     }
 
     function renderZones() {
         const constructZone = document.getElementById("construction-zone");
         constructZone.innerHTML = "";
-        
         selectedWords.forEach((word, index) => {
             const balloon = document.createElement("span");
             balloon.className = "word-balloon";
             balloon.innerText = word;
             balloon.draggable = true;
             balloon.dataset.index = index;
-
             balloon.style.color = colorConfig.textColor;
-
             balloon.onclick = (e) => {
                 if (balloon.classList.contains('dragged-active')) return;
                 speakWord(word);
-                if (!balloon.classList.contains('dragging')) {
-                    selectedWords.splice(index, 1);
-                    renderZones();
-                }
+                if (!balloon.classList.contains('dragging')) { selectedWords.splice(index, 1); renderZones(); }
             };
-
-            balloon.addEventListener('dragstart', (e) => {
-                draggedIndex = index;
-                balloon.classList.add('dragging');
-                e.dataTransfer.effectAllowed = 'move';
-            });
-
-            balloon.addEventListener('dragend', () => {
-                balloon.classList.remove('dragging');
-                draggedIndex = null;
-                renderZones();
-            });
-
-            balloon.addEventListener('pointerdown', (e) => {
-                balloon.setPointerCapture(e.pointerId);
-                draggedIndex = index;
-                balloon.classList.add('dragging');
-                balloon.classList.add('dragged-active');
-            });
-
+            balloon.addEventListener('dragstart', (e) => { draggedIndex = index; balloon.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+            balloon.addEventListener('dragend', () => { balloon.classList.remove('dragging'); draggedIndex = null; renderZones(); });
+            balloon.addEventListener('pointerdown', (e) => { balloon.setPointerCapture(e.pointerId); draggedIndex = index; balloon.classList.add('dragging'); balloon.classList.add('dragged-active'); });
             balloon.addEventListener('pointermove', (e) => {
                 if (draggedIndex === null) return;
-                
                 const targetEl = document.elementFromPoint(e.clientX, e.clientY);
                 if (targetEl && targetEl.classList.contains('word-balloon') && targetEl.parentNode === constructZone) {
                     const targetIndex = parseInt(targetEl.dataset.index);
@@ -2047,53 +648,34 @@
                     }
                 }
             });
-
             balloon.addEventListener('pointerup', (e) => {
                 if (draggedIndex !== null) {
                     balloon.releasePointerCapture(e.pointerId);
                     draggedIndex = null;
-                    setTimeout(() => {
-                        balloon.classList.remove('dragged-active');
-                    }, 50);
+                    setTimeout(() => { balloon.classList.remove('dragged-active'); }, 50);
                     renderZones();
                 }
             });
-
             constructZone.appendChild(balloon);
         });
-
         const currentPhrase = playlistPhrases[currentPhraseIndex];
         const poolWords = getCleanWordsList(currentPhrase);
         const wordsZone = document.getElementById("words-zone");
         wordsZone.innerHTML = "";
-
         poolWords.forEach(word => {
             const isSelected = selectedWords.map(w => w.toLowerCase()).includes(word.toLowerCase());
             if (!isSelected) {
                 const btn = document.createElement("span");
                 btn.className = "word-balloon";
                 btn.innerText = word;
-                
                 btn.style.color = colorConfig.textColor;
-                
-                btn.onclick = () => {
-                    speakWord(word);
-                    selectedWords.push(word);
-                    renderZones();
-                    if(pescaMode) {
-                        togglePescaMode();
-                    }
-                };
-                
+                btn.onclick = () => { speakWord(word); selectedWords.push(word); renderZones(); if(pescaMode) { togglePescaMode(); } };
                 if (pescaMode) {
                     btn.classList.add("pescado");
                     btn.style.color = '#ffff00';
                     let lower = word.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "");
-                    if (dictionary[lower]) {
-                        btn.innerText = `${word} (${dictionary[lower]})`;
-                    }
+                    if (dictionary[lower]) { btn.innerText = `${word} (${dictionary[lower]})`; }
                 }
-
                 wordsZone.appendChild(btn);
             }
         });
@@ -2110,15 +692,12 @@
         });
         children.forEach((child, index) => {
             child.dataset.index = index;
-            if (index === draggedIndex) {
-                child.innerText = selectedWords[index];
-            }
+            if (index === draggedIndex) { child.innerText = selectedWords[index]; }
         });
     }
 
     function setupDragAndDropEvents() {
         const constructZone = document.getElementById("construction-zone");
-
         constructZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             const targetEl = e.target;
@@ -2137,11 +716,7 @@
     function togglePescaMode() {
         pescaMode = !pescaMode;
         const btn = document.getElementById("btn-pesca");
-        if (pescaMode) {
-            btn.classList.add("active");
-        } else {
-            btn.classList.remove("active");
-        }
+        if (pescaMode) { btn.classList.add("active"); } else { btn.classList.remove("active"); }
         renderZones();
     }
 
@@ -2150,19 +725,15 @@
         const currentAnswer = selectedWords.join(" ").trim().toLowerCase();
         const cleanTarget = currentPhrase.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g,"").trim().toLowerCase();
         const statusMsg = document.getElementById("status-message");
-
         if (currentAnswer === cleanTarget) {
             statusMsg.innerHTML = '<span class="status-correct">✔ Conectado à Matrix! Ordem perfeita!</span>';
             document.getElementById("check-btn").style.display = "none";
             document.getElementById("next-btn").style.display = "block";
-            
             const constructionZone = document.getElementById("construction-zone");
             const successTextBox = document.getElementById("success-text-box");
-            
-            constructionZone.style.display = "none"; 
-            successTextBox.innerText = currentPhrase.en; 
-            successTextBox.style.display = "flex"; 
-            
+            constructionZone.style.display = "none";
+            successTextBox.innerText = currentPhrase.en;
+            successTextBox.style.display = "flex";
             speak(currentPhrase.en);
         } else {
             statusMsg.innerHTML = '<span class="status-wrong">❌ Erro no sistema! Tente outra sequência.</span>';
@@ -2172,26 +743,23 @@
     function revealAnswer() {
         const currentPhrase = playlistPhrases[currentPhraseIndex];
         const box = document.getElementById("revealed-answer");
-        if(box.style.display === "block") {
-            box.style.display = "none";
-        } else {
-            box.innerText = `Resposta Correta: ${currentPhrase.en}`;
-            box.style.display = "block";
-        }
+        if(box.style.display === "block") { box.style.display = "none"; } else { box.innerText = `Resposta Correta: ${currentPhrase.en}`; box.style.display = "block"; }
     }
 
-    function nextPhrase() {
-        currentPhraseIndex++;
-        loadPhrase();
+    function nextPhrase() { currentPhraseIndex++; loadPhrase(); }
+
+    // ============================================================
+    // 8. INICIALIZAÇÃO
+    // ============================================================
+    function init() {
+        renderTopics();
+        showTopicsScreen();
+        setupDragAndDropEvents();
+        applyTextColor(colorConfig.textColor);
+        applyBgColor(colorConfig.bgColor);
     }
 
-    // ===== A FUNÇÃO speak FOI SOBRESCRITA LÁ EM CIMA =====
-
-    // ===== INICIALIZAR =====
-    document.addEventListener('DOMContentLoaded', () => {
-        init();
-    });
+    init();
 </script>
-
 </body>
 </html>
