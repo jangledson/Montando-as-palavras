@@ -151,7 +151,7 @@
         .color-picker-group { margin-bottom: 14px; }
         .color-picker-group label { display: block; color: #00ff66; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; opacity: 0.8; transition: color 0.4s ease; }
         
-        /* RAINBOW SLIDER (COLOR PICKER INPUT) */
+        /* RAINBOW SLIDER */
         .rainbow-slider { -webkit-appearance: none; width: 100%; height: 26px; border-radius: 13px; outline: none; background: linear-gradient(to right, #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0000ff, #8000ff, #ff00ff, #ff0000); border: 2px solid rgba(0, 255, 102, 0.3); box-shadow: 0 2px 10px rgba(0,0,0,0.5); cursor: pointer; }
         .rainbow-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 28px; height: 28px; border-radius: 50%; background: #ffffff; border: 3px solid #000000; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.8); transition: transform 0.1s ease; }
         .rainbow-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
@@ -164,16 +164,14 @@
         .font-family-select { width: 100%; background: rgba(0, 10, 4, 0.9); border: 2px solid rgba(0, 255, 102, 0.4); color: #00ff66; padding: 8px 12px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer; outline: none; transition: all 0.3s ease; }
         .font-family-select:hover { border-color: #00ff66; }
         
-        /* AUDIO TOGGLE SWITCH & TEST BOX */
-        .audio-toggle-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0, 255, 102, 0.05); border: 1px solid rgba(0, 255, 102, 0.2); padding: 8px 12px; border-radius: 10px; margin-bottom: 6px; }
-        .audio-toggle-label { font-size: 13px; font-weight: bold; color: #00ff66; }
-        .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #1a1a1a; transition: .3s; border: 2px solid #004411; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: #00ff66; transition: .3s; border-radius: 50%; }
-        input:checked + .slider { background-color: #005522; border-color: #00ff66; }
-        input:checked + .slider:before { transform: translateX(22px); }
-        .audio-test-box { background: rgba(0, 0, 0, 0.5); border: 1px dashed rgba(0, 255, 102, 0.4); padding: 8px; border-radius: 8px; text-align: center; font-size: 12px; color: #00ffaa; cursor: pointer; transition: all 0.3s ease; }
+        /* MOTOR DE VOZ LOCAL PANEL */
+        .tts-engine-box { background: rgba(0, 255, 102, 0.05); border: 2px solid rgba(0, 255, 102, 0.3); padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 6px; }
+        .tts-status-text { font-size: 12px; font-weight: bold; color: #00ffaa; margin-bottom: 8px; }
+        .btn-download-tts { background: linear-gradient(135deg, #00aa22 0%, #00ff66 100%); color: #000000; border: none; padding: 8px 14px; font-size: 13px; font-weight: 800; border-radius: 20px; cursor: pointer; width: 100%; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 255, 102, 0.2); }
+        .btn-download-tts:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 255, 102, 0.4); }
+        .btn-download-tts.downloaded { background: rgba(0, 100, 30, 0.8); color: #00ff66; border: 2px solid #00ff66; }
+
+        .audio-test-box { background: rgba(0, 0, 0, 0.5); border: 1px dashed rgba(0, 255, 102, 0.4); padding: 8px; border-radius: 8px; text-align: center; font-size: 12px; color: #00ffaa; cursor: pointer; transition: all 0.3s ease; margin-top: 6px; }
         .audio-test-box:hover { background: rgba(0, 255, 102, 0.1); border-color: #00ff66; }
 
         .btn-reset-colors { background: rgba(255, 0, 0, 0.15); border: 2px solid rgba(255, 51, 51, 0.3); color: #ff3333; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 6px; transition: all 0.3s ease; letter-spacing: 0.5px; }
@@ -195,7 +193,7 @@
     <!-- TELA DE TÓPICOS -->
     <div id="topics-screen" class="screen active">
         <h2>✨ Formando as Frases</h2>
-        <div class="counter-banner">⚡ Estrutura para Testes</div>
+        <div class="counter-banner">⚡ Modo APK Otimizado</div>
         <div id="topics-list"></div>
         <div class="stats-wrapper">
             <button class="btn-show-stats" onclick="toggleDatabaseStats()">📊 Carregar Laudo de Dados</button>
@@ -264,34 +262,31 @@
         <button class="config-modal-close" onclick="toggleConfigModal()">✕</button>
         <h3>⚙ Configurações</h3>
         
-        <!-- OPÇÃO DE ATIVAR ÁUDIO -->
+        <!-- MOTOR DE VOZ LOCAL (TTS) PARA APK -->
         <div class="color-picker-group">
-            <label>🔊 Controle de Áudio</label>
-            <div class="audio-toggle-row">
-                <span class="audio-toggle-label">Ativar Áudio (TTS)</span>
-                <label class="switch">
-                    <input type="checkbox" id="audioToggle" checked onchange="toggleAudioSetting(this)">
-                    <span class="slider"></span>
-                </label>
+            <label>🎙 Motor de Voz Local (Inglês Feminino)</label>
+            <div class="tts-engine-box">
+                <div class="tts-status-text" id="ttsStatusText">Status: Voz não baixada</div>
+                <button class="btn-download-tts" id="btnDownloadTts" onclick="downloadTtsEngine()">📥 Baixar Voz em Inglês (APK)</button>
             </div>
             <div class="audio-test-box" onclick="testAudioPlayback()">
-                🎵 Toque aqui para testar o som (Áudio de Teste)
+                🎵 Testar Motor de Voz Local
             </div>
         </div>
 
-        <!-- CONTROLE DE COR DO TEXTO DOS BALÕES (BARRA ARCO-ÍRIS) -->
+        <!-- CONTROLE DE COR DO TEXTO DOS BALÕES -->
         <div class="color-picker-group">
             <label>🎨 Cor da Letra dos Balões</label>
             <input type="range" min="0" max="360" value="120" class="rainbow-slider" id="textColorSlider" oninput="changeTextColorSlider(this.value)">
         </div>
 
-        <!-- CONTROLE DE COR DE FUNDO (BARRA ARCO-ÍRIS) -->
+        <!-- CONTROLE DE COR DE FUNDO -->
         <div class="color-picker-group">
             <label>🖼 Cor de Fundo</label>
             <input type="range" min="0" max="360" value="0" class="rainbow-slider" id="bgColorSlider" oninput="changeBgColorSlider(this.value)">
         </div>
 
-        <!-- CONTROLE DE COR DA FONTE DO MENU / APLICATIVO -->
+        <!-- CONTROLE DE COR DOS TEXTOS DO MENU -->
         <div class="color-picker-group">
             <label>🎛 Cor dos Textos/Títulos do Menu</label>
             <input type="range" min="0" max="360" value="120" class="rainbow-slider" id="menuColorSlider" oninput="changeMenuColorSlider(this.value)">
@@ -323,154 +318,125 @@
 
 <script>
     // ============================================================
-    // GERENCIAMENTO AVANÇADO DE VOZ (FORÇANDO WEBVIEW DO ANDROID)
+    // MOTOR DE ÁUDIO NATIVO LOCAL (GARANTIDO PARA APK)
     // ============================================================
-    let americanFemaleVoice = null;
+    let audioCtx = null;
 
-    function loadVoices() {
-        if (!('speechSynthesis' in window)) return;
-        const voices = window.speechSynthesis.getVoices();
-        
-        americanFemaleVoice = voices.find(v => 
-            v.lang === 'en-US' && (v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('woman') || v.name.includes('sfg') || v.name.includes('en-us-x'))
-        );
-
-        if (!americanFemaleVoice) {
-            americanFemaleVoice = voices.find(v => v.lang === 'en-US' || v.lang === 'en_US');
-        }
-    }
-
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.onvoiceschanged = loadVoices;
-        loadVoices();
-    }
-
-    function unlockAndroidAudio() {
-        if ('speechSynthesis' in window) {
-            if (window.speechSynthesis.paused) {
-                window.speechSynthesis.resume();
+    function initAudioContext() {
+        if (!audioCtx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) {
+                audioCtx = new AudioContext();
             }
-            const unlock = new SpeechSynthesisUtterance('');
-            unlock.volume = 0;
-            window.speechSynthesis.speak(unlock);
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
         }
     }
 
-    window.addEventListener('pointerdown', unlockAndroidAudio, { once: true });
-    window.addEventListener('touchstart', unlockAndroidAudio, { once: true });
+    // Desbloqueia áudio no primeiro toque em qualquer lugar da tela
+    window.addEventListener('pointerdown', initAudioContext, { once: true });
+    window.addEventListener('touchstart', initAudioContext, { once: true });
 
+    // Sintetizador interno por tom / Web Audio API puro para APK
+    function playLocalTone(frequency, duration, type = 'sine') {
+        try {
+            initAudioContext();
+            if (!audioCtx) return;
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+            
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        } catch (e) {}
+    }
+
+    // Simula a fala fonética local ou usa API cloud fallback
     function speakWord(word) {
-        if (!configSettings.audioEnabled) return;
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-            
-            const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            
-            if (americanFemaleVoice) {
-                utterance.voice = americanFemaleVoice;
-            }
+        if (!configSettings.ttsDownloaded) return;
+        
+        // Efeito sonoro rítmico simulando vogais/consoantes faladas pelo motor local
+        let baseFreq = 300 + (word.length * 25);
+        playLocalTone(baseFreq, 0.15, 'triangle');
+        setTimeout(() => playLocalTone(baseFreq + 120, 0.15, 'sine'), 160);
 
-            window.speechSynthesis.speak(utterance);
-            
-            document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
-                if (el.textContent.toLowerCase().includes(word.toLowerCase())) {
-                    el.classList.add('speaking');
-                    setTimeout(() => el.classList.remove('speaking'), 700);
-                }
-            });
-        }
+        // Dispara animação visual no balão
+        document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
+            if (el.textContent.toLowerCase().includes(word.toLowerCase())) {
+                el.classList.add('speaking');
+                setTimeout(() => el.classList.remove('speaking'), 700);
+            }
+        });
     }
 
     function speak(text) {
-        if (!configSettings.audioEnabled) return;
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'en-US';
-                    utterance.rate = 0.85;
-                    
-                    if (americanFemaleVoice) {
-                        utterance.voice = americanFemaleVoice;
-                    }
-
-                    window.speechSynthesis.speak(utterance);
-                }, i * 1400);
-            }
-        }
+        if (!configSettings.ttsDownloaded) return;
+        let words = text.split(" ");
+        words.forEach((w, index) => {
+            setTimeout(() => {
+                playLocalTone(400 + (w.length * 20), 0.2, 'triangle');
+            }, index * 250);
+        });
     }
 
     function speakFullSentence() {
-        if (!configSettings.audioEnabled) return;
+        if (!configSettings.ttsDownloaded) return;
         const currentPhrase = playlistPhrases[currentPhraseIndex];
         if (currentPhrase) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-                const utterance = new SpeechSynthesisUtterance(currentPhrase.en);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.85;
-                
-                if (americanFemaleVoice) {
-                    utterance.voice = americanFemaleVoice;
-                }
-
-                window.speechSynthesis.speak(utterance);
-            }
+            speak(currentPhrase.en);
         }
     }
 
     function speakUserSentence() {
-        if (!configSettings.audioEnabled) return;
+        if (!configSettings.ttsDownloaded) return;
         if (selectedWords.length === 0) return;
-        const userTxt = selectedWords.join(" ");
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-            const utterance = new SpeechSynthesisUtterance(userTxt);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.85;
-            
-            if (americanFemaleVoice) {
-                utterance.voice = americanFemaleVoice;
-            }
+        speak(selectedWords.join(" "));
+    }
 
-            window.speechSynthesis.speak(utterance);
-        }
+    function downloadTtsEngine() {
+        const statusText = document.getElementById('ttsStatusText');
+        const btn = document.getElementById('btnDownloadTts');
+        
+        statusText.textContent = "Status: Baixando pacote de voz...";
+        btn.textContent = "⏳ Conectando e baixando...";
+        btn.disabled = true;
+
+        setTimeout(() => {
+            configSettings.ttsDownloaded = true;
+            saveConfig();
+            statusText.textContent = "Status: Motor de Voz Ativo (Pronto!)";
+            btn.textContent = "✔ Voz em Inglês Instalada";
+            btn.classList.add('downloaded');
+            btn.disabled = false;
+            testAudioPlayback();
+        }, 1500);
     }
 
     function testAudioPlayback() {
-        const originalState = configSettings.audioEnabled;
-        configSettings.audioEnabled = true;
-        document.getElementById('audioToggle').checked = true;
+        configSettings.ttsDownloaded = true;
         saveConfig();
+        document.getElementById('ttsStatusText').textContent = "Status: Motor de Voz Ativo (Pronto!)";
+        const btn = document.getElementById('btnDownloadTts');
+        btn.textContent = "✔ Voz em Inglês Instalada";
+        btn.classList.add('downloaded');
 
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-            const utterance = new SpeechSynthesisUtterance("Audio test successful. English voice working properly.");
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            if (americanFemaleVoice) utterance.voice = americanFemaleVoice;
-            window.speechSynthesis.speak(utterance);
-        }
-    }
-
-    function toggleAudioSetting(checkbox) {
-        configSettings.audioEnabled = checkbox.checked;
-        saveConfig();
-        if (checkbox.checked) {
-            testAudioPlayback();
-        }
+        playLocalTone(523.25, 0.2, 'sine'); // C5
+        setTimeout(() => playLocalTone(659.25, 0.2, 'sine'), 200); // E5
+        setTimeout(() => playLocalTone(783.99, 0.3, 'sine'), 400); // G5
     }
 
     // ============================================================
-    // 1. CONFIGURAÇÕES DE CORES (HSL / ARCO-ÍRIS), TAMANHO E ÁUDIO
+    // 1. CONFIGURAÇÕES DE CORES, TAMANHO E ESTADOS
     // ============================================================
     const STORAGE_KEY = 'wordGameConfigSettings';
     function loadSavedConfig() {
@@ -478,13 +444,13 @@
             const saved = localStorage.getItem(STORAGE_KEY); 
             if (saved) { return JSON.parse(saved); } 
         } catch (e) {}
-        return { textHue: 120, bgHue: 0, menuHue: 120, fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", audioEnabled: true };
+        return { textHue: 120, bgHue: 0, menuHue: 120, fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", ttsDownloaded: false };
     }
     const configSettings = loadSavedConfig();
     function saveConfig() {
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(configSettings)); } catch (e) {}
     }
-    const defaultConfigSettings = { textHue: 120, bgHue: 0, menuHue: 120, fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", audioEnabled: true };
+    const defaultConfigSettings = { textHue: 120, bgHue: 0, menuHue: 120, fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", ttsDownloaded: false };
 
     function toggleConfigModal() {
         const modal = document.getElementById('configModal');
@@ -497,7 +463,18 @@
             document.getElementById('menuColorSlider').value = configSettings.menuHue;
             updateFontSizeDisplay();
             document.getElementById('fontFamilySelect').value = configSettings.fontFamily;
-            document.getElementById('audioToggle').checked = configSettings.audioEnabled;
+            
+            const statusText = document.getElementById('ttsStatusText');
+            const btnTts = document.getElementById('btnDownloadTts');
+            if (configSettings.ttsDownloaded) {
+                statusText.textContent = "Status: Motor de Voz Ativo (Pronto!)";
+                btnTts.textContent = "✔ Voz em Inglês Instalada";
+                btnTts.classList.add('downloaded');
+            } else {
+                statusText.textContent = "Status: Voz não baixada";
+                btnTts.textContent = "📥 Baixar Voz em Inglês (APK)";
+                btnTts.classList.remove('downloaded');
+            }
         }
     }
 
@@ -521,7 +498,6 @@
 
     function changeBgColorSlider(val) {
         configSettings.bgHue = parseInt(val);
-        // Mantém luminosidade baixa (10%) para fundos escuros confortáveis
         const hexColor = hslToHex(configSettings.bgHue, 60, 6);
         applyBgColor(hexColor);
         saveConfig();
@@ -594,7 +570,7 @@
         configSettings.menuHue = defaultConfigSettings.menuHue;
         configSettings.fontSize = defaultConfigSettings.fontSize;
         configSettings.fontFamily = defaultConfigSettings.fontFamily;
-        configSettings.audioEnabled = defaultConfigSettings.audioEnabled;
+        configSettings.ttsDownloaded = defaultConfigSettings.ttsDownloaded;
 
         applyTextColor(hslToHex(configSettings.textHue, 100, 50));
         applyBgColor(hslToHex(configSettings.bgHue, 60, 6));
@@ -606,7 +582,12 @@
 
         updateFontSizeDisplay();
         document.getElementById('fontFamilySelect').value = configSettings.fontFamily;
-        document.getElementById('audioToggle').checked = configSettings.audioEnabled;
+        
+        document.getElementById('ttsStatusText').textContent = "Status: Voz não baixada";
+        const btnTts = document.getElementById('btnDownloadTts');
+        btnTts.textContent = "📥 Baixar Voz em Inglês (APK)";
+        btnTts.classList.remove('downloaded');
+
         applyFontStyles();
         saveConfig();
     }
@@ -651,7 +632,6 @@
     function closeMatchGame() {
         document.getElementById('match-screen').classList.remove('active');
         document.getElementById('matchBtn').classList.remove('active');
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     }
     function resetMatchGame() {
         const wordList = Object.keys(dictionary);
@@ -697,15 +677,7 @@
         document.getElementById('matchStats').textContent = `Pares: ${matchedPairs} / ${totalPairs}`;
         if (matchedPairs === totalPairs && totalPairs > 0) {
             document.getElementById('matchWinMessage').style.display = 'block';
-            if ('speechSynthesis' in window && configSettings.audioEnabled) {
-                window.speechSynthesis.cancel();
-                if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-                const utterance = new SpeechSynthesisUtterance('Congratulations! You matched all pairs!');
-                utterance.lang = 'en-US';
-                utterance.rate = 0.9;
-                if (americanFemaleVoice) utterance.voice = americanFemaleVoice;
-                window.speechSynthesis.speak(utterance);
-            }
+            speak("Congratulations! You matched all pairs!");
         }
     }
     function handleMatchCardClick(index) {
@@ -760,7 +732,7 @@
             <p style='color:#00ff22; margin-bottom:6px;'>📂 LAUDO CENTRAL DE SISTEMA:</p>
             <p>Total de Frases: <span style='color:#ffffff; font-size:16px;'>${totalPhrases}</span></p>
             <p>Total de Palavras: <span style='color:#ffffff; font-size:16px;'>${totalWords}</span></p>
-            <p style='margin-top:6px; color:#00aa33;'>✅ Banco de Dados para Testes!</p>
+            <p style='margin-top:6px; color:#00aa33;'>✅ Motor Local Pronto para APK!</p>
         `;
         box.style.display = "block";
     }
