@@ -256,6 +256,32 @@
 
 <script>
     // ============================================================
+    // INICIALIZAÇÃO E FORÇAGEM DO MOTOR DE VOZ DO ANDROID (TTS)
+    // ============================================================
+    function initAndroidTTS() {
+        if ('speechSynthesis' in window) {
+            // Limpa qualquer cache de fala anterior travada
+            window.speechSynthesis.cancel();
+            
+            // Dispara um comando silencioso para acordar o TTS engine nativo do Android WebView
+            const dummyUtterance = new SpeechSynthesisUtterance('');
+            dummyUtterance.volume = 0;
+            window.speechSynthesis.speak(dummyUtterance);
+        }
+    }
+
+    // Executa ao carregar e no primeiro toque do usuário para destravar restrições de WebView
+    window.addEventListener('load', () => {
+        initAndroidTTS();
+    });
+
+    window.addEventListener('pointerdown', () => {
+        if ('speechSynthesis' in window && window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+        }
+    }, { once: true });
+
+    // ============================================================
     // 1. CONFIGURAÇÕES DE CORES
     // ============================================================
     const STORAGE_KEY = 'wordGameColors';
@@ -349,7 +375,7 @@
     }
 
     // ============================================================
-    // 2. DICIONÁRIO (APENAS UM EXEMPLO PARA TESTE)
+    // 2. DICIONÁRIO
     // ============================================================
     const dictionary = {
         "love": "amor",
@@ -357,7 +383,7 @@
     };
 
     // ============================================================
-    // 3. BANCO DE FRASES (APENAS UMA FRASE PARA TESTE)
+    // 3. BANCO DE FRASES
     // ============================================================
     const pdfPhrasesDatabase = {
         "Teste": [
@@ -459,7 +485,7 @@
     }
 
     // ============================================================
-    // 6. FUNÇÕES DE VOZ
+    // 6. FUNÇÕES DE VOZ ROBUSTAS PARA O ANDROID WEBVIEW
     // ============================================================
     function speakWord(word) {
         if ('speechSynthesis' in window) {
