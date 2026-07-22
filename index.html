@@ -256,30 +256,119 @@
 
 <script>
     // ============================================================
-    // INICIALIZAÇÃO E FORÇAGEM DO MOTOR DE VOZ DO ANDROID (TTS)
+    // GERENCIAMENTO AVANÇADO DE VOZ (ANDROID TTS - FEMININA EN-US)
     // ============================================================
-    function initAndroidTTS() {
-        if ('speechSynthesis' in window) {
-            // Limpa qualquer cache de fala anterior travada
-            window.speechSynthesis.cancel();
-            
-            // Dispara um comando silencioso para acordar o TTS engine nativo do Android WebView
-            const dummyUtterance = new SpeechSynthesisUtterance('');
-            dummyUtterance.volume = 0;
-            window.speechSynthesis.speak(dummyUtterance);
+    let americanFemaleVoice = null;
+
+    function loadVoices() {
+        if (!('speechSynthesis' in window)) return;
+        const voices = window.speechSynthesis.getVoices();
+        
+        // Tenta encontrar uma voz feminina em inglês americano (en-US)
+        americanFemaleVoice = voices.find(v => 
+            v.lang === 'en-US' && (v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('woman') || v.name.includes('sfg') || v.name.includes('en-us-x'))
+        );
+
+        // Se não achar explicitamente feminina, pega qualquer voz padrão em en-US
+        if (!americanFemaleVoice) {
+            americanFemaleVoice = voices.find(v => v.lang === 'en-US' || v.lang === 'en_US');
         }
     }
 
-    // Executa ao carregar e no primeiro toque do usuário para destravar restrições de WebView
-    window.addEventListener('load', () => {
-        initAndroidTTS();
-    });
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices();
+        
+        // Acordar o motor de voz do Android no carregamento
+        window.speechSynthesis.cancel();
+        const dummy = new SpeechSynthesisUtterance('');
+        dummy.volume = 0;
+        window.speechSynthesis.speak(dummy);
+    }
 
+    // Desbloquear restrições de autoplay do WebView no primeiro toque
     window.addEventListener('pointerdown', () => {
-        if ('speechSynthesis' in window && window.speechSynthesis.paused) {
-            window.speechSynthesis.resume();
+        if ('speechSynthesis' in window) {
+            if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+            loadVoices();
         }
     }, { once: true });
+
+    function speakWord(word) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            
+            if (americanFemaleVoice) {
+                utterance.voice = americanFemaleVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+            
+            document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
+                if (el.textContent.toLowerCase() === word.toLowerCase()) {
+                    el.classList.add('speaking');
+                    setTimeout(() => el.classList.remove('speaking'), 700);
+                }
+            });
+        }
+    }
+
+    function speak(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    
+                    if (americanFemaleVoice) {
+                        utterance.voice = americanFemaleVoice;
+                    }
+
+                    window.speechSynthesis.speak(utterance);
+                }, i * 1400);
+            }
+        }
+    }
+
+    function speakFullSentence() {
+        const currentPhrase = playlistPhrases[currentPhraseIndex];
+        if (currentPhrase) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(currentPhrase.en);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85;
+                
+                if (americanFemaleVoice) {
+                    utterance.voice = americanFemaleVoice;
+                }
+
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+    }
+
+    function speakUserSentence() {
+        if (selectedWords.length === 0) return;
+        const userTxt = selectedWords.join(" ");
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(userTxt);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85;
+            
+            if (americanFemaleVoice) {
+                utterance.voice = americanFemaleVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+    }
 
     // ============================================================
     // 1. CONFIGURAÇÕES DE CORES
@@ -459,6 +548,7 @@
                 const utterance = new SpeechSynthesisUtterance('Congratulations! You matched all pairs!');
                 utterance.lang = 'en-US';
                 utterance.rate = 0.9;
+                if (americanFemaleVoice) utterance.voice = americanFemaleVoice;
                 window.speechSynthesis.speak(utterance);
             }
         }
@@ -481,64 +571,6 @@
             elements[selectedMatchCard].classList.add('wrong');
             elements[index].classList.add('wrong');
             setTimeout(() => { selectedMatchCard = null; isProcessingMatch = false; renderMatchGame(); }, 600);
-        }
-    }
-
-    // ============================================================
-    // 6. FUNÇÕES DE VOZ ROBUSTAS PARA O ANDROID WEBVIEW
-    // ============================================================
-    function speakWord(word) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
-            document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
-                if (el.textContent.toLowerCase() === word.toLowerCase()) {
-                    el.classList.add('speaking');
-                    setTimeout(() => el.classList.remove('speaking'), 700);
-                }
-            });
-        }
-    }
-
-    function speak(text) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'en-US';
-                    utterance.rate = 0.85;
-                    window.speechSynthesis.speak(utterance);
-                }, i * 1400);
-            }
-        }
-    }
-
-    function speakFullSentence() {
-        const currentPhrase = playlistPhrases[currentPhraseIndex];
-        if (currentPhrase) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(currentPhrase.en);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-    }
-
-    function speakUserSentence() {
-        if (selectedWords.length === 0) return;
-        const userTxt = selectedWords.join(" ");
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(userTxt);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.85;
-            window.speechSynthesis.speak(utterance);
         }
     }
 
