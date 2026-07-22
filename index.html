@@ -57,13 +57,13 @@
         .words-zone { background: rgba(0, 10, 4, 0.4); border: 2px solid rgba(0, 68, 17, 0.4); border-radius: 12px; min-height: 80px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; align-content: flex-start; transition: border-color 0.4s ease; backdrop-filter: blur(4px); }
         
         /* WORD BALLOONS */
-        .word-balloon { padding: 6px 12px; font-size: 15px; font-weight: 800; border-radius: 20px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.6); display: inline-block; user-select: none; position: relative; max-width: 100%; word-wrap: break-word; touch-action: none; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease; background: #0a0a0a; border: 2px solid #1a1a1a; color: #00ff22; text-shadow: 0 0 20px rgba(0, 255, 34, 0.15); letter-spacing: 0.3px; line-height: 1.2; }
+        .word-balloon { padding: 6px 12px; font-size: 15px; font-weight: 800; border-radius: 20px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.6); display: inline-block; user-select: none; position: relative; max-width: 100%; word-wrap: break-word; touch-action: none; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, font-size 0.2s ease, font-family 0.2s ease; background: #0a0a0a; border: 2px solid #1a1a1a; color: #00ff22; text-shadow: 0 0 20px rgba(0, 255, 34, 0.15); letter-spacing: 0.3px; line-height: 1.2; }
         .word-balloon:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 30px rgba(0,0,0,0.8); border-color: #2a2a2a; }
         .word-balloon:active { transform: scale(0.93); }
-        .construction-zone .word-balloon { background: #0a0a0a; border: 2px solid #1a1a1a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5); cursor: grab; color: #00ff22; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease; font-size: 14px; padding: 5px 10px; }
+        .construction-zone .word-balloon { background: #0a0a0a; border: 2px solid #1a1a1a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5); cursor: grab; color: #00ff22; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease, font-size 0.2s ease, font-family 0.2s ease; font-size: 14px; padding: 5px 10px; }
         .construction-zone .word-balloon:hover { box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7); border-color: #2a2a2a; }
         .construction-zone .word-balloon:active { cursor: grabbing; transform: scale(0.93); }
-        .words-zone .word-balloon { background: #0a0a0a; border: 2px solid #1a1a1a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4); color: #00ffaa; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease; font-size: 13px; padding: 4px 10px; }
+        .words-zone .word-balloon { background: #0a0a0a; border: 2px solid #1a1a1a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4); color: #00ffaa; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease, font-size 0.2s ease, font-family 0.2s ease; font-size: 13px; padding: 4px 10px; }
         .words-zone .word-balloon:hover { border-color: #2a2a2a; box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6); }
         .word-balloon.dragging { opacity: 0.4; border: 2px dashed #ffff00 !important; background: rgba(255, 255, 0, 0.05) !important; transform: scale(0.9); }
         .word-balloon.pescado { background: #001a00 !important; color: #ffff00 !important; border-color: #2a2a00 !important; box-shadow: 0 0 30px rgba(255, 255, 0, 0.15) !important; animation: pescaGlow 1s ease infinite alternate; }
@@ -119,7 +119,7 @@
         .match-close-btn:hover { background: #ffaa00; color: #000000; transform: rotate(90deg); }
         .match-stats { color: #ffaa00; text-align: center; font-size: 13px; margin-bottom: 10px; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255, 170, 0, 0.15); transition: color 0.4s ease; }
         .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; }
-        .match-card { background: #0a0a0a; border: 2px solid #1a1a1a; border-radius: 20px; padding: 10px 8px; text-align: center; font-size: 16px; font-weight: 800; color: #00ff22; cursor: pointer; transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; min-height: 50px; display: flex; align-items: center; justify-content: center; word-wrap: break-word; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; backdrop-filter: blur(4px); text-shadow: 0 0 20px rgba(0, 255, 34, 0.15); letter-spacing: 0.3px; line-height: 1.2; }
+        .match-card { background: #0a0a0a; border: 2px solid #1a1a1a; border-radius: 20px; padding: 10px 8px; text-align: center; font-size: 16px; font-weight: 800; color: #00ff22; cursor: pointer; transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease, font-size 0.2s ease, font-family 0.2s ease; min-height: 50px; display: flex; align-items: center; justify-content: center; word-wrap: break-word; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; backdrop-filter: blur(4px); text-shadow: 0 0 20px rgba(0, 255, 34, 0.15); letter-spacing: 0.3px; line-height: 1.2; }
         .match-card:hover { transform: translateY(-2px) scale(1.01); border-color: #2a2a2a; box-shadow: 0 6px 25px rgba(0,0,0,0.7); }
         .match-card:active { transform: scale(0.95); }
         .match-card.selected { border-color: #ffaa00; box-shadow: 0 0 40px rgba(255, 170, 0, 0.3); transform: scale(1.03); }
@@ -155,6 +155,12 @@
         .color-option.selected { border-color: #ffffff; box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); transform: scale(1.1); }
         .color-option .check-mark { display: none; font-size: 14px; color: white; text-align: center; line-height: 32px; text-shadow: 0 0 15px rgba(0,0,0,0.9); }
         .color-option.selected .check-mark { display: block; }
+        .font-size-controls { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .font-size-btn { background: rgba(0, 255, 102, 0.1); border: 2px solid rgba(0, 255, 102, 0.4); color: #00ff66; font-size: 16px; font-weight: bold; width: 40px; height: 36px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .font-size-btn:hover { background: rgba(0, 255, 102, 0.25); border-color: #00ff66; }
+        .font-size-display { color: #ffffff; font-size: 14px; font-weight: bold; text-align: center; flex: 1; }
+        .font-family-select { width: 100%; background: rgba(0, 10, 4, 0.9); border: 2px solid rgba(0, 255, 102, 0.4); color: #00ff66; padding: 8px 12px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer; outline: none; transition: all 0.3s ease; }
+        .font-family-select:hover { border-color: #00ff66; }
         .btn-reset-colors { background: rgba(255, 0, 0, 0.15); border: 2px solid rgba(255, 51, 51, 0.3); color: #ff3333; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 6px; transition: all 0.3s ease; letter-spacing: 0.5px; }
         .btn-reset-colors:hover { background: rgba(255, 0, 0, 0.25); border-color: #ff3333; box-shadow: 0 0 30px rgba(255, 51, 51, 0.15); }
         
@@ -250,7 +256,27 @@
             <label>🖼 Cor de Fundo</label>
             <div class="color-options" id="bgColorOptions"></div>
         </div>
-        <button class="btn-reset-colors" onclick="resetColors()">🔄 Restaurar Cores Padrão</button>
+        <div class="color-picker-group">
+            <label>🔤 Tamanho da Fonte (Inglês)</label>
+            <div class="font-size-controls">
+                <button class="font-size-btn" onclick="adjustFontSize(-1)">A-</button>
+                <div class="font-size-display" id="fontSizeDisplay">15px</div>
+                <button class="font-size-btn" onclick="adjustFontSize(1)">A+</button>
+            </div>
+        </div>
+        <div class="color-picker-group">
+            <label>✒ Estilo da Fonte (Inglês)</label>
+            <select class="font-family-select" id="fontFamilySelect" onchange="changeFontFamily(this.value)">
+                <option value="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">Padrão (Segoe UI / Sans)</option>
+                <option value="Georgia, serif">Georgia (Serifada)</option>
+                <option value="'Courier New', Courier, monospace">Courier New (Moderna/Mono)</option>
+                <option value="Impact, Charcoal, sans-serif">Impact (Pesada/Destacada)</option>
+                <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans (Arredondada)</option>
+                <option value="'Times New Roman', Times, serif">Times New Roman (Clássica)</option>
+                <option value="Verdana, Geneva, sans-serif">Verdana (Aberta/Ampla)</option>
+            </select>
+        </div>
+        <button class="btn-reset-colors" onclick="resetConfigSettings()">🔄 Restaurar Padrões</button>
     </div>
 </div>
 
@@ -264,12 +290,10 @@
         if (!('speechSynthesis' in window)) return;
         const voices = window.speechSynthesis.getVoices();
         
-        // Tenta encontrar uma voz feminina em inglês americano (en-US)
         americanFemaleVoice = voices.find(v => 
             v.lang === 'en-US' && (v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('woman') || v.name.includes('sfg') || v.name.includes('en-us-x'))
         );
 
-        // Se não achar explicitamente feminina, pega qualquer voz padrão em en-US
         if (!americanFemaleVoice) {
             americanFemaleVoice = voices.find(v => v.lang === 'en-US' || v.lang === 'en_US');
         }
@@ -279,14 +303,16 @@
         window.speechSynthesis.onvoiceschanged = loadVoices;
         loadVoices();
         
-        // Acordar o motor de voz do Android no carregamento
-        window.speechSynthesis.cancel();
-        const dummy = new SpeechSynthesisUtterance('');
-        dummy.volume = 0;
-        window.speechSynthesis.speak(dummy);
+        setTimeout(() => {
+            window.speechSynthesis.cancel();
+            const wakeup = new SpeechSynthesisUtterance('Audio ready');
+            wakeup.lang = 'en-US';
+            wakeup.volume = 0.1;
+            if (americanFemaleVoice) wakeup.voice = americanFemaleVoice;
+            window.speechSynthesis.speak(wakeup);
+        }, 500);
     }
 
-    // Desbloquear restrições de autoplay do WebView no primeiro toque
     window.addEventListener('pointerdown', () => {
         if ('speechSynthesis' in window) {
             if (window.speechSynthesis.paused) window.speechSynthesis.resume();
@@ -308,7 +334,7 @@
             window.speechSynthesis.speak(utterance);
             
             document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
-                if (el.textContent.toLowerCase() === word.toLowerCase()) {
+                if (el.textContent.toLowerCase().includes(word.toLowerCase())) {
                     el.classList.add('speaking');
                     setTimeout(() => el.classList.remove('speaking'), 700);
                 }
@@ -371,33 +397,40 @@
     }
 
     // ============================================================
-    // 1. CONFIGURAÇÕES DE CORES
+    // 1. CONFIGURAÇÕES DE CORES, TAMANHO E FONTE
     // ============================================================
-    const STORAGE_KEY = 'wordGameColors';
-    function loadSavedColors() {
-        try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) { const parsed = JSON.parse(saved); return parsed; } } catch (e) {}
-        return { textColor: '#00ff22', bgColor: '#000000' };
+    const STORAGE_KEY = 'wordGameConfigSettings';
+    function loadSavedConfig() {
+        try { 
+            const saved = localStorage.getItem(STORAGE_KEY); 
+            if (saved) { return JSON.parse(saved); } 
+        } catch (e) {}
+        return { textColor: '#00ff22', bgColor: '#000000', fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif" };
     }
-    const colorConfig = loadSavedColors();
-    function saveColors() {
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ textColor: colorConfig.textColor, bgColor: colorConfig.bgColor })); } catch (e) {}
+    const configSettings = loadSavedConfig();
+    function saveConfig() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(configSettings)); } catch (e) {}
     }
     const colorPalettes = {
         text: ['#00ff22', '#00ff66', '#00ffaa', '#00ddff', '#00ccff', '#ff00ff', '#ff6600', '#ffcc00', '#ffffff', '#00ff88', '#ff3366', '#ffaa00', '#66ff00', '#00ffff', '#ff44ff', '#ff0066', '#ff8800'],
         bg: ['#000000', '#0a0a0a', '#111111', '#1a1a2e', '#16213e', '#0f3460', '#2d132c', '#1b1b2f', '#001a06', '#001104', '#0d0d0d', '#1a0a0a', '#0a1a0a', '#0a0a1a']
     };
-    const defaultColors = { textColor: '#00ff22', bgColor: '#000000' };
+    const defaultConfigSettings = { textColor: '#00ff22', bgColor: '#000000', fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif" };
 
     function toggleConfigModal() {
         const modal = document.getElementById('configModal');
         const btn = document.getElementById('configBtn');
         modal.classList.toggle('active');
         btn.classList.toggle('active');
-        if (modal.classList.contains('active')) renderColorOptions();
+        if (modal.classList.contains('active')) {
+            renderColorOptions();
+            updateFontSizeDisplay();
+            document.getElementById('fontFamilySelect').value = configSettings.fontFamily;
+        }
     }
     function renderColorOptions() {
-        renderColorOptionGroup('textColorOptions', colorPalettes.text, colorConfig.textColor, 'text');
-        renderColorOptionGroup('bgColorOptions', colorPalettes.bg, colorConfig.bgColor, 'bg');
+        renderColorOptionGroup('textColorOptions', colorPalettes.text, configSettings.textColor, 'text');
+        renderColorOptionGroup('bgColorOptions', colorPalettes.bg, configSettings.bgColor, 'bg');
     }
     function renderColorOptionGroup(containerId, colors, selectedColor, type) {
         const container = document.getElementById(containerId);
@@ -414,9 +447,9 @@
             check.style.color = isDark ? '#fff' : '#000';
             option.appendChild(check);
             option.onclick = () => {
-                if (type === 'text') { colorConfig.textColor = color; applyTextColor(color); }
-                else if (type === 'bg') { colorConfig.bgColor = color; applyBgColor(color); }
-                saveColors();
+                if (type === 'text') { configSettings.textColor = color; applyTextColor(color); }
+                else if (type === 'bg') { configSettings.bgColor = color; applyBgColor(color); }
+                saveConfig();
                 renderColorOptions();
             };
             container.appendChild(option);
@@ -454,12 +487,39 @@
         document.body.style.backgroundColor = color;
         document.getElementById('match-screen').style.backgroundColor = color;
     }
-    function resetColors() {
-        colorConfig.textColor = defaultColors.textColor;
-        colorConfig.bgColor = defaultColors.bgColor;
-        applyTextColor(defaultColors.textColor);
-        applyBgColor(defaultColors.bgColor);
-        saveColors();
+    function adjustFontSize(delta) {
+        configSettings.fontSize = Math.max(10, Math.min(30, configSettings.fontSize + delta));
+        updateFontSizeDisplay();
+        applyFontStyles();
+        saveConfig();
+    }
+    function updateFontSizeDisplay() {
+        document.getElementById('fontSizeDisplay').textContent = `${configSettings.fontSize}px`;
+    }
+    function changeFontFamily(fontValue) {
+        configSettings.fontFamily = fontValue;
+        applyFontStyles();
+        saveConfig();
+    }
+    function applyFontStyles() {
+        const size = `${configSettings.fontSize}px`;
+        const family = configSettings.fontFamily;
+        document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
+            el.style.fontSize = size;
+            el.style.fontFamily = family;
+        });
+    }
+    function resetConfigSettings() {
+        configSettings.textColor = defaultConfigSettings.textColor;
+        configSettings.bgColor = defaultConfigSettings.bgColor;
+        configSettings.fontSize = defaultConfigSettings.fontSize;
+        configSettings.fontFamily = defaultConfigSettings.fontFamily;
+        applyTextColor(defaultConfigSettings.textColor);
+        applyBgColor(defaultConfigSettings.bgColor);
+        updateFontSizeDisplay();
+        document.getElementById('fontFamilySelect').value = configSettings.fontFamily;
+        applyFontStyles();
+        saveConfig();
         renderColorOptions();
     }
 
@@ -494,7 +554,11 @@
         document.getElementById('match-screen').classList.add('active');
         document.getElementById('matchBtn').classList.add('active');
         resetMatchGame();
-        setTimeout(() => { applyTextColor(colorConfig.textColor); applyBgColor(colorConfig.bgColor); }, 100);
+        setTimeout(() => { 
+            applyTextColor(configSettings.textColor); 
+            applyBgColor(configSettings.bgColor); 
+            applyFontStyles(); 
+        }, 100);
     }
     function closeMatchGame() {
         document.getElementById('match-screen').classList.remove('active');
@@ -534,11 +598,12 @@
             div.dataset.index = index;
             div.dataset.pairId = card.pairId;
             div.dataset.type = card.type;
-            if (!card.matched) { div.style.color = colorConfig.textColor; div.style.borderColor = colorConfig.textColor; }
+            if (!card.matched) { div.style.color = configSettings.textColor; div.style.borderColor = configSettings.textColor; }
             if (card.matched) { div.classList.add('matched'); }
             div.onclick = () => handleMatchCardClick(index);
             grid.appendChild(div);
         });
+        applyFontStyles();
         const totalPairs = matchPairs.length;
         document.getElementById('matchStats').textContent = `Pares: ${matchedPairs} / ${totalPairs}`;
         if (matchedPairs === totalPairs && totalPairs > 0) {
@@ -684,7 +749,7 @@
             balloon.innerText = word;
             balloon.draggable = true;
             balloon.dataset.index = index;
-            balloon.style.color = colorConfig.textColor;
+            balloon.style.color = configSettings.textColor;
             balloon.onclick = (e) => {
                 if (balloon.classList.contains('dragged-active')) return;
                 speakWord(word);
@@ -726,7 +791,7 @@
                 const btn = document.createElement("span");
                 btn.className = "word-balloon";
                 btn.innerText = word;
-                btn.style.color = colorConfig.textColor;
+                btn.style.color = configSettings.textColor;
                 btn.onclick = () => { speakWord(word); selectedWords.push(word); renderZones(); if(pescaMode) { togglePescaMode(); } };
                 if (pescaMode) {
                     btn.classList.add("pescado");
@@ -737,6 +802,7 @@
                 wordsZone.appendChild(btn);
             }
         });
+        applyFontStyles();
     }
 
     function renderZonesSilently(container) {
@@ -745,13 +811,14 @@
             const idx = parseInt(child.dataset.index);
             if (idx !== draggedIndex) {
                 child.innerText = selectedWords[idx];
-                child.style.color = colorConfig.textColor;
+                child.style.color = configSettings.textColor;
             }
         });
         children.forEach((child, index) => {
             child.dataset.index = index;
             if (index === draggedIndex) { child.innerText = selectedWords[index]; }
         });
+        applyFontStyles();
     }
 
     function setupDragAndDropEvents() {
@@ -813,8 +880,9 @@
         renderTopics();
         showTopicsScreen();
         setupDragAndDropEvents();
-        applyTextColor(colorConfig.textColor);
-        applyBgColor(colorConfig.bgColor);
+        applyTextColor(configSettings.textColor);
+        applyBgColor(configSettings.bgColor);
+        applyFontStyles();
     }
 
     init();
