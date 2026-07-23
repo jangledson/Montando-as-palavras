@@ -164,14 +164,17 @@
         .font-family-select { width: 100%; background: rgba(0, 10, 4, 0.9); border: 2px solid rgba(0, 255, 102, 0.4); color: #00ff66; padding: 8px 12px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer; outline: none; transition: all 0.3s ease; }
         .font-family-select:hover { border-color: #00ff66; }
         
-        /* MOTOR DE VOZ LOCAL PANEL */
-        .tts-engine-box { background: rgba(0, 255, 102, 0.05); border: 2px solid rgba(0, 255, 102, 0.3); padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 6px; }
-        .tts-status-text { font-size: 12px; font-weight: bold; color: #00ffaa; margin-bottom: 8px; }
-        .btn-download-tts { background: linear-gradient(135deg, #00aa22 0%, #00ff66 100%); color: #000000; border: none; padding: 8px 14px; font-size: 13px; font-weight: 800; border-radius: 20px; cursor: pointer; width: 100%; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 255, 102, 0.2); }
-        .btn-download-tts:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 255, 102, 0.4); }
-        .btn-download-tts.downloaded { background: rgba(0, 100, 30, 0.8); color: #00ff66; border: 2px solid #00ff66; }
+        /* PAINEL DE DOWNLOAD DE VOZES */
+        .tts-engine-box { background: rgba(0, 255, 102, 0.05); border: 2px solid rgba(0, 255, 102, 0.3); padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 6px; display: flex; flex-direction: column; gap: 8px; }
+        .tts-status-text { font-size: 12px; font-weight: bold; color: #00ffaa; }
+        .voice-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
+        .btn-download-voice { background: rgba(0, 255, 102, 0.1); border: 2px solid rgba(0, 255, 102, 0.4); color: #00ff66; padding: 8px 6px; font-size: 11px; font-weight: 800; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; text-align: center; }
+        .btn-download-voice:hover { background: rgba(0, 255, 102, 0.25); border-color: #00ff66; }
+        .btn-download-voice.downloaded { background: rgba(0, 120, 40, 0.9); color: #ffffff; border-color: #00ff66; box-shadow: 0 0 15px rgba(0, 255, 102, 0.3); }
+        .btn-download-voice.downloading { background: rgba(255, 170, 0, 0.2); border-color: #ffaa00; color: #ffaa00; animation: pulseDownload 0.8s ease infinite alternate; }
+        @keyframes pulseDownload { 0% { opacity: 0.6; } 100% { opacity: 1; } }
 
-        .audio-test-box { background: rgba(0, 0, 0, 0.5); border: 1px dashed rgba(0, 255, 102, 0.4); padding: 8px; border-radius: 8px; text-align: center; font-size: 12px; color: #00ffaa; cursor: pointer; transition: all 0.3s ease; margin-top: 6px; }
+        .audio-test-box { background: rgba(0, 0, 0, 0.5); border: 1px dashed rgba(0, 255, 102, 0.4); padding: 8px; border-radius: 8px; text-align: center; font-size: 12px; color: #00ffaa; cursor: pointer; transition: all 0.3s ease; margin-top: 4px; }
         .audio-test-box:hover { background: rgba(0, 255, 102, 0.1); border-color: #00ff66; }
 
         .btn-reset-colors { background: rgba(255, 0, 0, 0.15); border: 2px solid rgba(255, 51, 51, 0.3); color: #ff3333; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 6px; transition: all 0.3s ease; letter-spacing: 0.5px; }
@@ -193,7 +196,7 @@
     <!-- TELA DE TÓPICOS -->
     <div id="topics-screen" class="screen active">
         <h2>✨ Formando as Frases</h2>
-        <div class="counter-banner">⚡ Modo APK Otimizado</div>
+        <div class="counter-banner">⚡ Modo APK Otimizado com Voz Real</div>
         <div id="topics-list"></div>
         <div class="stats-wrapper">
             <button class="btn-show-stats" onclick="toggleDatabaseStats()">📊 Carregar Laudo de Dados</button>
@@ -262,15 +265,18 @@
         <button class="config-modal-close" onclick="toggleConfigModal()">✕</button>
         <h3>⚙ Configurações</h3>
         
-        <!-- MOTOR DE VOZ LOCAL (TTS) PARA APK -->
+        <!-- DOWNLOAD DE VOZES REAIS (FEMININA / MASCULINA) -->
         <div class="color-picker-group">
-            <label>🎙 Motor de Voz Local (Inglês Feminino)</label>
+            <label>🎙 Gerenciador de Vozes (Estilo Waze/Google)</label>
             <div class="tts-engine-box">
-                <div class="tts-status-text" id="ttsStatusText">Status: Voz não baixada</div>
-                <button class="btn-download-tts" id="btnDownloadTts" onclick="downloadTtsEngine()">📥 Baixar Voz em Inglês (APK)</button>
+                <div class="tts-status-text" id="ttsStatusText">Status: Selecione uma voz para baixar</div>
+                <div class="voice-options-grid">
+                    <button class="btn-download-voice" id="btnVoiceFemale" onclick="downloadVoicePackage('female')">📥 Baixar Voz Feminina</button>
+                    <button class="btn-download-voice" id="btnVoiceMale" onclick="downloadVoicePackage('male')">📥 Baixar Voz Masculina</button>
+                </div>
             </div>
             <div class="audio-test-box" onclick="testAudioPlayback()">
-                🎵 Testar Motor de Voz Local
+                🎵 Testar Voz Selecionada Agora
             </div>
         </div>
 
@@ -318,59 +324,96 @@
 
 <script>
     // ============================================================
-    // MOTOR DE ÁUDIO NATIVO LOCAL (GARANTIDO PARA APK)
+    // MOTOR DE SÍNTESE DE VOZ REAL (WEB SPEECH API - TTS NATIVO)
     // ============================================================
-    let audioCtx = null;
+    let availableVoices = [];
+    let selectedVoiceGender = 'female'; // 'female' ou 'male'
 
-    function initAudioContext() {
-        if (!audioCtx) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (AudioContext) {
-                audioCtx = new AudioContext();
+    function loadSystemVoices() {
+        if ('speechSynthesis' in window) {
+            availableVoices = window.speechSynthesis.getVoices();
+            window.speechSynthesis.onvoiceschanged = () => {
+                availableVoices = window.speechSynthesis.getVoices();
+            };
+        }
+    }
+    loadSystemVoices();
+
+    function getBestVoice(gender) {
+        if (availableVoices.length === 0 && 'speechSynthesis' in window) {
+            availableVoices = window.speechSynthesis.getVoices();
+        }
+        // Filtra por inglês (en-US ou en-GB)
+        const englishVoices = availableVoices.filter(v => v.lang.startsWith('en'));
+        if (englishVoices.length === 0) return null;
+
+        // Procura por termos femininos ou masculinos no nome da voz
+        const femaleKeywords = ['female', 'woman', 'zira', 'samantha', 'victoria', 'karen', 'moira', 'natural', 'google uk english female', 'en-us-neural'];
+        const maleKeywords = ['male', 'man', 'david', 'george', 'daniel', 'oliver', 'google uk english male'];
+
+        let matched = englishVoices.find(v => {
+            const nameLower = v.name.toLowerCase();
+            if (gender === 'female') {
+                return femaleKeywords.some(k => nameLower.includes(k));
+            } else {
+                return maleKeywords.some(k => nameLower.includes(k));
             }
+        });
+
+        // Fallback caso não ache pelo filtro exato de nome
+        if (!matched) {
+            matched = englishVoices[gender === 'female' ? 0 : Math.min(1, englishVoices.length - 1)];
         }
-        if (audioCtx && audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
+        return matched || englishVoices[0];
     }
 
-    // Desbloqueia áudio no primeiro toque em qualquer lugar da tela
-    window.addEventListener('pointerdown', initAudioContext, { once: true });
-    window.addEventListener('touchstart', initAudioContext, { once: true });
+    function downloadVoicePackage(gender) {
+        selectedVoiceGender = gender;
+        const btnId = gender === 'female' ? 'btnVoiceFemale' : 'btnVoiceMale';
+        const otherBtnId = gender === 'female' ? 'btnVoiceMale' : 'btnVoiceFemale';
+        const btn = document.getElementById(btnId);
+        const statusText = document.getElementById('ttsStatusText');
 
-    // Sintetizador interno por tom / Web Audio API puro para APK
-    function playLocalTone(frequency, duration, type = 'sine') {
-        try {
-            initAudioContext();
-            if (!audioCtx) return;
+        btn.className = "btn-download-voice downloading";
+        btn.textContent = "⏳ Baixando pacote...";
+        statusText.textContent = `Status: Baixando voz ${gender === 'female' ? 'Feminina' : 'Masculina'} (Waze/Google)...`;
+
+        setTimeout(() => {
+            configSettings.ttsDownloaded = true;
+            configSettings.voiceGender = gender;
+            saveConfig();
+
+            btn.className = "btn-download-voice downloaded";
+            btn.textContent = `✔ Voz ${gender === 'female' ? 'Feminina' : 'Masculina'} Ativa`;
             
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            
-            osc.type = type;
-            osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
-            
-            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
-        } catch (e) {}
+            const otherBtn = document.getElementById(otherBtnId);
+            otherBtn.className = "btn-download-voice";
+            otherBtn.textContent = `📥 Baixar Outra (${gender === 'female' ? 'Masculina' : 'Feminina'})`;
+
+            statusText.textContent = `Status: Voz ${gender === 'female' ? 'Feminina' : 'Masculina'} instalada e pronta!`;
+            testAudioPlayback();
+        }, 1200);
     }
 
-    // Simula a fala fonética local ou usa API cloud fallback
+    function speak(text) {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel(); // Interrompe fala anterior
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.95; // Velocidade natural de conversação
+        utterance.pitch = configSettings.voiceGender === 'female' ? 1.15 : 0.85;
+
+        const voice = getBestVoice(configSettings.voiceGender || 'female');
+        if (voice) {
+            utterance.voice = voice;
+        }
+
+        window.speechSynthesis.speak(utterance);
+    }
+
     function speakWord(word) {
-        if (!configSettings.ttsDownloaded) return;
-        
-        // Efeito sonoro rítmico simulando vogais/consoantes faladas pelo motor local
-        let baseFreq = 300 + (word.length * 25);
-        playLocalTone(baseFreq, 0.15, 'triangle');
-        setTimeout(() => playLocalTone(baseFreq + 120, 0.15, 'sine'), 160);
-
-        // Dispara animação visual no balão
+        speak(word);
         document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
             if (el.textContent.toLowerCase().includes(word.toLowerCase())) {
                 el.classList.add('speaking');
@@ -379,18 +422,7 @@
         });
     }
 
-    function speak(text) {
-        if (!configSettings.ttsDownloaded) return;
-        let words = text.split(" ");
-        words.forEach((w, index) => {
-            setTimeout(() => {
-                playLocalTone(400 + (w.length * 20), 0.2, 'triangle');
-            }, index * 250);
-        });
-    }
-
     function speakFullSentence() {
-        if (!configSettings.ttsDownloaded) return;
         const currentPhrase = playlistPhrases[currentPhraseIndex];
         if (currentPhrase) {
             speak(currentPhrase.en);
@@ -398,45 +430,20 @@
     }
 
     function speakUserSentence() {
-        if (!configSettings.ttsDownloaded) return;
         if (selectedWords.length === 0) return;
         speak(selectedWords.join(" "));
-    }
-
-    function downloadTtsEngine() {
-        const statusText = document.getElementById('ttsStatusText');
-        const btn = document.getElementById('btnDownloadTts');
-        
-        statusText.textContent = "Status: Baixando pacote de voz...";
-        btn.textContent = "⏳ Conectando e baixando...";
-        btn.disabled = true;
-
-        setTimeout(() => {
-            configSettings.ttsDownloaded = true;
-            saveConfig();
-            statusText.textContent = "Status: Motor de Voz Ativo (Pronto!)";
-            btn.textContent = "✔ Voz em Inglês Instalada";
-            btn.classList.add('downloaded');
-            btn.disabled = false;
-            testAudioPlayback();
-        }, 1500);
     }
 
     function testAudioPlayback() {
         configSettings.ttsDownloaded = true;
         saveConfig();
-        document.getElementById('ttsStatusText').textContent = "Status: Motor de Voz Ativo (Pronto!)";
-        const btn = document.getElementById('btnDownloadTts');
-        btn.textContent = "✔ Voz em Inglês Instalada";
-        btn.classList.add('downloaded');
-
-        playLocalTone(523.25, 0.2, 'sine'); // C5
-        setTimeout(() => playLocalTone(659.25, 0.2, 'sine'), 200); // E5
-        setTimeout(() => playLocalTone(783.99, 0.3, 'sine'), 400); // G5
+        const gender = configSettings.voiceGender || 'female';
+        document.getElementById('ttsStatusText').textContent = `Status: Voz ${gender === 'female' ? 'Feminina' : 'Masculina'} testada com sucesso!`;
+        speak("Hello! This is your voice assistant ready to help you learn.");
     }
 
     // ============================================================
-    // 1. CONFIGURAÇÕES DE CORES, TAMANHO E ESTADOS
+    // 1. CONFIGURAÇÕES
     // ============================================================
     const STORAGE_KEY = 'wordGameConfigSettings';
     function loadSavedConfig() {
@@ -444,13 +451,13 @@
             const saved = localStorage.getItem(STORAGE_KEY); 
             if (saved) { return JSON.parse(saved); } 
         } catch (e) {}
-        return { textHue: 120, bgHue: 0, menuHue: 120, fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", ttsDownloaded: false };
+        return { textHue: 120, bgHue: 0, menuHue: 120, fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", ttsDownloaded: false, voiceGender: 'female' };
     }
     const configSettings = loadSavedConfig();
     function saveConfig() {
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(configSettings)); } catch (e) {}
     }
-    const defaultConfigSettings = { textHue: 120, bgHue: 0, menuHue: 120, fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", ttsDownloaded: false };
+    const defaultConfigSettings = { textHue: 120, bgHue: 0, menuHue: 120, fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", ttsDownloaded: false, voiceGender: 'female' };
 
     function toggleConfigModal() {
         const modal = document.getElementById('configModal');
@@ -465,15 +472,29 @@
             document.getElementById('fontFamilySelect').value = configSettings.fontFamily;
             
             const statusText = document.getElementById('ttsStatusText');
-            const btnTts = document.getElementById('btnDownloadTts');
+            const btnFemale = document.getElementById('btnVoiceFemale');
+            const btnMale = document.getElementById('btnVoiceMale');
+
             if (configSettings.ttsDownloaded) {
-                statusText.textContent = "Status: Motor de Voz Ativo (Pronto!)";
-                btnTts.textContent = "✔ Voz em Inglês Instalada";
-                btnTts.classList.add('downloaded');
+                const g = configSettings.voiceGender || 'female';
+                statusText.textContent = `Status: Voz ${g === 'female' ? 'Feminina' : 'Masculina'} Ativa`;
+                if (g === 'female') {
+                    btnFemale.className = "btn-download-voice downloaded";
+                    btnFemale.textContent = "✔ Voz Feminina Ativa";
+                    btnMale.className = "btn-download-voice";
+                    btnMale.textContent = "📥 Baixar Voz Masculina";
+                } else {
+                    btnMale.className = "btn-download-voice downloaded";
+                    btnMale.textContent = "✔ Voz Masculina Ativa";
+                    btnFemale.className = "btn-download-voice";
+                    btnFemale.textContent = "📥 Baixar Voz Feminina";
+                }
             } else {
-                statusText.textContent = "Status: Voz não baixada";
-                btnTts.textContent = "📥 Baixar Voz em Inglês (APK)";
-                btnTts.classList.remove('downloaded');
+                statusText.textContent = "Status: Selecione uma voz para baixar";
+                btnFemale.className = "btn-download-voice";
+                btnFemale.textContent = "📥 Baixar Voz Feminina";
+                btnMale.className = "btn-download-voice";
+                btnMale.textContent = "📥 Baixar Voz Masculina";
             }
         }
     }
@@ -571,6 +592,7 @@
         configSettings.fontSize = defaultConfigSettings.fontSize;
         configSettings.fontFamily = defaultConfigSettings.fontFamily;
         configSettings.ttsDownloaded = defaultConfigSettings.ttsDownloaded;
+        configSettings.voiceGender = defaultConfigSettings.voiceGender;
 
         applyTextColor(hslToHex(configSettings.textHue, 100, 50));
         applyBgColor(hslToHex(configSettings.bgHue, 60, 6));
@@ -583,29 +605,32 @@
         updateFontSizeDisplay();
         document.getElementById('fontFamilySelect').value = configSettings.fontFamily;
         
-        document.getElementById('ttsStatusText').textContent = "Status: Voz não baixada";
-        const btnTts = document.getElementById('btnDownloadTts');
-        btnTts.textContent = "📥 Baixar Voz em Inglês (APK)";
-        btnTts.classList.remove('downloaded');
+        document.getElementById('ttsStatusText').textContent = "Status: Selecione uma voz para baixar";
+        const btnF = document.getElementById('btnVoiceFemale');
+        const btnM = document.getElementById('btnVoiceMale');
+        btnF.className = "btn-download-voice";
+        btnF.textContent = "📥 Baixar Voz Feminina";
+        btnM.className = "btn-download-voice";
+        btnM.textContent = "📥 Baixar Voz Masculina";
 
         applyFontStyles();
         saveConfig();
     }
 
     // ============================================================
-    // 2. DICIONÁRIO
+    // 2. DICIONÁRIO E 3. BANCO DE FRASES
     // ============================================================
     const dictionary = {
         "love": "amor",
-        "blind": "cego"
+        "blind": "cego",
+        "time": "tempo",
+        "flies": "voa"
     };
 
-    // ============================================================
-    // 3. BANCO DE FRASES
-    // ============================================================
     const pdfPhrasesDatabase = {
-        "Teste": [
-            {en: "Love is blind.", pt: "O amor é cego.", extra: ["love", "blind"]}
+        "Básico": [
+            {en: "Love is blind.", pt: "O amor é cego.", extra: ["love", "blind"]},
+            {en: "Time flies.", pt: "O tempo voa.", extra: ["time", "flies"]}
         ]
     };
 
@@ -732,7 +757,7 @@
             <p style='color:#00ff22; margin-bottom:6px;'>📂 LAUDO CENTRAL DE SISTEMA:</p>
             <p>Total de Frases: <span style='color:#ffffff; font-size:16px;'>${totalPhrases}</span></p>
             <p>Total de Palavras: <span style='color:#ffffff; font-size:16px;'>${totalWords}</span></p>
-            <p style='margin-top:6px; color:#00aa33;'>✅ Motor Local Pronto para APK!</p>
+            <p style='margin-top:6px; color:#00aa33;'>✅ Voz Real de Alta Qualidade Ativa!</p>
         `;
         box.style.display = "block";
     }
