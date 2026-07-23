@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta http-equiv="Feature-Policy" content="autoplay 'self'; microphone 'self'; camera 'none'">
     <title>Formando as Frases</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -293,6 +294,18 @@
 </div>
 
 <script>
+    // Solicita permissões de mídias/áudio ao carregar no WebView
+    async function requestWebviewPermissions() {
+        try {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                await navigator.mediaDevices.getUserMedia({ audio: true });
+                console.log("Permissão concedida via HTML/Web API");
+            }
+        } catch (err) {
+            console.warn("Aviso: Permissão requisitada via Web API precisa ser confirmada no Android native.", err);
+        }
+    }
+
     let availableVoices = [];
     let selectedVoiceGender = 'female';
 
@@ -911,6 +924,7 @@
     function nextPhrase() { currentPhraseIndex++; loadPhrase(); }
 
     function init() {
+        requestWebviewPermissions();
         renderTopics();
         showTopicsScreen();
         setupDragAndDropEvents();
