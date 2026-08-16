@@ -3,169 +3,480 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <title>Formando as Frases</title>
+    <title>Formando as Frases - Duas por Vez</title>
     <style>
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #000000; color: #00ff66; user-select: none; overflow: hidden; transition: background-color 0.4s ease, color 0.4s ease; }
-        .container { width: 100%; height: 100%; padding: 10px; display: flex; flex-direction: column; gap: 8px; transition: background-color 0.4s ease; overflow: hidden; }
+        /* Fonte Elegância */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
         
-        h2 { text-align: center; color: #00ff22; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0px 0px 20px rgba(0, 255, 34, 0.5); margin-top: 2px; font-size: 18px; font-weight: 800; transition: color 0.4s ease; }
-        .counter-banner { text-align: center; color: #00aa33; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; transition: color 0.4s ease; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #000000; color: #00ff66; user-select: none; overflow: hidden; transition: background-color 0.4s ease; }
+        
+        /* ===== ESTRUTURA DO APLICATIVO - COR FIXA BRANCA ===== */
+        .container { width: 100%; height: 100%; padding: 10px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; background: #000000; transition: background-color 0.4s ease; }
+        
+        h2 { text-align: center; color: #ffffff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0px 0px 20px rgba(255,255,255,0.15); margin-top: 2px; font-size: 18px; font-weight: 800; }
+        .counter-banner { text-align: center; color: #cccccc; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
         
         .screen { display: none; flex-direction: column; width: 100%; height: 100%; flex: 1; overflow: hidden; }
         .screen.active { display: flex; }
         #topics-screen { overflow-y: auto; gap: 8px; padding-bottom: 10px; }
         #topics-list { display: flex; flex-direction: column; gap: 6px; padding-bottom: 6px; }
         
-        .topic-card { background: rgba(0, 20, 5, 0.85); border: 2px solid #004411; padding: 12px 16px; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; border-left: 8px solid #00ff22; box-shadow: 0 4px 15px rgba(0,0,0,0.8); text-align: left; color: #ffffff; width: 100%; display: flex; align-items: center; min-height: 50px; transition: all 0.3s ease; backdrop-filter: blur(10px); }
-        .topic-card:hover { transform: scale(1.01); border-left-color: #00ff88; box-shadow: 0 6px 25px rgba(0, 255, 34, 0.15); }
+        .topic-card { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.15); padding: 12px 16px; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; border-left: 8px solid #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.8); text-align: left; color: #ffffff; width: 100%; display: flex; align-items: center; min-height: 50px; transition: all 0.3s ease; }
+        .topic-card:hover { transform: scale(1.01); border-left-color: #aaaaaa; }
         .topic-card:active { transform: scale(0.98); }
-        .topic-card.misto-btn { background: rgba(0, 255, 100, 0.12); border-left-color: #00ff66; border-color: rgba(0, 255, 102, 0.3); color: #00ff66; text-shadow: 0 0 15px rgba(0, 255, 102, 0.4); font-size: 15px; }
+        .topic-card.misto-btn { background: rgba(255,255,255,0.08); border-left-color: #ffffff; border-color: rgba(255,255,255,0.25); color: #ffffff; }
+        
+        .btn-show-stats { background: rgba(0, 0, 0, 0.8); color: #ffffff; border: 2px dashed rgba(255,255,255,0.3); padding: 5px 12px; font-size: 11px; font-weight: bold; border-radius: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease; }
+        .btn-show-stats:hover { border-color: #ffffff; }
+        .stats-report-box { display: none; background: rgba(0, 0, 0, 0.9); border: 2px solid #ffffff; padding: 10px; border-radius: 12px; margin: 4px auto 0 auto; font-size: 12px; color: #ffffff; font-weight: bold; text-align: left; line-height: 1.5; max-width: 550px; }
         
         #game-screen { display: none; flex-direction: column; height: 100%; overflow: hidden; }
         #game-screen.active { display: flex; }
-        .game-scrollable-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-bottom: 8px; padding-right: 2px; }
+        .game-scrollable-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-bottom: 6px; padding-right: 2px; }
         
-        .top-challenge { background: rgba(0, 15, 5, 0.6); border: 2px solid rgba(0, 68, 17, 0.6); padding: 10px 12px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 8px; backdrop-filter: blur(8px); transition: border-color 0.4s ease; }
-        .phrase-pt { font-size: 18px; font-weight: bold; text-align: center; line-height: 1.3; color: #ffffff; text-shadow: 0 2px 10px rgba(0,255,34,0.3); word-wrap: break-word; transition: color 0.4s ease; }
+        .top-challenge { background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.08); padding: 8px 10px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 6px; backdrop-filter: blur(8px); }
+        .phrase-pt { font-size: 16px; font-weight: bold; text-align: center; line-height: 1.3; color: #ffffff; text-shadow: 0 2px 10px rgba(255,255,255,0.1); word-wrap: break-word; padding: 4px 0; }
+        .phrase-hidden { filter: blur(8px); opacity: 0.3; transition: all 0.6s ease; pointer-events: none; }
+        .phrase-hidden.revealed { filter: blur(0); opacity: 1; pointer-events: auto; }
         
-        .audio-controls-row { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 2px; gap: 6px; }
-        .btn-audio-top { background: rgba(0, 255, 102, 0.08); color: #00ff66; border: 2px solid rgba(0, 255, 102, 0.3); padding: 6px 10px; font-size: 12px; font-weight: bold; border-radius: 10px; cursor: pointer; flex: 1; text-align: center; text-shadow: 0 0 5px rgba(0, 255, 102, 0.2); transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; backdrop-filter: blur(4px); }
-        .btn-audio-top:hover { background: rgba(0, 255, 102, 0.15); border-color: #00ff66; }
+        .btn-audio-top { background: rgba(255,255,255,0.05); color: #ffffff; border: 2px solid rgba(255,255,255,0.15); padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 10px; cursor: pointer; flex: 1; text-align: center; transition: all 0.3s ease; }
+        .btn-audio-top:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
         .btn-audio-top:active { transform: scale(0.95); }
-        .btn-audio-user { color: #00ff22; border-color: rgba(0, 255, 34, 0.3); }
+        .audio-controls-row { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 2px; gap: 4px; }
         
-        .zone-header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
-        .zone-title { font-size: 13px; color: #00aa33; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(0, 170, 51, 0.2); transition: color 0.4s ease; }
-        .btn-pesca { background: rgba(0, 17, 4, 0.8); color: #00dd44; border: 2px solid rgba(0, 68, 17, 0.6); padding: 4px 12px; font-size: 11px; font-weight: bold; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; backdrop-filter: blur(4px); }
-        .btn-pesca:hover { border-color: #00dd44; box-shadow: 0 0 20px rgba(0, 221, 68, 0.15); }
-        .btn-pesca.active { background: rgba(0, 51, 10, 0.8); color: #00ff66; border-color: #00ff66; box-shadow: 0 0 25px rgba(0, 255, 102, 0.3); }
+        .construction-zone { background: rgba(255,255,255,0.04); border: 2px dashed rgba(255,255,255,0.15); border-radius: 10px; min-height: 60px; padding: 8px; display: flex; flex-wrap: wrap; gap: 5px; align-content: flex-start; position: relative; transition: border-color 0.4s ease; }
+        .construction-zone.completed { border-color: #00ff66; background: rgba(0, 255, 102, 0.05); }
+        .success-text-box { display: none; background: rgba(0, 255, 102, 0.05); border: 2px solid #00ff66; border-radius: 10px; min-height: 50px; padding: 10px; font-size: 16px; font-weight: bold; color: #00ff66; text-align: center; align-items: center; justify-content: center; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); }
         
-        .construction-zone { background: rgba(0, 5, 2, 0.7); border: 2px dashed rgba(0, 255, 34, 0.3); border-radius: 12px; min-height: 100px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; position: relative; transition: border-color 0.4s ease; backdrop-filter: blur(4px); }
-        .success-text-box { display: none; background: rgba(0, 255, 102, 0.05); border: 2px solid #00ff66; border-radius: 12px; min-height: 100px; padding: 12px; font-size: 18px; font-weight: bold; color: #00ff66; text-align: center; align-items: center; justify-content: center; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); backdrop-filter: blur(4px); transition: color 0.4s ease, border-color 0.4s ease; }
+        .words-zone { background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.06); border-radius: 10px; min-height: 60px; padding: 8px; display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-start; align-content: flex-start; }
         
-        .words-zone { background: rgba(0, 10, 4, 0.4); border: 2px solid rgba(0, 68, 17, 0.4); border-radius: 12px; min-height: 80px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; align-content: flex-start; transition: border-color 0.4s ease; backdrop-filter: blur(4px); }
-        
-        .word-balloon { padding: 6px 12px; font-size: 15px; font-weight: 800; border-radius: 20px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.6); display: inline-block; user-select: none; position: relative; max-width: 100%; word-wrap: break-word; touch-action: none; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, font-size 0.2s ease, font-family 0.2s ease; background: #0a0a0a; border: 2px solid #1a1a1a; color: #00ff22; text-shadow: 0 0 20px rgba(0, 255, 34, 0.15); letter-spacing: 0.3px; line-height: 1.2; }
-        .word-balloon:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 30px rgba(0,0,0,0.8); border-color: #2a2a2a; }
+        /* ===== BALÕES ===== */
+        .word-balloon { 
+            padding: 5px 10px; 
+            font-size: 14px; 
+            font-weight: 800; 
+            border-radius: 18px; 
+            cursor: pointer; 
+            box-shadow: 0 3px 10px rgba(0,0,0,0.6); 
+            display: inline-block; 
+            user-select: none; 
+            position: relative; 
+            max-width: 100%; 
+            word-wrap: break-word; 
+            touch-action: none; 
+            transition: color 0.3s ease, background-color 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease; 
+            background: #1a1a1a; 
+            border: 2px solid #2a2a2a; 
+            color: #00ff66; 
+            letter-spacing: 0.3px; 
+            line-height: 1.2; 
+        }
+        .word-balloon:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 30px rgba(0,0,0,0.8); border-color: #3a3a3a; }
         .word-balloon:active { transform: scale(0.93); }
-        .construction-zone .word-balloon { background: #0a0a0a; border: 2px solid #1a1a1a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5); cursor: grab; color: #00ff22; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease, font-size 0.2s ease, font-family 0.2s ease; font-size: 14px; padding: 5px 10px; }
-        .construction-zone .word-balloon:hover { box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7); border-color: #2a2a2a; }
+        .construction-zone .word-balloon { background: #1a1a1a; border: 2px solid #2a2a2a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5); cursor: grab; color: #00ff66; font-size: 13px; padding: 4px 8px; }
+        .construction-zone .word-balloon:hover { box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7); border-color: #3a3a3a; }
         .construction-zone .word-balloon:active { cursor: grabbing; transform: scale(0.93); }
-        .words-zone .word-balloon { background: #0a0a0a; border: 2px solid #1a1a1a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4); color: #00ffaa; transition: color 0.4s ease, transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease, font-size 0.2s ease, font-family 0.2s ease; font-size: 13px; padding: 4px 10px; }
-        .words-zone .word-balloon:hover { border-color: #2a2a2a; box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6); }
+        .words-zone .word-balloon { background: #1a1a1a; border: 2px solid #2a2a2a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4); color: #00ffaa; font-size: 12px; padding: 4px 8px; }
+        .words-zone .word-balloon:hover { border-color: #3a3a3a; box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6); }
         .word-balloon.dragging { opacity: 0.4; border: 2px dashed #ffff00 !important; background: rgba(255, 255, 0, 0.05) !important; transform: scale(0.9); }
-        .word-balloon.pescado { background: #001a00 !important; color: #ffff00 !important; border-color: #2a2a00 !important; box-shadow: 0 0 30px rgba(255, 255, 0, 0.15) !important; animation: pescaGlow 1s ease infinite alternate; }
-        @keyframes pescaGlow { 0% { box-shadow: 0 0 15px rgba(255, 255, 0, 0.1); } 100% { box-shadow: 0 0 35px rgba(255, 255, 0, 0.25); } }
+        .word-balloon.speaking { animation: speakGlow 0.6s ease; }
+        @keyframes speakGlow { 0% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); } 50% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.12); } 100% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); } }
         
-        .status-container { text-align: center; font-size: 14px; font-weight: bold; min-height: 20px; margin: 2px 0; padding: 3px; }
-        .status-correct { color: #00ff66; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); animation: statusPop 0.5s ease; transition: color 0.4s ease; }
+        .status-correct { color: #00ff66; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); animation: statusPop 0.5s ease; }
         .status-wrong { color: #ff3333; text-shadow: 0 0 20px rgba(255, 51, 51, 0.4); animation: statusShake 0.5s ease; }
+        .status-info { color: #ffaa00; text-shadow: 0 0 20px rgba(255, 170, 0, 0.3); }
         @keyframes statusPop { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
         @keyframes statusShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
         
-        .control-panel { display: flex; flex-direction: column; gap: 5px; padding-top: 6px; border-top: 2px solid rgba(0, 255, 34, 0.08); background: transparent; align-items: center; width: 100%; position: relative; }
-        .action-btn { width: 100%; max-width: 500px; padding: 10px 16px; color: #000000; border: none; border-radius: 25px; font-size: 15px; font-weight: bold; cursor: pointer; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6); display: block; transition: all 0.3s ease; letter-spacing: 0.5px; }
+        .control-panel { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; border-top: 2px solid rgba(255,255,255,0.05); align-items: center; width: 100%; }
+        .action-btn { width: 100%; max-width: 500px; padding: 8px 14px; color: #000000; border: none; border-radius: 25px; font-size: 14px; font-weight: bold; cursor: pointer; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6); display: block; transition: all 0.3s ease; letter-spacing: 0.5px; }
         .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8); }
         .action-btn:active { transform: scale(0.97); }
         .btn-check { background: linear-gradient(135deg, #00aa22 0%, #00ff66 100%); color: #000000; font-weight: 800; }
         .btn-next { background: linear-gradient(135deg, #00ddff 0%, #00ffaa 100%); color: #000000; display: none; font-weight: 800; }
-        .btn-reveal { background: rgba(0, 17, 4, 0.8); border: 2px solid rgba(0, 68, 17, 0.6); padding: 6px 14px; font-size: 13px; color: #00ff22; backdrop-filter: blur(4px); transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; border-radius: 20px; }
-        .btn-reveal:hover { border-color: #00ff22; background: rgba(0, 255, 34, 0.1); }
-        .revealed-answer-box { background: rgba(0, 0, 0, 0.9); border: 2px solid #00ff66; color: #00ff66; padding: 10px; border-radius: 12px; text-align: center; font-size: 14px; font-weight: bold; display: none; word-wrap: break-word; width: 100%; max-width: 500px; box-shadow: 0 0 30px rgba(0, 255, 102, 0.15); backdrop-filter: blur(4px); transition: color 0.4s ease, border-color 0.4s ease; }
+        .btn-reveal { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.15); padding: 5px 12px; font-size: 12px; color: #ffffff; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; }
+        .btn-reveal:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.05); }
+        .revealed-answer-box { background: rgba(0, 0, 0, 0.9); border: 2px solid #ffffff; color: #ffffff; padding: 8px; border-radius: 12px; text-align: center; font-size: 13px; font-weight: bold; display: none; word-wrap: break-word; width: 100%; max-width: 500px; }
         
-        .back-link { display: inline-block; color: #00ff22; font-weight: bold; font-size: 14px; cursor: pointer; margin-bottom: 2px; text-shadow: 0 0 10px rgba(0, 255, 34, 0.2); transition: all 0.3s ease, color 0.4s ease; padding: 3px 8px; border-radius: 8px; }
-        .back-link:hover { background: rgba(0, 255, 34, 0.05); text-shadow: 0 0 20px rgba(0, 255, 34, 0.4); }
-        
-        .stats-wrapper { text-align: center; padding: 6px 0 12px 0; margin-top: 2px; }
-        .btn-show-stats { background: rgba(0, 0, 0, 0.8); color: #00aa33; border: 2px dashed rgba(0, 68, 17, 0.5); padding: 6px 14px; font-size: 12px; font-weight: bold; border-radius: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; backdrop-filter: blur(4px); }
-        .btn-show-stats:hover { border-color: #00aa33; box-shadow: 0 0 20px rgba(0, 170, 51, 0.15); }
-        .stats-report-box { display: none; background: rgba(0, 10, 3, 0.9); border: 2px solid #00ff22; padding: 12px; border-radius: 12px; margin: 6px auto 0 auto; font-size: 13px; color: #00ff22; font-weight: bold; text-align: left; line-height: 1.5; max-width: 550px; box-shadow: 0 0 30px rgba(0, 255, 34, 0.1); backdrop-filter: blur(4px); transition: color 0.4s ease, border-color 0.4s ease; }
-        
-        .bottom-buttons-row { display: flex; justify-content: space-around; width: 100%; padding: 0 5px; position: relative; gap: 10px; }
-        .config-btn { background: rgba(0, 20, 5, 0.85); border: 2px solid #00ff66; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; color: #00ff66; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(0, 255, 102, 0.15); transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease; z-index: 10; backdrop-filter: blur(4px); }
-        .config-btn:hover { transform: scale(1.1) rotate(60deg); box-shadow: 0 0 35px rgba(0, 255, 102, 0.3); }
-        .config-btn.active { background: #00ff66; color: #000000; box-shadow: 0 0 40px rgba(0, 255, 102, 0.5); }
-        .match-btn { background: rgba(20, 20, 5, 0.85); border: 2px solid #ffaa00; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; color: #ffaa00; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(255, 170, 0, 0.15); transition: all 0.3s ease; z-index: 10; backdrop-filter: blur(4px); }
-        .match-btn:hover { transform: scale(1.1); box-shadow: 0 0 35px rgba(255, 170, 0, 0.3); }
-        .match-btn.active { background: #ffaa00; color: #000000; box-shadow: 0 0 40px rgba(255, 170, 0, 0.5); }
-        .config-btn-label, .match-btn-label { font-size: 7px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5; text-align: center; margin-top: 2px; }
-        .config-btn-label { color: #00aa33; }
-        .match-btn-label { color: #ffaa00; }
+        .bottom-buttons-row { display: flex; justify-content: space-around; width: 100%; padding: 0 5px; gap: 10px; }
+        .config-btn { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; width: 38px; height: 38px; font-size: 16px; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .config-btn:hover { transform: scale(1.1) rotate(60deg); background: rgba(255,255,255,0.1); }
+        .config-btn.active { background: #ffffff; color: #000000; }
+        .match-btn { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; width: 38px; height: 38px; font-size: 16px; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .match-btn:hover { transform: scale(1.1); background: rgba(255,255,255,0.1); }
+        .match-btn.active { background: #ffffff; color: #000000; }
+        .config-btn-label, .match-btn-label { font-size: 6px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.4; text-align: center; margin-top: 2px; color: #ffffff; }
         .bottom-btn-wrapper { display: flex; flex-direction: column; align-items: center; }
         
-        #match-screen { display: none; flex-direction: column; height: 100%; width: 100%; position: fixed; top: 0; left: 0; background: #000000; z-index: 500; padding: 12px; overflow-y: auto; transition: background-color 0.4s ease; }
-        #match-screen.active { display: flex; }
-        .match-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 0 10px 0; border-bottom: 2px solid rgba(255, 170, 0, 0.2); margin-bottom: 10px; }
-        .match-header h2 { color: #ffaa00; text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); font-size: 18px; margin: 0; letter-spacing: 2px; transition: color 0.4s ease; }
-        .match-close-btn { background: rgba(255, 170, 0, 0.1); border: 2px solid #ffaa00; color: #ffaa00; font-size: 18px; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
-        .match-close-btn:hover { background: #ffaa00; color: #000000; transform: rotate(90deg); }
-        .match-stats { color: #ffaa00; text-align: center; font-size: 13px; margin-bottom: 10px; font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255, 170, 0, 0.15); transition: color 0.4s ease; }
-        .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; }
-        .match-card { background: #0a0a0a; border: 2px solid #1a1a1a; border-radius: 20px; padding: 10px 8px; text-align: center; font-size: 16px; font-weight: 800; color: #00ff22; cursor: pointer; transition: all 0.3s ease, color 0.4s ease, border-color 0.4s ease, font-size 0.2s ease, font-family 0.2s ease; min-height: 50px; display: flex; align-items: center; justify-content: center; word-wrap: break-word; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; backdrop-filter: blur(4px); text-shadow: 0 0 20px rgba(0, 255, 34, 0.15); letter-spacing: 0.3px; line-height: 1.2; }
-        .match-card:hover { transform: translateY(-2px) scale(1.01); border-color: #2a2a2a; box-shadow: 0 6px 25px rgba(0,0,0,0.7); }
-        .match-card:active { transform: scale(0.95); }
-        .match-card.selected { border-color: #ffaa00; box-shadow: 0 0 40px rgba(255, 170, 0, 0.3); transform: scale(1.03); }
-        .match-card.matched { background: rgba(0, 26, 0, 0.6); border-color: #00ff66; color: #00ff66; cursor: default; opacity: 0.3; transform: scale(0.92); pointer-events: none; animation: matchPop 0.6s ease; }
-        .match-card.matched::after { content: "✓"; position: absolute; top: 2px; right: 10px; font-size: 18px; color: #00ff66; text-shadow: 0 0 30px rgba(0, 255, 102, 0.5); }
-        @keyframes matchPop { 0% { transform: scale(1.3); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.92); opacity: 0.3; } }
-        .match-card.wrong { animation: wrongShake 0.5s ease; border-color: #ff3333; box-shadow: 0 0 40px rgba(255, 51, 51, 0.25); }
-        @keyframes wrongShake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-10px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); } }
-        .match-controls { display: flex; gap: 8px; justify-content: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 170, 0, 0.15); }
-        .match-controls button { padding: 8px 18px; border-radius: 25px; font-size: 13px; font-weight: bold; cursor: pointer; border: none; transition: all 0.3s ease; letter-spacing: 0.5px; }
-        .match-controls button:hover { transform: translateY(-2px); }
-        .match-controls button:active { transform: scale(0.95); }
-        .btn-match-reset { background: linear-gradient(135deg, #ffaa00, #ffcc44); color: #000000; font-weight: 800; }
-        .btn-match-reset:hover { box-shadow: 0 6px 30px rgba(255, 170, 0, 0.4); }
-        .btn-match-close { background: rgba(51, 51, 51, 0.8); color: #ffaa00; border: 2px solid rgba(255, 170, 0, 0.3) !important; }
-        .btn-match-close:hover { background: rgba(255, 170, 0, 0.15); border-color: #ffaa00 !important; }
-        .match-win-message { display: none; text-align: center; color: #ffaa00; font-size: 22px; font-weight: bold; padding: 12px; text-shadow: 0 0 40px rgba(255, 170, 0, 0.4); animation: winPulse 1.5s ease infinite alternate; }
-        @keyframes winPulse { 0% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); } 100% { transform: scale(1.04); text-shadow: 0 0 60px rgba(255, 170, 0, 0.6); } }
+        /* ===== BOTÃO VOLTAR OCULTO - CANTO INFERIOR ESQUERDO ===== */
+        .back-link-hidden {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            padding: 8px 14px;
+            border-radius: 10px;
+            background: rgba(0,0,0,0.7);
+            border: 2px solid rgba(255,255,255,0.15);
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .back-link-hidden.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .back-link-hidden:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+        }
+        .back-link-hidden:active { transform: scale(0.95); }
         
-        .config-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.88); z-index: 1000; justify-content: center; align-items: center; animation: fadeIn 0.3s ease; backdrop-filter: blur(8px); }
+        /* ===== MATCH GAME ===== */
+        #match-screen { 
+            display: none; 
+            flex-direction: column; 
+            height: 100%; 
+            width: 100%; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            background: #000000; 
+            z-index: 500; 
+            padding: 4px 6px 4px 6px; 
+            overflow: hidden; 
+            transition: background-color 0.4s ease; 
+        }
+        #match-screen.active { display: flex; }
+        
+        .match-header { display: none; }
+        .match-stats { display: none; }
+        
+        .match-win-message { display: none; text-align: center; color: #ffaa00; font-size: 16px; font-weight: bold; padding: 2px; text-shadow: 0 0 40px rgba(255, 170, 0, 0.4); animation: winPulse 1.5s ease infinite alternate; flex-shrink: 0; }
+        @keyframes winPulse { 0% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); } 100% { transform: scale(1.03); text-shadow: 0 0 60px rgba(255, 170, 0, 0.6); } }
+        
+        .match-grid-wrapper { flex: 1; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 0; padding: 1px 0; }
+        .match-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; width: 100%; height: 100%; max-height: 82vh; align-content: stretch; }
+        
+        /* ===== CARDS DO MATCH GAME ===== */
+        .match-card { 
+            background: #1a1a1a; 
+            border: 2px solid #2a2a2a; 
+            border-radius: 10px; 
+            padding: 4px 3px; 
+            text-align: center; 
+            font-size: 18px !important;
+            font-weight: 900 !important;
+            font-family: 'Playfair Display', 'Georgia', serif !important;
+            color: #00ff66; 
+            cursor: pointer; 
+            transition: all 0.25s ease, color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; 
+            min-height: 42px; 
+            max-height: 65px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            word-wrap: break-word; 
+            word-break: break-word;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5); 
+            position: relative; 
+            letter-spacing: 0.5px; 
+            line-height: 1.1;
+            overflow: hidden;
+            text-transform: capitalize;
+        }
+        .match-card:active { transform: scale(0.93); }
+        .match-card.selected { border-color: #ffaa00; box-shadow: 0 0 30px rgba(255, 170, 0, 0.25); transform: scale(1.03); z-index: 2; }
+        .match-card.matched { 
+            background: rgba(0, 26, 0, 0.5); 
+            border-color: #00ff66; 
+            color: #00ff66; 
+            cursor: pointer;
+            opacity: 0.7; 
+            transform: scale(0.92); 
+            pointer-events: auto;
+        }
+        .match-card.matched::after { content: "✓"; position: absolute; top: 0px; right: 4px; font-size: 14px; color: #00ff66; text-shadow: 0 0 30px rgba(0, 255, 102, 0.5); }
+        .match-card.wrong { animation: wrongShake 0.4s ease; border-color: #ff3333; box-shadow: 0 0 30px rgba(255, 51, 51, 0.2); }
+        @keyframes wrongShake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
+        @keyframes matchPop { 0% { transform: scale(1.2); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(0.92); opacity: 0.7; } }
+        .match-card.matched { animation: matchPop 0.5s ease; }
+        .match-card.showing-translation { color: #ffaa00 !important; border-color: #ffaa00 !important; box-shadow: 0 0 40px rgba(255, 170, 0, 0.3) !important; transform: scale(1.02); transition: all 0.3s ease; }
+        
+        /* ===== CONTROLES INFERIORES DO MATCH - BOTÕES MAIORES ===== */
+        .match-bottom-controls { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 6px; 
+            padding: 4px 2px 2px 2px; 
+            border-top: 1px solid rgba(255,255,255,0.06); 
+            flex-shrink: 0; 
+            margin-top: 2px;
+            flex-wrap: nowrap;
+        }
+        .match-mode-group { display: flex; gap: 5px; align-items: center; }
+        .match-mode-btn { 
+            padding: 6px 14px; 
+            border-radius: 16px; 
+            font-size: 13px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            border: 2px solid rgba(255,255,255,0.2); 
+            background: rgba(0, 0, 0, 0.6); 
+            color: #ffffff; 
+            transition: all 0.3s ease; 
+            white-space: nowrap;
+        }
+        .match-mode-btn.active { background: #ffffff; color: #000000; border-color: #ffffff; }
+        .match-mode-btn:active { transform: scale(0.95); }
+        
+        .match-font-controls { display: flex; align-items: center; gap: 5px; margin-left: 6px; }
+        .match-font-btn { 
+            background: rgba(255,255,255,0.08); 
+            border: 2px solid rgba(255,255,255,0.2); 
+            color: #ffffff; 
+            width: 34px; 
+            height: 34px; 
+            border-radius: 50%; 
+            font-size: 18px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: all 0.3s ease; 
+        }
+        .match-font-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
+        .match-font-btn:active { transform: scale(0.9); }
+        .match-font-size-display { color: #ffffff; font-size: 13px; font-weight: bold; min-width: 32px; text-align: center; }
+        
+        .match-controls-right { display: flex; gap: 5px; align-items: center; margin-left: 6px; }
+        .match-controls-right button { 
+            padding: 6px 16px; 
+            border-radius: 16px; 
+            font-size: 13px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            border: none; 
+            transition: all 0.3s ease; 
+            letter-spacing: 0.3px; 
+            white-space: nowrap;
+        }
+        .match-controls-right button:active { transform: scale(0.95); }
+        .btn-match-reset { background: linear-gradient(135deg, #ffaa00, #ffcc44); color: #000000; font-weight: 800; }
+        .btn-match-reset:hover { box-shadow: 0 4px 20px rgba(255, 170, 0, 0.3); }
+        .btn-match-close { background: rgba(255,255,255,0.08); color: #ffffff; border: 2px solid rgba(255,255,255,0.15) !important; }
+        .btn-match-close:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3) !important; }
+        
+        /* ===== CONFIG MODAL - TELA TODA ===== */
+        .config-modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: #000000; 
+            z-index: 1000; 
+            justify-content: center; 
+            align-items: center; 
+            animation: fadeIn 0.3s ease; 
+            padding: 20px;
+            overflow-y: auto;
+        }
         .config-modal.active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .config-modal-content { background: rgba(0, 15, 5, 0.95); border: 2px solid rgba(0, 255, 102, 0.2); border-radius: 16px; padding: 20px 18px; max-width: 380px; width: 92%; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 60px rgba(0, 255, 102, 0.08); backdrop-filter: blur(10px); transition: border-color 0.4s ease; }
-        .config-modal-content h3 { color: #00ff66; text-align: center; font-size: 18px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(0, 255, 102, 0.2); transition: color 0.4s ease; }
-        .config-modal-close { float: right; background: transparent; border: none; color: #00ff66; font-size: 22px; cursor: pointer; padding: 0 6px; line-height: 1; transition: all 0.3s ease, color 0.4s ease; }
-        .config-modal-close:hover { color: #ffffff; transform: rotate(90deg); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .config-modal-content { 
+            background: rgba(20,20,20,0.98); 
+            border: 2px solid rgba(255,255,255,0.1); 
+            border-radius: 20px; 
+            padding: 24px 20px; 
+            max-width: 420px; 
+            width: 100%; 
+            max-height: 90vh; 
+            overflow-y: auto; 
+            box-shadow: 0 0 60px rgba(0,0,0,0.8); 
+        }
+        .config-modal-content h3 { 
+            color: #ffffff; 
+            text-align: center; 
+            font-size: 20px; 
+            margin-bottom: 16px; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+        }
+        .config-modal-close { 
+            float: right; 
+            background: transparent; 
+            border: none; 
+            color: #ffffff; 
+            font-size: 24px; 
+            cursor: pointer; 
+            padding: 0 4px; 
+            line-height: 1; 
+            transition: all 0.3s ease; 
+        }
+        .config-modal-close:hover { color: #ff4444; transform: rotate(90deg); }
         
         .color-picker-group { margin-bottom: 14px; }
-        .color-picker-group label { display: block; color: #00ff66; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; opacity: 0.8; transition: color 0.4s ease; }
+        .color-picker-group label { display: block; color: #ffffff; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; opacity: 0.7; }
         
-        .rainbow-slider { -webkit-appearance: none; width: 100%; height: 26px; border-radius: 13px; outline: none; background: linear-gradient(to right, #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0000ff, #8000ff, #ff00ff, #ff0000); border: 2px solid rgba(0, 255, 102, 0.3); box-shadow: 0 2px 10px rgba(0,0,0,0.5); cursor: pointer; }
-        .rainbow-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 28px; height: 28px; border-radius: 50%; background: #ffffff; border: 3px solid #000000; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.8); transition: transform 0.1s ease; }
+        .rainbow-slider { 
+            -webkit-appearance: none; 
+            width: 100%; 
+            height: 26px; 
+            border-radius: 13px; 
+            outline: none; 
+            background: linear-gradient(to right, #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0000ff, #8000ff, #ff00ff, #ff0000); 
+            border: 2px solid rgba(255,255,255,0.15); 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5); 
+            cursor: pointer; 
+        }
+        .rainbow-slider::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            appearance: none; 
+            width: 28px; 
+            height: 28px; 
+            border-radius: 50%; 
+            background: #ffffff; 
+            border: 3px solid #000000; 
+            cursor: pointer; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.8); 
+        }
         .rainbow-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
         .rainbow-slider::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: #ffffff; border: 3px solid #000000; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
-
-        .font-size-controls { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-        .font-size-btn { background: rgba(0, 255, 102, 0.1); border: 2px solid rgba(0, 255, 102, 0.4); color: #00ff66; font-size: 16px; font-weight: bold; width: 40px; height: 36px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
-        .font-size-btn:hover { background: rgba(0, 255, 102, 0.25); border-color: #00ff66; }
-        .font-size-display { color: #ffffff; font-size: 14px; font-weight: bold; text-align: center; flex: 1; }
-        .font-family-select { width: 100%; background: rgba(0, 10, 4, 0.9); border: 2px solid rgba(0, 255, 102, 0.4); color: #00ff66; padding: 8px 12px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer; outline: none; transition: all 0.3s ease; }
-        .font-family-select:hover { border-color: #00ff66; }
         
-        .tts-engine-box { background: rgba(0, 255, 102, 0.05); border: 2px solid rgba(0, 255, 102, 0.3); padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 6px; display: flex; flex-direction: column; gap: 8px; }
-        .tts-status-text { font-size: 12px; font-weight: bold; color: #00ffaa; }
-        .voice-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
-        .btn-download-voice { background: rgba(0, 255, 102, 0.1); border: 2px solid rgba(0, 255, 102, 0.4); color: #00ff66; padding: 8px 6px; font-size: 11px; font-weight: 800; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; text-align: center; }
-        .btn-download-voice:hover { background: rgba(0, 255, 102, 0.25); border-color: #00ff66; }
-        .btn-download-voice.downloaded { background: rgba(0, 120, 40, 0.9); color: #ffffff; border-color: #00ff66; box-shadow: 0 0 15px rgba(0, 255, 102, 0.3); }
+        .font-size-controls { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+        .font-size-btn { 
+            background: rgba(255,255,255,0.05); 
+            border: 2px solid rgba(255,255,255,0.15); 
+            color: #ffffff; 
+            font-size: 14px; 
+            font-weight: bold; 
+            width: 34px; 
+            height: 32px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: all 0.3s ease; 
+        }
+        .font-size-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
+        .font-size-display { color: #ffffff; font-size: 14px; font-weight: bold; text-align: center; flex: 1; }
+        
+        .font-family-select { 
+            width: 100%; 
+            background: rgba(0, 0, 0, 0.8); 
+            border: 2px solid rgba(255,255,255,0.15); 
+            color: #ffffff; 
+            padding: 8px 12px; 
+            border-radius: 10px; 
+            font-size: 13px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            outline: none; 
+            transition: all 0.3s ease; 
+        }
+        .font-family-select:hover { border-color: rgba(255,255,255,0.3); }
+        
+        .tts-engine-box { 
+            background: rgba(255,255,255,0.03); 
+            border: 2px solid rgba(255,255,255,0.08); 
+            padding: 12px; 
+            border-radius: 12px; 
+            text-align: center; 
+            margin-bottom: 4px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+        }
+        .tts-status-text { font-size: 12px; font-weight: bold; color: #ffffff; opacity: 0.7; }
+        .voice-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 2px; }
+        .btn-download-voice { 
+            background: rgba(255,255,255,0.05); 
+            border: 2px solid rgba(255,255,255,0.15); 
+            color: #ffffff; 
+            padding: 8px 6px; 
+            font-size: 11px; 
+            font-weight: 800; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            text-align: center; 
+        }
+        .btn-download-voice:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
+        .btn-download-voice.downloaded { background: rgba(0, 120, 40, 0.8); color: #ffffff; border-color: #00ff66; box-shadow: 0 0 15px rgba(0, 255, 102, 0.2); }
         .btn-download-voice.downloading { background: rgba(255, 170, 0, 0.2); border-color: #ffaa00; color: #ffaa00; animation: pulseDownload 0.8s ease infinite alternate; }
         @keyframes pulseDownload { 0% { opacity: 0.6; } 100% { opacity: 1; } }
-
-        .audio-test-box { background: rgba(0, 0, 0, 0.5); border: 1px dashed rgba(0, 255, 102, 0.4); padding: 8px; border-radius: 8px; text-align: center; font-size: 12px; color: #00ffaa; cursor: pointer; transition: all 0.3s ease; margin-top: 4px; }
-        .audio-test-box:hover { background: rgba(0, 255, 102, 0.1); border-color: #00ff66; }
-
-        .btn-reset-colors { background: rgba(255, 0, 0, 0.15); border: 2px solid rgba(255, 51, 51, 0.3); color: #ff3333; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 6px; transition: all 0.3s ease; letter-spacing: 0.5px; }
-        .btn-reset-colors:hover { background: rgba(255, 0, 0, 0.25); border-color: #ff3333; box-shadow: 0 0 30px rgba(255, 51, 51, 0.15); }
         
-        .word-balloon.speaking { animation: speakGlow 0.6s ease; }
-        @keyframes speakGlow { 0% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); } 50% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.12); } 100% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); } }
+        .audio-test-box { 
+            background: rgba(255,255,255,0.03); 
+            border: 1px dashed rgba(255,255,255,0.15); 
+            padding: 8px; 
+            border-radius: 8px; 
+            text-align: center; 
+            font-size: 12px; 
+            color: #ffffff; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            margin-top: 2px; 
+        }
+        .audio-test-box:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.3); }
+        
+        .btn-reset-colors { 
+            background: rgba(255, 0, 0, 0.1); 
+            border: 2px solid rgba(255, 50, 50, 0.2); 
+            color: #ff4444; 
+            padding: 8px 16px; 
+            border-radius: 12px; 
+            font-size: 12px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            width: 100%; 
+            margin-top: 6px; 
+            transition: all 0.3s ease; 
+            letter-spacing: 0.5px; 
+        }
+        .btn-reset-colors:hover { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 50, 50, 0.4); }
         
         .game-scrollable-content::-webkit-scrollbar, #topics-screen::-webkit-scrollbar { width: 3px; }
-        .game-scrollable-content::-webkit-scrollbar-track, #topics-screen::-webkit-scrollbar-track { background: rgba(0, 255, 34, 0.03); border-radius: 10px; }
-        .game-scrollable-content::-webkit-scrollbar-thumb, #topics-screen::-webkit-scrollbar-thumb { background: rgba(0, 255, 34, 0.2); border-radius: 10px; }
+        .game-scrollable-content::-webkit-scrollbar-track, #topics-screen::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
+        .game-scrollable-content::-webkit-scrollbar-thumb, #topics-screen::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        
+        /* Responsividade */
+        @media (max-width: 400px) {
+            .match-card { font-size: 14px !important; min-height: 34px; max-height: 52px; padding: 3px 2px; border-radius: 8px; }
+            .match-grid { gap: 3px; }
+            .match-mode-btn { font-size: 11px; padding: 4px 10px; }
+            .match-controls-right button { font-size: 11px; padding: 4px 12px; }
+            .match-font-btn { width: 30px; height: 30px; font-size: 15px; }
+            .match-font-size-display { font-size: 11px; min-width: 28px; }
+            .match-bottom-controls { gap: 4px; flex-wrap: wrap; justify-content: center; }
+        }
+        @media (max-width: 350px) {
+            .match-card { font-size: 12px !important; min-height: 28px; max-height: 44px; padding: 2px 1px; border-radius: 6px; }
+            .match-grid { gap: 2px; }
+            .match-mode-btn { font-size: 10px; padding: 3px 8px; }
+            .match-controls-right button { font-size: 10px; padding: 3px 10px; }
+            .match-font-btn { width: 26px; height: 26px; font-size: 13px; }
+        }
+        @media (max-height: 600px) {
+            .match-card { min-height: 28px; max-height: 40px; font-size: 14px !important; }
+            .match-grid { gap: 3px; }
+            .match-bottom-controls { padding: 2px 0 0 0; }
+            .match-mode-btn { font-size: 10px; padding: 3px 8px; }
+            .match-controls-right button { font-size: 10px; padding: 3px 10px; }
+            .match-font-btn { width: 28px; height: 28px; font-size: 14px; }
+            .match-font-size-display { font-size: 10px; min-width: 26px; }
+        }
     </style>
 </head>
 <body>
@@ -173,7 +484,7 @@
 <div class="container" id="appContainer">
     <div id="topics-screen" class="screen active">
         <h2>✨ Formando as Frases</h2>
-        <div class="counter-banner">⚡ Modo APK Otimizado & Fluido</div>
+        <div class="counter-banner">⚡ Duas frases por vez - Sem sobras!</div>
         <div id="topics-list"></div>
         <div class="stats-wrapper">
             <button class="btn-show-stats" onclick="toggleDatabaseStats()">📊 Carregar Laudo de Dados</button>
@@ -183,28 +494,24 @@
 
     <div id="game-screen" class="screen">
         <div class="game-scrollable-content">
-            <div><span class="back-link" onclick="showTopicsScreen()">⬅ Voltar</span></div>
+            <!-- Botão Voltar REMOVIDO do topo -->
             <div class="top-challenge">
-                <div class="phrase-pt" id="phrase-pt">Carregando...</div>
-                <div class="audio-controls-row">
-                    <button class="btn-audio-top btn-audio-user" onclick="speakUserSentence()">🔊 Ouvir Sua Resposta</button>
-                    <button class="btn-audio-top" onclick="speakFullSentence()">🔊 Ouvir Tudo</button>
-                </div>
+                <div id="phrase-pt-1" class="phrase-pt">Carregando frase 1...</div>
+                <div id="phrase-pt-2" class="phrase-pt phrase-hidden">🔒 Segunda frase (complete a primeira)</div>
             </div>
-            <div class="zone-title" id="track-number">Sua resposta:</div>
+            <div class="zone-title" id="track-number">Montando a frase 1:</div>
             <div class="construction-zone" id="construction-zone"></div>
             <div class="success-text-box" id="success-text-box"></div>
             <div class="zone-header-row">
-                <div class="zone-title">📚 Banco de palavras:</div>
-                <button class="btn-pesca" id="btn-pesca" onclick="togglePescaMode()">🪝 Botão de Pesca</button>
+                <div class="zone-title">📚 Palavras disponíveis:</div>
             </div>
             <div class="words-zone" id="words-zone"></div>
             <div class="status-container" id="status-message"></div>
         </div>
         <div class="control-panel">
             <button class="action-btn btn-check" id="check-btn" onclick="checkAnswer()">✅ Verificar Resposta</button>
-            <button class="action-btn btn-next" id="next-btn" onclick="nextPhrase()">➜ Próxima Frase</button>
-            <button class="action-btn btn-reveal" id="reveal-btn" onclick="revealAnswer()">👁 Ver Resposta</button>
+            <button class="action-btn btn-next" id="next-btn" onclick="nextPhrasePair()">➜ Próximo Par</button>
+            <button class="action-btn btn-reveal" onclick="revealAnswer()">👁 Ver Resposta</button>
             <div class="revealed-answer-box" id="revealed-answer"></div>
             <div class="bottom-buttons-row">
                 <div class="bottom-btn-wrapper">
@@ -220,82 +527,241 @@
     </div>
 </div>
 
+<!-- ===== BOTÃO VOLTAR OCULTO - CANTO INFERIOR ESQUERDO ===== -->
+<div class="back-link-hidden" id="backLinkHidden" onclick="showTopicsScreen()">⬅ Voltar</div>
+
+<!-- ===== MATCH GAME ===== -->
 <div id="match-screen">
-    <div class="match-header">
-        <h2>🎯 Match - Combine as Palavras</h2>
-        <button class="match-close-btn" onclick="closeMatchGame()">✕</button>
-    </div>
-    <div class="match-stats" id="matchStats">Pares: 0 / 0</div>
+    <div class="match-stats" id="matchStats"></div>
     <div id="matchWinMessage" class="match-win-message">🎉 PARABÉNS! Você combinou todas! 🎉</div>
-    <div class="match-grid" id="matchGrid"></div>
-    <div class="match-controls">
-        <button class="btn-match-reset" onclick="resetMatchGame()">🔄 Embaralhar</button>
-        <button class="btn-match-close" onclick="closeMatchGame()">✕ Fechar</button>
+    <div class="match-grid-wrapper">
+        <div class="match-grid" id="matchGrid"></div>
+    </div>
+    <div class="match-bottom-controls">
+        <div class="match-mode-group">
+            <button class="match-mode-btn active" id="modeTranslation" onclick="setMatchMode('translation')">🌐 Tradução</button>
+            <button class="match-mode-btn" id="modeAntonyms" onclick="setMatchMode('antonyms')">🔀 Antônimos</button>
+        </div>
+        <div class="match-font-controls">
+            <button class="match-font-btn" onclick="adjustMatchFontSize(-1)">−</button>
+            <span class="match-font-size-display" id="matchFontSizeDisplay">18</span>
+            <button class="match-font-btn" onclick="adjustMatchFontSize(1)">+</button>
+        </div>
+        <div class="match-controls-right">
+            <button class="btn-match-reset" onclick="resetMatchGame()">🔄 Embaralhar</button>
+            <button class="btn-match-close" onclick="closeMatchGame()">✕ Fechar</button>
+        </div>
     </div>
 </div>
 
+<!-- ===== CONFIG MODAL - TELA TODA ===== -->
 <div class="config-modal" id="configModal">
     <div class="config-modal-content">
         <button class="config-modal-close" onclick="toggleConfigModal()">✕</button>
         <h3>⚙ Configurações</h3>
         
         <div class="color-picker-group">
-            <label>🎙 Gerenciador de Vozes (Estilo Waze/Google)</label>
-            <div class="tts-engine-box">
-                <div class="tts-status-text" id="ttsStatusText">Status: Selecione uma voz para ativar</div>
-                <div class="voice-options-grid">
-                    <button class="btn-download-voice" id="btnVoiceFemale" onclick="downloadVoicePackage('female')">📥 Ativar Voz Feminina</button>
-                    <button class="btn-download-voice" id="btnVoiceMale" onclick="downloadVoicePackage('male')">📥 Ativar Voz Masculina</button>
-                </div>
-            </div>
-            <div class="audio-test-box" onclick="testAudioPlayback()">
-                🎵 Testar Voz Selecionada Agora
-            </div>
+            <label>🎨 Cor do Balão (Fundo do Balão)</label>
+            <input type="range" min="0" max="360" value="0" class="rainbow-slider" id="balloonColorSlider" oninput="changeBalloonColorSlider(this.value)">
         </div>
-
+        
         <div class="color-picker-group">
-            <label>🎨 Cor da Letra dos Balões</label>
-            <input type="range" min="0" max="360" value="120" class="rainbow-slider" id="textColorSlider" oninput="changeTextColorSlider(this.value)">
-        </div>
-
-        <div class="color-picker-group">
-            <label>🖼 Cor de Fundo</label>
+            <label>🖼 Cor do Fundo (Tela do App)</label>
             <input type="range" min="0" max="360" value="0" class="rainbow-slider" id="bgColorSlider" oninput="changeBgColorSlider(this.value)">
         </div>
-
+        
         <div class="color-picker-group">
-            <label>🎛 Cor dos Textos/Títulos do Menu</label>
-            <input type="range" min="0" max="360" value="120" class="rainbow-slider" id="menuColorSlider" oninput="changeMenuColorSlider(this.value)">
+            <label>🎛 Cor do Texto (Balões)</label>
+            <input type="range" min="0" max="360" value="120" class="rainbow-slider" id="textColorSlider" oninput="changeTextColorSlider(this.value)">
         </div>
-
+        
         <div class="color-picker-group">
-            <label>🔤 Tamanho da Fonte (Inglês)</label>
+            <label>🔤 Tamanho da Fonte (Balões)</label>
             <div class="font-size-controls">
                 <button class="font-size-btn" onclick="adjustFontSize(-1)">A-</button>
                 <div class="font-size-display" id="fontSizeDisplay">15px</div>
                 <button class="font-size-btn" onclick="adjustFontSize(1)">A+</button>
             </div>
         </div>
+        
         <div class="color-picker-group">
-            <label>✒ Estilo da Fonte (Inglês)</label>
+            <label>✒ Estilo da Fonte (Balões)</label>
             <select class="font-family-select" id="fontFamilySelect" onchange="changeFontFamily(this.value)">
-                <option value="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">Padrão (Segoe UI / Sans)</option>
-                <option value="Georgia, serif">Georgia (Serifada)</option>
-                <option value="'Courier New', Courier, monospace">Courier New (Moderna/Mono)</option>
-                <option value="Impact, Charcoal, sans-serif">Impact (Pesada/Destacada)</option>
-                <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans (Arredondada)</option>
-                <option value="'Times New Roman', Times, serif">Times New Roman (Clássica)</option>
-                <option value="Verdana, Geneva, sans-serif">Verdana (Aberta/Ampla)</option>
+                <option value="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">Padrão</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Courier New', Courier, monospace">Courier New</option>
+                <option value="Impact, Charcoal, sans-serif">Impact</option>
+                <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans</option>
+                <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                <option value="Verdana, Geneva, sans-serif">Verdana</option>
             </select>
         </div>
+        
+        <div class="color-picker-group">
+            <label>🎙 Gerenciador de Vozes</label>
+            <div class="tts-engine-box">
+                <div class="tts-status-text" id="ttsStatusText">Status: Selecione uma voz</div>
+                <div class="voice-options-grid">
+                    <button class="btn-download-voice" id="btnVoiceFemale" onclick="downloadVoicePackage('female')">📥 Voz Feminina</button>
+                    <button class="btn-download-voice" id="btnVoiceMale" onclick="downloadVoicePackage('male')">📥 Voz Masculina</button>
+                </div>
+            </div>
+            <div class="audio-test-box" onclick="testAudioPlayback()">🎵 Testar Voz</div>
+        </div>
+        
         <button class="btn-reset-colors" onclick="resetConfigSettings()">🔄 Restaurar Padrões</button>
     </div>
 </div>
 
 <script>
+    // ============================================================
+    // BANCO DE DADOS DE FRASES
+    // ============================================================
+    const phraseDatabase = [
+        {
+            frases: [
+                { en: "Love is blind.", pt: "O amor é cego." },
+                { en: "Time flies.", pt: "O tempo voa." }
+            ]
+        },
+        {
+            frases: [
+                { en: "The sun is hot.", pt: "O sol é quente." },
+                { en: "The moon is bright.", pt: "A lua é brilhante." }
+            ]
+        },
+        {
+            frases: [
+                { en: "The cat is black.", pt: "O gato é preto." },
+                { en: "The dog is white.", pt: "O cachorro é branco." }
+            ]
+        }
+    ];
+
+    // ============================================================
+    // BANCO DE DADOS DO MATCH GAME - 24 PARES (48 PALAVRAS)
+    // ============================================================
+    const translationPairs = [
+        { pt: "amor", en: "love" },
+        { pt: "cego", en: "blind" },
+        { pt: "tempo", en: "time" },
+        { pt: "voa", en: "flies" },
+        { pt: "sol", en: "sun" },
+        { pt: "quente", en: "hot" },
+        { pt: "lua", en: "moon" },
+        { pt: "brilhante", en: "bright" },
+        { pt: "gato", en: "cat" },
+        { pt: "preto", en: "black" },
+        { pt: "cachorro", en: "dog" },
+        { pt: "branco", en: "white" },
+        { pt: "casa", en: "house" },
+        { pt: "grande", en: "big" },
+        { pt: "pequeno", en: "small" },
+        { pt: "rápido", en: "fast" },
+        { pt: "lento", en: "slow" },
+        { pt: "feliz", en: "happy" },
+        { pt: "triste", en: "sad" },
+        { pt: "forte", en: "strong" },
+        { pt: "fraco", en: "weak" },
+        { pt: "alto", en: "tall" },
+        { pt: "baixo", en: "short" },
+        { pt: "velho", en: "old" }
+    ];
+
+    const antonymPairs = [
+        { en: "hot", oposto: "cold", traducao: "quente" },
+        { en: "big", oposto: "small", traducao: "grande" },
+        { en: "fast", oposto: "slow", traducao: "rápido" },
+        { en: "happy", oposto: "sad", traducao: "feliz" },
+        { en: "strong", oposto: "weak", traducao: "forte" },
+        { en: "tall", oposto: "short", traducao: "alto" },
+        { en: "fat", oposto: "thin", traducao: "gordo" },
+        { en: "old", oposto: "new", traducao: "velho" },
+        { en: "light", oposto: "dark", traducao: "claro" },
+        { en: "clean", oposto: "dirty", traducao: "limpo" },
+        { en: "full", oposto: "empty", traducao: "cheio" },
+        { en: "hard", oposto: "soft", traducao: "duro" },
+        { en: "dry", oposto: "wet", traducao: "seco" },
+        { en: "sweet", oposto: "bitter", traducao: "doce" },
+        { en: "rich", oposto: "poor", traducao: "rico" },
+        { en: "beautiful", oposto: "ugly", traducao: "bonito" },
+        { en: "smart", oposto: "dumb", traducao: "inteligente" },
+        { en: "brave", oposto: "coward", traducao: "corajoso" },
+        { en: "kind", oposto: "cruel", traducao: "gentil" },
+        { en: "young", oposto: "old", traducao: "jovem" },
+        { en: "wide", oposto: "narrow", traducao: "largo" },
+        { en: "deep", oposto: "shallow", traducao: "fundo" },
+        { en: "loud", oposto: "quiet", traducao: "barulhento" },
+        { en: "rough", oposto: "smooth", traducao: "áspero" }
+    ];
+
+    // ============================================================
+    // CONFIGURAÇÕES E ESTADO GLOBAL
+    // ============================================================
+    const STORAGE_KEY = 'wordGameConfigSettings';
+    let configSettings = loadSavedConfig();
+    let currentPhrasePairIndex = 0;
+    let phrasePairs = [];
+    let selectedWords = [];
+    let currentPhraseIndex = 0;
+    let phraseCompleted = false;
+    let allCompleted = false;
+
+    let matchMode = 'translation';
+    let matchPairs = [];
+    let matchCards = [];
+    let matchedPairs = 0;
+    let selectedMatchCard = null;
+    let isProcessingMatch = false;
+    let translationTimeout = null;
+    let matchFontSize = 18;
+
     let availableVoices = [];
     let selectedVoiceGender = 'female';
+    
+    // Controle de toques para mostrar o botão Voltar
+    let tapCount = 0;
+    let tapTimer = null;
 
+    // ============================================================
+    // FUNÇÕES DE CONFIGURAÇÃO
+    // ============================================================
+    function loadSavedConfig() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed.balloonColor === undefined) parsed.balloonColor = '#1a1a1a';
+                if (parsed.bgColor === undefined) parsed.bgColor = '#000000';
+                return parsed;
+            }
+        } catch (e) {}
+        return { 
+            textHue: 120, 
+            bgHue: 0, 
+            balloonHue: 0,
+            fontSize: 15, 
+            fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", 
+            ttsDownloaded: false, 
+            voiceGender: 'female' 
+        };
+    }
+    function saveConfig() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(configSettings)); } catch (e) {}
+    }
+    const defaultConfigSettings = { 
+        textHue: 120, 
+        bgHue: 0, 
+        balloonHue: 0,
+        fontSize: 15, 
+        fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", 
+        ttsDownloaded: false, 
+        voiceGender: 'female' 
+    };
+
+    // ============================================================
+    // FUNÇÕES DE ÁUDIO
+    // ============================================================
     function loadSystemVoices() {
         if ('speechSynthesis' in window) {
             availableVoices = window.speechSynthesis.getVoices();
@@ -306,16 +772,11 @@
     }
     loadSystemVoices();
 
-    // Solicita permissão de áudio/microfone nativa ao iniciar para liberar o sistema de som
     function requestAudioPermissions() {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(stream => {
-                    console.log("Permissão de áudio concedida com sucesso!");
-                })
-                .catch(err => {
-                    console.log("Permissão de áudio não concedida ou indisponível:", err);
-                });
+                .then(stream => console.log("Permissão de áudio concedida"))
+                .catch(err => console.log("Permissão de áudio negada:", err));
         }
     }
 
@@ -325,67 +786,26 @@
         }
         const englishVoices = availableVoices.filter(v => v.lang.startsWith('en'));
         if (englishVoices.length === 0) return null;
-
         const femaleKeywords = ['female', 'woman', 'zira', 'samantha', 'victoria', 'karen', 'moira', 'natural', 'google uk english female', 'en-us-neural'];
         const maleKeywords = ['male', 'man', 'david', 'george', 'daniel', 'oliver', 'google uk english male'];
-
         let matched = englishVoices.find(v => {
             const nameLower = v.name.toLowerCase();
-            if (gender === 'female') {
-                return femaleKeywords.some(k => nameLower.includes(k));
-            } else {
-                return maleKeywords.some(k => nameLower.includes(k));
-            }
+            if (gender === 'female') return femaleKeywords.some(k => nameLower.includes(k));
+            else return maleKeywords.some(k => nameLower.includes(k));
         });
-
-        if (!matched) {
-            matched = englishVoices[gender === 'female' ? 0 : Math.min(1, englishVoices.length - 1)];
-        }
+        if (!matched) matched = englishVoices[gender === 'female' ? 0 : Math.min(1, englishVoices.length - 1)];
         return matched || englishVoices[0];
-    }
-
-    function downloadVoicePackage(gender) {
-        selectedVoiceGender = gender;
-        const btnId = gender === 'female' ? 'btnVoiceFemale' : 'btnVoiceMale';
-        const otherBtnId = gender === 'female' ? 'btnVoiceMale' : 'btnVoiceFemale';
-        const btn = document.getElementById(btnId);
-        const statusText = document.getElementById('ttsStatusText');
-
-        btn.className = "btn-download-voice downloading";
-        btn.textContent = "⏳ Ativando voz...";
-        statusText.textContent = `Status: Ativando voz ${gender === 'female' ? 'Feminina' : 'Masculina'}...`;
-
-        setTimeout(() => {
-            configSettings.ttsDownloaded = true;
-            configSettings.voiceGender = gender;
-            saveConfig();
-
-            btn.className = "btn-download-voice downloaded";
-            btn.textContent = `✔ Voz ${gender === 'female' ? 'Feminina' : 'Masculina'} Ativa`;
-            
-            const otherBtn = document.getElementById(otherBtnId);
-            otherBtn.className = "btn-download-voice";
-            otherBtn.textContent = `📥 Ativar Outra (${gender === 'female' ? 'Masculina' : 'Feminina'})`;
-
-            statusText.textContent = `Status: Voz ${gender === 'female' ? 'Feminina' : 'Masculina'} pronta para uso!`;
-            testAudioPlayback();
-        }, 800);
     }
 
     function speak(text) {
         if (!('speechSynthesis' in window)) return;
         window.speechSynthesis.cancel();
-
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
         utterance.rate = 0.95;
         utterance.pitch = configSettings.voiceGender === 'female' ? 1.15 : 0.85;
-
         const voice = getBestVoice(configSettings.voiceGender || 'female');
-        if (voice) {
-            utterance.voice = voice;
-        }
-
+        if (voice) utterance.voice = voice;
         window.speechSynthesis.speak(utterance);
     }
 
@@ -399,80 +819,43 @@
         });
     }
 
-    function speakFullSentence() {
-        const currentPhrase = playlistPhrases[currentPhraseIndex];
-        if (currentPhrase) {
-            speak(currentPhrase.en);
-        }
-    }
+    function downloadVoicePackage(gender) {
+        selectedVoiceGender = gender;
+        const btnId = gender === 'female' ? 'btnVoiceFemale' : 'btnVoiceMale';
+        const otherBtnId = gender === 'female' ? 'btnVoiceMale' : 'btnVoiceFemale';
+        const btn = document.getElementById(btnId);
+        const statusText = document.getElementById('ttsStatusText');
 
-    function speakUserSentence() {
-        if (selectedWords.length === 0) return;
-        speak(selectedWords.join(" "));
+        btn.className = "btn-download-voice downloading";
+        btn.textContent = "⏳ Ativando...";
+        statusText.textContent = `Status: Ativando voz ${gender === 'female' ? 'Feminina' : 'Masculina'}...`;
+
+        setTimeout(() => {
+            configSettings.ttsDownloaded = true;
+            configSettings.voiceGender = gender;
+            saveConfig();
+
+            btn.className = "btn-download-voice downloaded";
+            btn.textContent = `✔ Voz ${gender === 'female' ? 'Feminina' : 'Masculina'} Ativa`;
+            const otherBtn = document.getElementById(otherBtnId);
+            otherBtn.className = "btn-download-voice";
+            otherBtn.textContent = `📥 Ativar ${gender === 'female' ? 'Masculina' : 'Feminina'}`;
+            statusText.textContent = `Status: Voz ${gender === 'female' ? 'Feminina' : 'Masculina'} pronta!`;
+            testAudioPlayback();
+        }, 800);
     }
 
     function testAudioPlayback() {
         configSettings.ttsDownloaded = true;
         saveConfig();
         const gender = configSettings.voiceGender || 'female';
-        document.getElementById('ttsStatusText').textContent = `Status: Voz ${gender === 'female' ? 'Feminina' : 'Masculina'} testada com sucesso!`;
-        speak("Hello! Your audio system is ready and fully optimized.");
+        document.getElementById('ttsStatusText').textContent = `Status: Voz ${gender === 'female' ? 'Feminina' : 'Masculina'} testada!`;
+        speak("Hello! Audio system ready.");
     }
 
-    const STORAGE_KEY = 'wordGameConfigSettings';
-    function loadSavedConfig() {
-        try { 
-            const saved = localStorage.getItem(STORAGE_KEY); 
-            if (saved) { return JSON.parse(saved); } 
-        } catch (e) {}
-        return { textHue: 120, bgHue: 0, menuHue: 120, fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", ttsDownloaded: false, voiceGender: 'female' };
-    }
-    const configSettings = loadSavedConfig();
-    function saveConfig() {
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(configSettings)); } catch (e) {}
-    }
-    const defaultConfigSettings = { textHue: 120, bgHue: 0, menuHue: 120, fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", ttsDownloaded: false, voiceGender: 'female' };
-
-    function toggleConfigModal() {
-        const modal = document.getElementById('configModal');
-        const btn = document.getElementById('configBtn');
-        modal.classList.toggle('active');
-        btn.classList.toggle('active');
-        if (modal.classList.contains('active')) {
-            document.getElementById('textColorSlider').value = configSettings.textHue;
-            document.getElementById('bgColorSlider').value = configSettings.bgHue;
-            document.getElementById('menuColorSlider').value = configSettings.menuHue;
-            updateFontSizeDisplay();
-            document.getElementById('fontFamilySelect').value = configSettings.fontFamily;
-            
-            const statusText = document.getElementById('ttsStatusText');
-            const btnFemale = document.getElementById('btnVoiceFemale');
-            const btnMale = document.getElementById('btnVoiceMale');
-
-            if (configSettings.ttsDownloaded) {
-                const g = configSettings.voiceGender || 'female';
-                statusText.textContent = `Status: Voz ${g === 'female' ? 'Feminina' : 'Masculina'} Ativa`;
-                if (g === 'female') {
-                    btnFemale.className = "btn-download-voice downloaded";
-                    btnFemale.textContent = "✔ Voz Feminina Ativa";
-                    btnMale.className = "btn-download-voice";
-                    btnMale.textContent = "📥 Ativar Voz Masculina";
-                } else {
-                    btnMale.className = "btn-download-voice downloaded";
-                    btnMale.textContent = "✔ Voz Masculina Ativa";
-                    btnFemale.className = "btn-download-voice";
-                    btnFemale.textContent = "📥 Ativar Voz Feminina";
-                }
-            } else {
-                statusText.textContent = "Status: Selecione uma voz para ativar";
-                btnFemale.className = "btn-download-voice";
-                btnFemale.textContent = "📥 Ativar Voz Feminina";
-                btnMale.className = "btn-download-voice";
-                btnMale.textContent = "📥 Ativar Voz Masculina";
-            }
-        }
-    }
-
+    // ============================================================
+    // FUNÇÕES DE COR
+    // ============================================================
     function hslToHex(h, s, l) {
         l /= 100;
         const a = s * Math.min(l, 1 - l) / 100;
@@ -484,59 +867,54 @@
         return `#${f(0)}${f(8)}${f(4)}`;
     }
 
-    function changeTextColorSlider(val) {
-        configSettings.textHue = parseInt(val);
-        const hexColor = hslToHex(configSettings.textHue, 100, 50);
-        applyTextColor(hexColor);
+    function changeBalloonColorSlider(val) {
+        configSettings.balloonHue = parseInt(val);
+        const hexColor = hslToHex(configSettings.balloonHue, 60, 18);
+        applyBalloonColor(hexColor);
         saveConfig();
+    }
+
+    function applyBalloonColor(color) {
+        document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
+            el.style.backgroundColor = color;
+        });
+        document.getElementById('balloonColorSlider').value = configSettings.balloonHue;
     }
 
     function changeBgColorSlider(val) {
         configSettings.bgHue = parseInt(val);
-        const hexColor = hslToHex(configSettings.bgHue, 60, 6);
+        const hexColor = hslToHex(configSettings.bgHue, 60, 8);
         applyBgColor(hexColor);
         saveConfig();
-    }
-
-    function changeMenuColorSlider(val) {
-        configSettings.menuHue = parseInt(val);
-        const hexColor = hslToHex(configSettings.menuHue, 100, 50);
-        applyMenuColor(hexColor);
-        saveConfig();
-    }
-
-    function applyTextColor(color) {
-        document.querySelectorAll('.word-balloon:not(.pescado)').forEach(el => { el.style.color = color; });
-        document.querySelectorAll('.word-balloon.pescado').forEach(el => { el.style.color = '#ffff00'; });
-        document.querySelectorAll('.match-card:not(.matched)').forEach(el => { el.style.color = color; el.style.borderColor = color; });
-        document.querySelectorAll('.btn-reveal, .revealed-answer-box').forEach(el => {
-            if (el.classList.contains('btn-reveal')) { el.style.color = color; el.style.borderColor = color; }
-            else if (el.classList.contains('revealed-answer-box')) { el.style.color = color; el.style.borderColor = color; }
-        });
-        document.querySelectorAll('.status-correct').forEach(el => { el.style.color = color; });
     }
 
     function applyBgColor(color) {
         document.getElementById('appContainer').style.backgroundColor = color;
         document.body.style.backgroundColor = color;
         document.getElementById('match-screen').style.backgroundColor = color;
+        document.getElementById('configModal').style.backgroundColor = color;
     }
 
-    function applyMenuColor(color) {
-        document.querySelectorAll('h2, .zone-title, .counter-banner, .back-link, .stats-report-box, .btn-show-stats, .config-btn-label, .phrase-pt, .btn-audio-top, .btn-audio-user').forEach(el => {
-            if (el.tagName === 'H2') { el.style.color = color; }
-            else if (el.classList.contains('zone-title')) { el.style.color = color; }
-            else if (el.classList.contains('counter-banner')) { el.style.color = color; }
-            else if (el.classList.contains('back-link')) { el.style.color = color; }
-            else if (el.classList.contains('stats-report-box')) { el.style.color = color; el.style.borderColor = color; }
-            else if (el.classList.contains('btn-show-stats')) { el.style.color = color; }
-            else if (el.classList.contains('config-btn-label')) { el.style.color = color; }
-            else if (el.classList.contains('phrase-pt')) { el.style.color = color; }
-            else if (el.classList.contains('btn-audio-top') || el.classList.contains('btn-audio-user')) { el.style.color = color; el.style.borderColor = color; }
+    function changeTextColorSlider(val) {
+        configSettings.textHue = parseInt(val);
+        const hexColor = hslToHex(configSettings.textHue, 100, 55);
+        applyTextColor(hexColor);
+        saveConfig();
+    }
+
+    function applyTextColor(color) {
+        document.querySelectorAll('.word-balloon, .match-card:not(.matched)').forEach(el => {
+            el.style.color = color;
         });
-        document.querySelectorAll('.config-btn').forEach(el => { el.style.color = color; el.style.borderColor = color; });
+        document.querySelectorAll('.match-card.matched').forEach(el => {
+            el.style.color = color;
+        });
+        document.querySelectorAll('.status-correct').forEach(el => { el.style.color = color; });
     }
 
+    // ============================================================
+    // FUNÇÕES DE FONTE
+    // ============================================================
     function adjustFontSize(delta) {
         configSettings.fontSize = Math.max(10, Math.min(30, configSettings.fontSize + delta));
         updateFontSizeDisplay();
@@ -554,89 +932,422 @@
     function applyFontStyles() {
         const size = `${configSettings.fontSize}px`;
         const family = configSettings.fontFamily;
-        document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
+        document.querySelectorAll('.word-balloon').forEach(el => {
             el.style.fontSize = size;
             el.style.fontFamily = family;
         });
     }
+    
     function resetConfigSettings() {
         configSettings.textHue = defaultConfigSettings.textHue;
         configSettings.bgHue = defaultConfigSettings.bgHue;
-        configSettings.menuHue = defaultConfigSettings.menuHue;
+        configSettings.balloonHue = defaultConfigSettings.balloonHue;
         configSettings.fontSize = defaultConfigSettings.fontSize;
         configSettings.fontFamily = defaultConfigSettings.fontFamily;
         configSettings.ttsDownloaded = defaultConfigSettings.ttsDownloaded;
         configSettings.voiceGender = defaultConfigSettings.voiceGender;
 
-        applyTextColor(hslToHex(configSettings.textHue, 100, 50));
-        applyBgColor(hslToHex(configSettings.bgHue, 60, 6));
-        applyMenuColor(hslToHex(configSettings.menuHue, 100, 50));
+        applyTextColor(hslToHex(configSettings.textHue, 100, 55));
+        applyBgColor(hslToHex(configSettings.bgHue, 60, 8));
+        applyBalloonColor(hslToHex(configSettings.balloonHue, 60, 18));
 
         document.getElementById('textColorSlider').value = configSettings.textHue;
         document.getElementById('bgColorSlider').value = configSettings.bgHue;
-        document.getElementById('menuColorSlider').value = configSettings.menuHue;
-
+        document.getElementById('balloonColorSlider').value = configSettings.balloonHue;
         updateFontSizeDisplay();
         document.getElementById('fontFamilySelect').value = configSettings.fontFamily;
-        
-        document.getElementById('ttsStatusText').textContent = "Status: Selecione uma voz para ativar";
+        document.getElementById('ttsStatusText').textContent = "Status: Selecione uma voz";
         const btnF = document.getElementById('btnVoiceFemale');
         const btnM = document.getElementById('btnVoiceMale');
         btnF.className = "btn-download-voice";
-        btnF.textContent = "📥 Ativar Voz Feminina";
+        btnF.textContent = "📥 Voz Feminina";
         btnM.className = "btn-download-voice";
-        btnM.textContent = "📥 Ativar Voz Masculina";
-
+        btnM.textContent = "📥 Voz Masculina";
         applyFontStyles();
         saveConfig();
     }
 
-    const dictionary = {
-        "love": "amor",
-        "blind": "cego",
-        "time": "tempo",
-        "flies": "voa"
-    };
+    // ============================================================
+    // FUNÇÕES DA TELA DE CONFIGURAÇÃO (TELA TODA)
+    // ============================================================
+    function toggleConfigModal() {
+        const modal = document.getElementById('configModal');
+        const btn = document.getElementById('configBtn');
+        modal.classList.toggle('active');
+        btn.classList.toggle('active');
+        if (modal.classList.contains('active')) {
+            document.getElementById('textColorSlider').value = configSettings.textHue;
+            document.getElementById('bgColorSlider').value = configSettings.bgHue;
+            document.getElementById('balloonColorSlider').value = configSettings.balloonHue || 0;
+            updateFontSizeDisplay();
+            document.getElementById('fontFamilySelect').value = configSettings.fontFamily;
+            const statusText = document.getElementById('ttsStatusText');
+            const btnFemale = document.getElementById('btnVoiceFemale');
+            const btnMale = document.getElementById('btnVoiceMale');
+            if (configSettings.ttsDownloaded) {
+                const g = configSettings.voiceGender || 'female';
+                statusText.textContent = `Status: Voz ${g === 'female' ? 'Feminina' : 'Masculina'} Ativa`;
+                if (g === 'female') {
+                    btnFemale.className = "btn-download-voice downloaded";
+                    btnFemale.textContent = "✔ Voz Feminina Ativa";
+                    btnMale.className = "btn-download-voice";
+                    btnMale.textContent = "📥 Ativar Voz Masculina";
+                } else {
+                    btnMale.className = "btn-download-voice downloaded";
+                    btnMale.textContent = "✔ Voz Masculina Ativa";
+                    btnFemale.className = "btn-download-voice";
+                    btnFemale.textContent = "📥 Ativar Voz Feminina";
+                }
+            } else {
+                statusText.textContent = "Status: Selecione uma voz";
+                btnFemale.className = "btn-download-voice";
+                btnFemale.textContent = "📥 Voz Feminina";
+                btnMale.className = "btn-download-voice";
+                btnMale.textContent = "📥 Voz Masculina";
+            }
+        }
+    }
 
-    const pdfPhrasesDatabase = {
-        "Básico": [
-            {en: "Love is blind.", pt: "O amor é cego.", extra: ["love", "blind"]},
-            {en: "Time flies.", pt: "O tempo voa.", extra: ["time", "flies"]}
-        ]
-    };
+    // ============================================================
+    // FUNÇÕES DA TELA DE TÓPICOS
+    // ============================================================
+    function renderTopics() {
+        const listContainer = document.getElementById("topics-list");
+        listContainer.innerHTML = "";
+        const mistoBtn = document.createElement("button");
+        mistoBtn.className = "topic-card misto-btn";
+        mistoBtn.innerText = "🔀 MODO MISTO";
+        mistoBtn.onclick = () => startTopic("MISTO");
+        listContainer.appendChild(mistoBtn);
+        for (let i = 0; i < phraseDatabase.length; i++) {
+            const btn = document.createElement("button");
+            btn.className = "topic-card";
+            btn.innerText = `📚 Conjunto ${i+1} (${phraseDatabase[i].frases.length} frases)`;
+            btn.onclick = () => startTopic(i);
+            listContainer.appendChild(btn);
+        }
+    }
 
-    let selectedTopic = "", playlistPhrases = [], currentPhraseIndex = 0, selectedWords = [], pescaMode = false, draggedIndex = null;
-    let matchPairs = [], selectedMatchCard = null, matchedPairs = 0, matchCards = [], isProcessingMatch = false;
+    function toggleDatabaseStats() {
+        const box = document.getElementById("stats-report-box");
+        if (box.style.display === "block") { box.style.display = "none"; return; }
+        let totalFrases = 0;
+        for (let i = 0; i < phraseDatabase.length; i++) {
+            totalFrases += phraseDatabase[i].frases.length;
+        }
+        let totalMatch = translationPairs.length + antonymPairs.length;
+        box.innerHTML = `
+            <p style='margin-bottom:4px;'>📂 LAUDO DE DADOS:</p>
+            <p>Total de Frases: <span style='font-size:15px;'>${totalFrases}</span></p>
+            <p>Match - Tradução: <span style='font-size:15px;'>${translationPairs.length} pares</span></p>
+            <p>Match - Antônimos: <span style='font-size:15px;'>${antonymPairs.length} pares</span></p>
+            <p style='margin-top:4px; opacity:0.6;'>✅ Pronto para receber seus dados!</p>
+        `;
+        box.style.display = "block";
+    }
+
+    function showTopicsScreen() {
+        document.getElementById("topics-screen").classList.add("active");
+        document.getElementById("game-screen").classList.remove("active");
+        // Oculta o botão Voltar ao voltar para o menu
+        document.getElementById('backLinkHidden').classList.remove('visible');
+        renderTopics();
+    }
+
+    // ============================================================
+    // FUNÇÃO PARA DETECTAR 2 TOQUES NA TELA (MOSTRAR BOTÃO VOLTAR)
+    // ============================================================
+    function setupDoubleTap() {
+        document.addEventListener('click', function(e) {
+            // Ignora cliques no botão Voltar
+            if (e.target.id === 'backLinkHidden') return;
+            
+            tapCount++;
+            if (tapCount === 1) {
+                tapTimer = setTimeout(() => {
+                    tapCount = 0;
+                }, 500);
+            } else if (tapCount === 2) {
+                clearTimeout(tapTimer);
+                tapCount = 0;
+                // Mostra o botão Voltar
+                const backBtn = document.getElementById('backLinkHidden');
+                backBtn.classList.toggle('visible');
+                // Esconde automaticamente após 5 segundos
+                setTimeout(() => {
+                    backBtn.classList.remove('visible');
+                }, 5000);
+            }
+        });
+    }
+
+    // ============================================================
+    // FUNÇÕES DO JOGO DE FRASES
+    // ============================================================
+    function startTopic(topicId) {
+        if (topicId === "MISTO") {
+            phrasePairs = [...phraseDatabase];
+        } else if (typeof topicId === 'number' && topicId < phraseDatabase.length) {
+            phrasePairs = [phraseDatabase[topicId]];
+        } else {
+            phrasePairs = [phraseDatabase[0]];
+        }
+        phrasePairs.sort(() => Math.random() - 0.5);
+        currentPhrasePairIndex = 0;
+        document.getElementById("topics-screen").classList.remove("active");
+        document.getElementById("game-screen").classList.add("active");
+        loadPhrasePair();
+    }
+
+    function loadPhrasePair() {
+        if (currentPhrasePairIndex >= phrasePairs.length) {
+            alert("🎉 Fim de todos os blocos! Voltando ao início.");
+            currentPhrasePairIndex = 0;
+        }
+        const pair = phrasePairs[currentPhrasePairIndex];
+        if (!pair || !pair.frases || pair.frases.length < 2) {
+            alert("Erro: este bloco não tem duas frases.");
+            showTopicsScreen();
+            return;
+        }
+        currentPhraseIndex = 0;
+        phraseCompleted = false;
+        allCompleted = false;
+        selectedWords = [];
+
+        document.getElementById("status-message").innerHTML = "";
+        document.getElementById("revealed-answer").style.display = "none";
+        document.getElementById("revealed-answer").innerText = "";
+        document.getElementById("check-btn").style.display = "block";
+        document.getElementById("next-btn").style.display = "none";
+        document.getElementById("construction-zone").style.display = "flex";
+        document.getElementById("construction-zone").classList.remove("completed");
+        document.getElementById("success-text-box").style.display = "none";
+
+        document.getElementById("phrase-pt-1").innerText = pair.frases[0].pt;
+        document.getElementById("phrase-pt-1").classList.remove("phrase-hidden");
+        document.getElementById("phrase-pt-2").innerText = pair.frases[1].pt;
+        document.getElementById("phrase-pt-2").classList.add("phrase-hidden");
+        document.getElementById("phrase-pt-2").classList.remove("revealed");
+
+        document.getElementById("track-number").innerText = `Bloco ${currentPhrasePairIndex + 1} de ${phrasePairs.length} - Frase 1:`;
+        renderZones();
+    }
+
+    function getWordsForPair() {
+        const pair = phrasePairs[currentPhrasePairIndex];
+        const frase1 = pair.frases[0];
+        const frase2 = pair.frases[1];
+        let words1 = frase1.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
+        let words2 = frase2.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
+        let allWords = [...words1, ...words2];
+        return allWords.sort(() => Math.random() - 0.5);
+    }
+
+    function renderZones() {
+        const constructZone = document.getElementById("construction-zone");
+        const wordsZone = document.getElementById("words-zone");
+        const currentTextColor = hslToHex(configSettings.textHue, 100, 55);
+        const currentBalloonColor = hslToHex(configSettings.balloonHue || 0, 60, 18);
+
+        constructZone.innerHTML = "";
+        const pair = phrasePairs[currentPhrasePairIndex];
+        const currentPhrase = pair.frases[currentPhraseIndex];
+        const targetWords = currentPhrase.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
+
+        selectedWords.forEach((word, index) => {
+            const balloon = document.createElement("span");
+            balloon.className = "word-balloon";
+            balloon.innerText = word;
+            balloon.draggable = true;
+            balloon.dataset.index = index;
+            balloon.style.color = currentTextColor;
+            balloon.style.backgroundColor = currentBalloonColor;
+            balloon.onclick = (e) => {
+                speakWord(word);
+                if (!balloon.classList.contains('dragging')) {
+                    selectedWords.splice(index, 1);
+                    renderZones();
+                }
+            };
+            balloon.addEventListener('dragstart', (e) => {
+                balloon.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+            balloon.addEventListener('dragend', () => {
+                balloon.classList.remove('dragging');
+                renderZones();
+            });
+            constructZone.appendChild(balloon);
+        });
+
+        // Verifica se a frase atual foi completada
+        if (selectedWords.length === targetWords.length && 
+            selectedWords.join(" ").toLowerCase() === currentPhrase.en.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "")) {
+            if (!phraseCompleted) {
+                phraseCompleted = true;
+                if (currentPhraseIndex === 0) {
+                    // Frase 1 completa - revela a frase 2
+                    document.getElementById("phrase-pt-2").classList.remove("phrase-hidden");
+                    document.getElementById("phrase-pt-2").classList.add("revealed");
+                    document.getElementById("track-number").innerText = `Bloco ${currentPhrasePairIndex + 1} - Frase 2:`;
+                    document.getElementById("status-message").innerHTML = `<span class="status-correct">✅ Frase 1 completa! Agora monte a frase 2.</span>`;
+                    currentPhraseIndex = 1;
+                    selectedWords = [];
+                    renderZones();
+                    return;
+                } else {
+                    // Frase 2 completa - BLOCO FINALIZADO!
+                    allCompleted = true;
+                    document.getElementById("status-message").innerHTML = `<span class="status-correct">🎉 PARABÉNS! Bloco completo!</span>`;
+                    document.getElementById("construction-zone").classList.add("completed");
+                    document.getElementById("construction-zone").style.display = "none";
+                    document.getElementById("words-zone").style.display = "none"; // Esconde todas as palavras
+                    document.getElementById("check-btn").style.display = "none";
+                    document.getElementById("next-btn").style.display = "block";
+                    document.getElementById("next-btn").textContent = "➜ Próximo Par";
+                    const successBox = document.getElementById("success-text-box");
+                    successBox.innerText = `✅ ${pair.frases[0].en} ✅ ${pair.frases[1].en}`;
+                    successBox.style.display = "flex";
+                    speak(pair.frases[0].en + ". " + pair.frases[1].en);
+                    return;
+                }
+            }
+        }
+
+        // Se ainda não completou, mostra as palavras disponíveis
+        wordsZone.style.display = "flex";
+        wordsZone.innerHTML = "";
+        const allWords = getWordsForPair();
+        // Filtra apenas palavras que não foram selecionadas E que pertencem à frase atual
+        const remainingWords = allWords.filter(w => {
+            const isSelected = selectedWords.includes(w);
+            const belongsToCurrent = targetWords.includes(w);
+            // Se já completou a frase 1, usa as palavras da frase 2
+            if (phraseCompleted && currentPhraseIndex === 1) {
+                const secondPhrase = pair.frases[1].en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
+                return !isSelected && secondPhrase.includes(w);
+            }
+            return !isSelected && belongsToCurrent;
+        });
+
+        remainingWords.forEach(word => {
+            const btn = document.createElement("span");
+            btn.className = "word-balloon";
+            btn.innerText = word;
+            btn.style.color = currentTextColor;
+            btn.style.backgroundColor = currentBalloonColor;
+            btn.onclick = () => {
+                speakWord(word);
+                selectedWords.push(word);
+                renderZones();
+            };
+            wordsZone.appendChild(btn);
+        });
+
+        applyFontStyles();
+    }
+
+    function checkAnswer() {
+        const statusMsg = document.getElementById("status-message");
+        statusMsg.innerHTML = '<span class="status-info">ℹ️ A verificação é automática ao montar a frase!</span>';
+        setTimeout(() => { statusMsg.innerHTML = ""; }, 2000);
+    }
+
+    function revealAnswer() {
+        const pair = phrasePairs[currentPhrasePairIndex];
+        const box = document.getElementById("revealed-answer");
+        if (box.style.display === "block") {
+            box.style.display = "none";
+        } else {
+            box.innerText = `Respostas: ${pair.frases[0].en} | ${pair.frases[1].en}`;
+            box.style.display = "block";
+        }
+    }
+
+    function nextPhrasePair() {
+        currentPhrasePairIndex++;
+        if (currentPhrasePairIndex >= phrasePairs.length) {
+            alert("🎉 Você completou todos os blocos! Voltando ao menu.");
+            showTopicsScreen();
+            return;
+        }
+        // Restaura a visibilidade da área de palavras
+        document.getElementById("words-zone").style.display = "flex";
+        loadPhrasePair();
+    }
+
+    // ============================================================
+    // FUNÇÕES DO MATCH GAME
+    // ============================================================
+    function setMatchMode(mode) {
+        matchMode = mode;
+        document.querySelectorAll('.match-mode-btn').forEach(btn => btn.classList.remove('active'));
+        if (mode === 'translation') {
+            document.getElementById('modeTranslation').classList.add('active');
+        } else {
+            document.getElementById('modeAntonyms').classList.add('active');
+        }
+        resetMatchGame();
+    }
 
     function openMatchGame() {
         document.getElementById('match-screen').classList.add('active');
         document.getElementById('matchBtn').classList.add('active');
+        if (matchMode === 'translation') {
+            document.getElementById('modeTranslation').classList.add('active');
+            document.getElementById('modeAntonyms').classList.remove('active');
+        } else {
+            document.getElementById('modeAntonyms').classList.add('active');
+            document.getElementById('modeTranslation').classList.remove('active');
+        }
+        matchFontSize = parseInt(localStorage.getItem('matchFontSize')) || 18;
+        document.getElementById('matchFontSizeDisplay').textContent = matchFontSize;
         resetMatchGame();
-        setTimeout(() => { 
-            applyTextColor(hslToHex(configSettings.textHue, 100, 50)); 
-            applyBgColor(hslToHex(configSettings.bgHue, 60, 6)); 
-            applyFontStyles(); 
+        setTimeout(() => {
+            const textColor = hslToHex(configSettings.textHue, 100, 55);
+            const balloonColor = hslToHex(configSettings.balloonHue || 0, 60, 18);
+            const bgColor = hslToHex(configSettings.bgHue, 60, 8);
+            applyTextColor(textColor);
+            applyBgColor(bgColor);
+            applyBalloonColor(balloonColor);
         }, 100);
     }
+
     function closeMatchGame() {
         document.getElementById('match-screen').classList.remove('active');
         document.getElementById('matchBtn').classList.remove('active');
-    }
-    function resetMatchGame() {
-        const wordList = Object.keys(dictionary);
-        const numPairs = Math.min(Math.floor(Math.random() * 3) + 2, wordList.length);
-        const shuffledWords = wordList.sort(() => Math.random() - 0.5);
-        const selectedWordsForMatch = shuffledWords.slice(0, numPairs);
-        matchPairs = [];
-        selectedWordsForMatch.forEach(word => {
-            const translation = dictionary[word] || word;
-            const cleanTranslation = translation.split('/')[0].trim();
-            matchPairs.push({ en: word, pt: cleanTranslation, id: word });
+        if (translationTimeout) {
+            clearTimeout(translationTimeout);
+            translationTimeout = null;
+        }
+        document.querySelectorAll('.match-card.showing-translation').forEach(el => {
+            el.classList.remove('showing-translation');
         });
+    }
+
+    function resetMatchGame() {
+        if (translationTimeout) {
+            clearTimeout(translationTimeout);
+            translationTimeout = null;
+        }
+        document.querySelectorAll('.match-card.showing-translation').forEach(el => {
+            el.classList.remove('showing-translation');
+        });
+
+        let sourcePairs = matchMode === 'translation' ? translationPairs : antonymPairs;
+        let shuffled = [...sourcePairs].sort(() => Math.random() - 0.5);
+        let selected = shuffled.slice(0, Math.min(24, shuffled.length));
+        matchPairs = selected;
         matchCards = [];
-        matchPairs.forEach(pair => {
-            matchCards.push({ type: 'en', word: pair.en, pairId: pair.id });
-            matchCards.push({ type: 'pt', word: pair.pt, pairId: pair.id });
+        matchPairs.forEach((pair, idx) => {
+            if (matchMode === 'translation') {
+                matchCards.push({ type: 'pt', word: pair.pt, pairId: idx });
+                matchCards.push({ type: 'en', word: pair.en, pairId: idx });
+            } else {
+                matchCards.push({ type: 'a', word: pair.en, pairId: idx, traducao: pair.traducao });
+                matchCards.push({ type: 'b', word: pair.oposto, pairId: idx, traducao: pair.traducao });
+            }
         });
         matchCards.sort(() => Math.random() - 0.5);
         matchedPairs = 0;
@@ -645,10 +1356,13 @@
         document.getElementById('matchWinMessage').style.display = 'none';
         renderMatchGame();
     }
+
     function renderMatchGame() {
         const grid = document.getElementById('matchGrid');
         grid.innerHTML = '';
-        const currentTextColor = hslToHex(configSettings.textHue, 100, 50);
+        const textColor = hslToHex(configSettings.textHue, 100, 55);
+        const balloonColor = hslToHex(configSettings.balloonHue || 0, 60, 18);
+        
         matchCards.forEach((card, index) => {
             const div = document.createElement('div');
             div.className = 'match-card';
@@ -656,12 +1370,27 @@
             div.dataset.index = index;
             div.dataset.pairId = card.pairId;
             div.dataset.type = card.type;
-            if (!card.matched) { div.style.color = currentTextColor; div.style.borderColor = currentTextColor; }
-            if (card.matched) { div.classList.add('matched'); }
-            div.onclick = () => handleMatchCardClick(index);
+            if (matchMode === 'antonyms') {
+                div.dataset.traducao = card.traducao || '';
+            }
+            div.style.fontSize = matchFontSize + 'px';
+            div.style.backgroundColor = balloonColor;
+            if (!card.matched) {
+                div.style.color = textColor;
+                div.style.borderColor = 'rgba(255,255,255,0.15)';
+            }
+            if (card.matched) {
+                div.classList.add('matched');
+                div.style.color = textColor;
+                div.style.borderColor = '#00ff66';
+                if (matchMode === 'antonyms') {
+                    div.onclick = () => showTranslation(index);
+                }
+            } else {
+                div.onclick = () => handleMatchCardClick(index);
+            }
             grid.appendChild(div);
         });
-        applyFontStyles();
         const totalPairs = matchPairs.length;
         document.getElementById('matchStats').textContent = `Pares: ${matchedPairs} / ${totalPairs}`;
         if (matchedPairs === totalPairs && totalPairs > 0) {
@@ -669,269 +1398,115 @@
             speak("Congratulations! You matched all pairs!");
         }
     }
+
     function handleMatchCardClick(index) {
         if (isProcessingMatch) return;
         const card = matchCards[index];
         if (card.matched) return;
-        if (selectedMatchCard === index) { selectedMatchCard = null; renderMatchGame(); return; }
-        if (selectedMatchCard === null) { selectedMatchCard = index; const grid = document.getElementById('matchGrid'); const elements = grid.children; elements[index].classList.add('selected'); return; }
+        if (selectedMatchCard === index) {
+            selectedMatchCard = null;
+            renderMatchGame();
+            return;
+        }
+        if (selectedMatchCard === null) {
+            selectedMatchCard = index;
+            const grid = document.getElementById('matchGrid');
+            const elements = grid.children;
+            elements[index].classList.add('selected');
+            return;
+        }
         const firstCard = matchCards[selectedMatchCard];
         const secondCard = card;
         if (firstCard.pairId === secondCard.pairId && firstCard.type !== secondCard.type) {
-            firstCard.matched = true; secondCard.matched = true; matchedPairs++; selectedMatchCard = null; isProcessingMatch = false; renderMatchGame();
-            speakWord(firstCard.type === 'en' ? firstCard.word : secondCard.word);
+            firstCard.matched = true;
+            secondCard.matched = true;
+            matchedPairs++;
+            selectedMatchCard = null;
+            isProcessingMatch = false;
+            renderMatchGame();
+            const wordToSpeak = matchMode === 'translation' ? firstCard.word : firstCard.word;
+            speakWord(wordToSpeak);
         } else {
             isProcessingMatch = true;
             const grid = document.getElementById('matchGrid');
             const elements = grid.children;
             elements[selectedMatchCard].classList.add('wrong');
             elements[index].classList.add('wrong');
-            setTimeout(() => { selectedMatchCard = null; isProcessingMatch = false; renderMatchGame(); }, 600);
+            setTimeout(() => {
+                selectedMatchCard = null;
+                isProcessingMatch = false;
+                renderMatchGame();
+            }, 500);
         }
     }
 
-    function renderTopics() {
-        const listContainer = document.getElementById("topics-list");
-        listContainer.innerHTML = "";
-        const mistoBtn = document.createElement("button");
-        mistoBtn.className = "topic-card misto-btn";
-        mistoBtn.innerText = "🔀 MODO MISTO CRÍTICO";
-        mistoBtn.onclick = () => startTopic("MISTO");
-        listContainer.appendChild(mistoBtn);
-        for (let topicName in pdfPhrasesDatabase) {
-            const count = pdfPhrasesDatabase[topicName].length;
-            const btn = document.createElement("button");
-            btn.className = "topic-card";
-            btn.innerText = `${topicName} (${count})`;
-            btn.onclick = () => startTopic(topicName);
-            listContainer.appendChild(btn);
+    // ============================================================
+    // FUNÇÃO PARA MOSTRAR TRADUÇÃO NO MODO ANTÔNIMOS
+    // ============================================================
+    function showTranslation(index) {
+        if (matchMode !== 'antonyms') return;
+        const card = matchCards[index];
+        if (!card.matched) return;
+        
+        const grid = document.getElementById('matchGrid');
+        const elements = grid.children;
+        const el = elements[index];
+        
+        if (el.classList.contains('showing-translation')) return;
+        
+        const originalText = card.word;
+        const traducao = card.traducao || '';
+        
+        el.textContent = traducao;
+        el.classList.add('showing-translation');
+        
+        if (translationTimeout) {
+            clearTimeout(translationTimeout);
+            translationTimeout = null;
         }
+        
+        translationTimeout = setTimeout(() => {
+            el.textContent = originalText;
+            el.classList.remove('showing-translation');
+            translationTimeout = null;
+        }, 3000);
     }
 
-    function toggleDatabaseStats() {
-        const box = document.getElementById("stats-report-box");
-        if (box.style.display === "block") { box.style.display = "none"; return; }
-        let totalPhrases = 0;
-        for (let cat in pdfPhrasesDatabase) { totalPhrases += pdfPhrasesDatabase[cat].length; }
-        let totalWords = Object.keys(dictionary).length;
-        box.innerHTML = `
-            <p style='color:#00ff22; margin-bottom:6px;'>📂 LAUDO CENTRAL DE SISTEMA:</p>
-            <p>Total de Frases: <span style='color:#ffffff; font-size:16px;'>${totalPhrases}</span></p>
-            <p>Total de Palavras: <span style='color:#ffffff; font-size:16px;'>${totalWords}</span></p>
-            <p style='margin-top:6px; color:#00aa33;'>✅ Sistema Ágil & Otimizado Ativo!</p>
-        `;
-        box.style.display = "block";
-    }
-
-    function showTopicsScreen() {
-        selectedTopic = "";
-        document.getElementById("topics-screen").classList.add("active");
-        document.getElementById("game-screen").classList.remove("active");
-        renderTopics();
-    }
-
-    function startTopic(topicName) {
-        selectedTopic = topicName;
-        let sourcePhrases = [];
-        if (topicName === "MISTO") {
-            for (let cat in pdfPhrasesDatabase) { sourcePhrases = sourcePhrases.concat(pdfPhrasesDatabase[cat]); }
-        } else {
-            sourcePhrases = pdfPhrasesDatabase[topicName] || [];
-        }
-        playlistPhrases = [...sourcePhrases];
-        if (playlistPhrases.length === 0) { alert("Nenhuma frase encontrada!"); return; }
-        playlistPhrases.sort(() => Math.random() - 0.5);
-        currentPhraseIndex = 0;
-        document.getElementById("topics-screen").classList.remove("active");
-        document.getElementById("game-screen").classList.add("active");
-        loadPhrase();
-    }
-
-    function loadPhrase() {
-        if (currentPhraseIndex >= playlistPhrases.length) {
-            alert("🎉 Fim do bloco! Retornando ao painel central.");
-            showTopicsScreen();
-            return;
-        }
-        selectedWords = [];
-        pescaMode = false;
-        document.getElementById("btn-pesca").classList.remove("active");
-        document.getElementById("status-message").innerHTML = "";
-        document.getElementById("revealed-answer").style.display = "none";
-        document.getElementById("revealed-answer").innerText = "";
-        document.getElementById("check-btn").style.display = "block";
-        document.getElementById("next-btn").style.display = "none";
-        document.getElementById("construction-zone").style.display = "flex";
-        document.getElementById("success-text-box").style.display = "none";
-        const currentPhrase = playlistPhrases[currentPhraseIndex];
-        document.getElementById("phrase-pt").innerText = currentPhrase.pt;
-        document.getElementById("track-number").innerText = `Frase ${currentPhraseIndex + 1} de ${playlistPhrases.length}:`;
-        renderZones();
-    }
-
-    function getCleanWordsList(phraseObj) {
-        let cleanEn = phraseObj.en.replace(/[.,\/\/#!$%\^&\*;:{}=\-_`~?]/g, "");
-        let rawWords = cleanEn.split(" ").filter(w => w.trim() !== "");
-        let pool = [...rawWords];
-        if (phraseObj.extra) { phraseObj.extra.forEach(ex => { if (ex.trim() !== "") pool.push(ex); }); }
-        let uniquePool = [];
-        pool.forEach(w => {
-            if(!uniquePool.map(x => x.toLowerCase()).includes(w.toLowerCase())){ uniquePool.push(w); }
-        });
-        const backupDistractors = ["there", "ready", "always", "together", "nothing", "day", "night", "more", "less", "here", "now", "then", "from", "into", "about", "after", "before", "between", "without", "through", "under", "over", "never", "ever", "just", "only"];
-        while(uniquePool.length < (rawWords.length * 2) + 4) {
-            let randW = backupDistractors[Math.floor(Math.random() * backupDistractors.length)];
-            if(!uniquePool.map(x => x.toLowerCase()).includes(randW.toLowerCase())) {
-                uniquePool.push(randW);
-            }
-        }
-        return uniquePool.sort(() => Math.random() - 0.5);
-    }
-
-    function renderZones() {
-        const constructZone = document.getElementById("construction-zone");
-        constructZone.innerHTML = "";
-        const currentTextColor = hslToHex(configSettings.textHue, 100, 50);
-        selectedWords.forEach((word, index) => {
-            const balloon = document.createElement("span");
-            balloon.className = "word-balloon";
-            balloon.innerText = word;
-            balloon.draggable = true;
-            balloon.dataset.index = index;
-            balloon.style.color = currentTextColor;
-            balloon.onclick = (e) => {
-                if (balloon.classList.contains('dragged-active')) return;
-                speakWord(word);
-                if (!balloon.classList.contains('dragging')) { selectedWords.splice(index, 1); renderZones(); }
-            };
-            balloon.addEventListener('dragstart', (e) => { draggedIndex = index; balloon.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
-            balloon.addEventListener('dragend', () => { balloon.classList.remove('dragging'); draggedIndex = null; renderZones(); });
-            balloon.addEventListener('pointerdown', (e) => { balloon.setPointerCapture(e.pointerId); draggedIndex = index; balloon.classList.add('dragging'); balloon.classList.add('dragged-active'); });
-            balloon.addEventListener('pointermove', (e) => {
-                if (draggedIndex === null) return;
-                const targetEl = document.elementFromPoint(e.clientX, e.clientY);
-                if (targetEl && targetEl.classList.contains('word-balloon') && targetEl.parentNode === constructZone) {
-                    const targetIndex = parseInt(targetEl.dataset.index);
-                    if (targetIndex !== draggedIndex && !isNaN(targetIndex)) {
-                        const draggedWord = selectedWords.splice(draggedIndex, 1)[0];
-                        selectedWords.splice(targetIndex, 0, draggedWord);
-                        draggedIndex = targetIndex;
-                        renderZonesSilently(constructZone);
-                    }
-                }
-            });
-            balloon.addEventListener('pointerup', (e) => {
-                if (draggedIndex !== null) {
-                    balloon.releasePointerCapture(e.pointerId);
-                    draggedIndex = null;
-                    setTimeout(() => { balloon.classList.remove('dragged-active'); }, 50);
-                    renderZones();
-                }
-            });
-            constructZone.appendChild(balloon);
-        });
-        const currentPhrase = playlistPhrases[currentPhraseIndex];
-        const poolWords = getCleanWordsList(currentPhrase);
-        const wordsZone = document.getElementById("words-zone");
-        wordsZone.innerHTML = "";
-        poolWords.forEach(word => {
-            const isSelected = selectedWords.map(w => w.toLowerCase()).includes(word.toLowerCase());
-            if (!isSelected) {
-                const btn = document.createElement("span");
-                btn.className = "word-balloon";
-                btn.innerText = word;
-                btn.style.color = currentTextColor;
-                btn.onclick = () => { speakWord(word); selectedWords.push(word); renderZones(); if(pescaMode) { togglePescaMode(); } };
-                if (pescaMode) {
-                    btn.classList.add("pescado");
-                    btn.style.color = '#ffff00';
-                    let lower = word.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "");
-                    if (dictionary[lower]) { btn.innerText = `${word} (${dictionary[lower]})`; }
-                }
-                wordsZone.appendChild(btn);
-            }
-        });
-        applyFontStyles();
-    }
-
-    function renderZonesSilently(container) {
-        const children = Array.from(container.children);
-        const currentTextColor = hslToHex(configSettings.textHue, 100, 50);
-        children.forEach((child) => {
-            const idx = parseInt(child.dataset.index);
-            if (idx !== draggedIndex) {
-                child.innerText = selectedWords[idx];
-                child.style.color = currentTextColor;
-            }
-        });
-        children.forEach((child, index) => {
-            child.dataset.index = index;
-            if (index === draggedIndex) { child.innerText = selectedWords[index]; }
-        });
-        applyFontStyles();
-    }
-
-    function setupDragAndDropEvents() {
-        const constructZone = document.getElementById("construction-zone");
-        constructZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            const targetEl = e.target;
-            if (targetEl && targetEl.classList.contains('word-balloon') && targetEl.parentNode === constructZone) {
-                const targetIndex = parseInt(targetEl.dataset.index);
-                if (targetIndex !== draggedIndex && !isNaN(targetIndex) && draggedIndex !== null) {
-                    const draggedWord = selectedWords.splice(draggedIndex, 1)[0];
-                    selectedWords.splice(targetIndex, 0, draggedWord);
-                    draggedIndex = targetIndex;
-                    renderZonesSilently(constructZone);
-                }
-            }
+    // ============================================================
+    // FUNÇÃO PARA AJUSTAR O TAMANHO DA FONTE NO MATCH GAME (CORRIGIDA)
+    // ============================================================
+    function adjustMatchFontSize(delta) {
+        matchFontSize = Math.max(10, Math.min(40, matchFontSize + delta));
+        document.getElementById('matchFontSizeDisplay').textContent = matchFontSize;
+        localStorage.setItem('matchFontSize', matchFontSize);
+        
+        // Aplica o novo tamanho a todos os cards
+        document.querySelectorAll('.match-card').forEach(el => {
+            el.style.fontSize = matchFontSize + 'px';
         });
     }
 
-    function togglePescaMode() {
-        pescaMode = !pescaMode;
-        const btn = document.getElementById("btn-pesca");
-        if (pescaMode) { btn.classList.add("active"); } else { btn.classList.remove("active"); }
-        renderZones();
-    }
-
-    function checkAnswer() {
-        const currentPhrase = playlistPhrases[currentPhraseIndex];
-        const currentAnswer = selectedWords.join(" ").trim().toLowerCase();
-        const cleanTarget = currentPhrase.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g,"").trim().toLowerCase();
-        const statusMsg = document.getElementById("status-message");
-        if (currentAnswer === cleanTarget) {
-            statusMsg.innerHTML = '<span class="status-correct">✔ Conectado à Matrix! Ordem perfeita!</span>';
-            document.getElementById("check-btn").style.display = "none";
-            document.getElementById("next-btn").style.display = "block";
-            const constructionZone = document.getElementById("construction-zone");
-            const successTextBox = document.getElementById("success-text-box");
-            constructionZone.style.display = "none";
-            successTextBox.innerText = currentPhrase.en;
-            successTextBox.style.display = "flex";
-            speak(currentPhrase.en);
-        } else {
-            statusMsg.innerHTML = '<span class="status-wrong">❌ Erro no sistema! Tente outra sequência.</span>';
-        }
-    }
-
-    function revealAnswer() {
-        const currentPhrase = playlistPhrases[currentPhraseIndex];
-        const box = document.getElementById("revealed-answer");
-        if(box.style.display === "block") { box.style.display = "none"; } else { box.innerText = `Resposta Correta: ${currentPhrase.en}`; box.style.display = "block"; }
-    }
-
-    function nextPhrase() { currentPhraseIndex++; loadPhrase(); }
-
+    // ============================================================
+    // INICIALIZAÇÃO
+    // ============================================================
     function init() {
-        requestAudioPermissions(); // Solicita permissão de áudio ao iniciar
+        requestAudioPermissions();
         renderTopics();
         showTopicsScreen();
-        setupDragAndDropEvents();
-        applyTextColor(hslToHex(configSettings.textHue, 100, 50));
-        applyBgColor(hslToHex(configSettings.bgHue, 60, 6));
-        applyMenuColor(hslToHex(configSettings.menuHue, 100, 50));
+        
+        applyTextColor(hslToHex(configSettings.textHue, 100, 55));
+        applyBgColor(hslToHex(configSettings.bgHue, 60, 8));
+        applyBalloonColor(hslToHex(configSettings.balloonHue || 0, 60, 18));
         applyFontStyles();
+
+        document.getElementById('modeTranslation').classList.add('active');
+        matchMode = 'translation';
+        
+        matchFontSize = parseInt(localStorage.getItem('matchFontSize')) || 18;
+        document.getElementById('matchFontSizeDisplay').textContent = matchFontSize;
+        
+        // Configura o detector de duplo toque
+        setupDoubleTap();
     }
 
     init();
