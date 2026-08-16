@@ -491,16 +491,23 @@
             z-index: 2;
         }
         .match-word.matched { 
-            opacity: 0.3;
-            transform: scale(0.88);
-            pointer-events: none;
+            opacity: 0.7;
+            transform: scale(0.92);
+            pointer-events: auto;
             border-color: #00ff66;
+            cursor: pointer;
         }
         .match-word.matched::after { 
-            content: "✓"; 
-            margin-left: 4px;
+            content: " ✓"; 
             font-size: clamp(10px, 1.5vh, 16px);
             color: #00ff66;
+        }
+        .match-word.matched.showing-translation {
+            color: #ffaa00 !important;
+            border-color: #ffaa00 !important;
+            box-shadow: 0 0 40px rgba(255, 170, 0, 0.3) !important;
+            transform: scale(1.02);
+            transition: all 0.3s ease;
         }
         .match-word.wrong { 
             animation: wrongShake 0.4s ease; 
@@ -1031,6 +1038,7 @@
     let matchedPairsCount = 0;
     let totalMatchPairs = 0;
     let isProcessingMatch = false;
+    let translationTimeout = null;
 
     let availableVoices = [];
     let selectedVoiceGender = 'female';
@@ -1170,7 +1178,7 @@
     }
 
     // ============================================================
-    // FUNÇÕES DE COR - REFEITAS PARA SINCRONIZAR COM O MATCH GAME
+    // FUNÇÕES DE COR
     // ============================================================
     function hslToHex(h, s, l) {
         l /= 100;
@@ -1191,15 +1199,12 @@
     }
 
     function applyBalloonColor(color) {
-        // Aplica no balão do Match Game
         document.querySelectorAll('.match-balloon').forEach(el => {
             el.style.backgroundColor = color;
         });
-        // Aplica nos balões do jogo de frases
         document.querySelectorAll('.word-balloon').forEach(el => {
             el.style.backgroundColor = color;
         });
-        // Aplica nas palavras do Match Game
         document.querySelectorAll('.match-word').forEach(el => {
             el.style.backgroundColor = color;
         });
@@ -1228,14 +1233,12 @@
     }
 
     function applyTextColor(color) {
-        // Aplica nas palavras do Match Game
         document.querySelectorAll('.match-word:not(.matched)').forEach(el => {
             el.style.color = color;
         });
         document.querySelectorAll('.match-word.matched').forEach(el => {
             el.style.color = color;
         });
-        // Aplica nos balões do jogo de frases
         document.querySelectorAll('.word-balloon').forEach(el => {
             el.style.color = color;
         });
@@ -1243,7 +1246,7 @@
     }
 
     // ============================================================
-    // FUNÇÕES DE FONTE - REFEITAS PARA SINCRONIZAR COM O MATCH GAME
+    // FUNÇÕES DE FONTE - AGORA O MATCH GAME ACOMPANHA
     // ============================================================
     function adjustFontSize(delta) {
         let newSize = configSettings.fontSize + delta;
@@ -1270,13 +1273,11 @@
         const size = `${configSettings.fontSize}px`;
         const family = configSettings.fontFamily;
         
-        // Aplica nos balões do jogo de frases
         document.querySelectorAll('.word-balloon').forEach(el => {
             el.style.fontSize = size;
             el.style.fontFamily = family;
         });
         
-        // Aplica nas palavras do Match Game
         document.querySelectorAll('.match-word').forEach(el => {
             el.style.fontSize = size;
             el.style.fontFamily = family;
@@ -1671,37 +1672,47 @@
         document.getElementById('match-screen').classList.remove('active');
         document.getElementById('matchBtn').classList.remove('active');
         document.getElementById('matchWinMessage').style.display = 'none';
+        if (translationTimeout) {
+            clearTimeout(translationTimeout);
+            translationTimeout = null;
+        }
+        document.querySelectorAll('.match-word.showing-translation').forEach(el => {
+            el.classList.remove('showing-translation');
+        });
         selectedMatchWord = null;
         isProcessingMatch = false;
     }
 
     function resetMatchGame() {
         document.getElementById('matchWinMessage').style.display = 'none';
+        if (translationTimeout) {
+            clearTimeout(translationTimeout);
+            translationTimeout = null;
+        }
+        document.querySelectorAll('.match-word.showing-translation').forEach(el => {
+            el.classList.remove('showing-translation');
+        });
         selectedMatchWord = null;
         isProcessingMatch = false;
         matchedPairsCount = 0;
         
-        // Monta as palavras baseado no modo
         let sourcePairs = matchMode === 'translation' ? translationPairs : antonymPairs;
         let shuffled = [...sourcePairs].sort(() => Math.random() - 0.5);
         matchPairs = shuffled;
         totalMatchPairs = matchPairs.length;
         
-        // Cria a lista de palavras com seus pares
         matchWords = [];
         matchPairs.forEach((pair, idx) => {
             if (matchMode === 'translation') {
-                matchWords.push({ word: pair.pt, pairId: idx, matched: false });
-                matchWords.push({ word: pair.en, pairId: idx, matched: false });
+                matchWords.push({ word: pair.pt, pairId: idx, matched: false, traducao: null });
+                matchWords.push({ word: pair.en, pairId: idx, matched: false, traducao: null });
             } else {
-                matchWords.push({ word: pair.en, pairId: idx, matched: false });
-                matchWords.push({ word: pair.oposto, pairId: idx, matched: false });
+                matchWords.push({ word: pair.en, pairId: idx, matched: false, traducao: pair.traducao_en });
+                matchWords.push({ word: pair.oposto, pairId: idx, matched: false, traducao: pair.traducao_oposto });
             }
         });
         
-        // Embaralha as palavras
         matchWords.sort(() => Math.random() - 0.5);
-        
         renderMatchGame();
     }
 
@@ -1714,7 +1725,6 @@
         const fontSize = configSettings.fontSize + 'px';
         const fontFamily = configSettings.fontFamily;
         
-        // Aplica a cor do balão
         balloon.style.backgroundColor = balloonColor;
         balloon.style.borderColor = 'rgba(255,255,255,0.1)';
         
@@ -1732,24 +1742,26 @@
             
             if (!item.matched) {
                 wordEl.onclick = () => handleMatchWordClick(index);
+            } else {
+                // Palavra já combinada - se for antônimos, pode mostrar tradução ao tocar
+                if (matchMode === 'antonyms' && item.traducao) {
+                    wordEl.onclick = () => showAntonymTranslation(index);
+                }
             }
             
             balloon.appendChild(wordEl);
         });
         
-        // Verifica se todos os pares foram encontrados
         const allMatched = matchWords.every(item => item.matched === true);
         if (allMatched && totalMatchPairs > 0) {
             document.getElementById('matchWinMessage').style.display = 'block';
             speak("Congratulations! You matched all pairs!");
-            // Reseta após 3 segundos
             setTimeout(() => {
                 document.getElementById('matchWinMessage').style.display = 'none';
                 resetMatchGame();
             }, 3000);
         }
         
-        // Atualiza o contador
         const matchedCount = matchWords.filter(item => item.matched).length / 2;
         document.getElementById('matchStats').textContent = `Pares: ${matchedCount} / ${totalMatchPairs}`;
     }
@@ -1759,21 +1771,17 @@
         const item = matchWords[index];
         if (item.matched) return;
         
-        // Se já tem uma palavra selecionada
         if (selectedMatchWord !== null) {
             const firstItem = matchWords[selectedMatchWord];
             const firstEl = document.querySelectorAll('.match-word')[selectedMatchWord];
             
-            // Se clicou na mesma palavra, desmarca
             if (selectedMatchWord === index) {
                 firstEl.classList.remove('selected');
                 selectedMatchWord = null;
                 return;
             }
             
-            // Verifica se formam um par
             if (firstItem.pairId === item.pairId && firstItem.word !== item.word) {
-                // Par encontrado!
                 firstItem.matched = true;
                 item.matched = true;
                 matchedPairsCount++;
@@ -1782,7 +1790,6 @@
                 renderMatchGame();
                 speakWord(firstItem.word + " " + item.word);
             } else {
-                // Par errado
                 isProcessingMatch = true;
                 const secondEl = document.querySelectorAll('.match-word')[index];
                 firstEl.classList.add('wrong');
@@ -1797,11 +1804,41 @@
                 }, 500);
             }
         } else {
-            // Seleciona a primeira palavra
             selectedMatchWord = index;
             const el = document.querySelectorAll('.match-word')[index];
             el.classList.add('selected');
         }
+    }
+
+    // ============================================================
+    // FUNÇÃO PARA MOSTRAR TRADUÇÃO NO MODO ANTÔNIMOS (APENAS A PALAVRA)
+    // ============================================================
+    function showAntonymTranslation(index) {
+        if (matchMode !== 'antonyms') return;
+        const item = matchWords[index];
+        if (!item.matched || !item.traducao) return;
+        
+        const allWords = document.querySelectorAll('.match-word');
+        const el = allWords[index];
+        
+        if (el.classList.contains('showing-translation')) return;
+        
+        const originalText = item.word;
+        const traducao = item.traducao;
+        
+        el.textContent = traducao;
+        el.classList.add('showing-translation');
+        
+        if (translationTimeout) {
+            clearTimeout(translationTimeout);
+            translationTimeout = null;
+        }
+        
+        translationTimeout = setTimeout(() => {
+            el.textContent = originalText;
+            el.classList.remove('showing-translation');
+            translationTimeout = null;
+        }, 3000);
     }
 
     // ============================================================
