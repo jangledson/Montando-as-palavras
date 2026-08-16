@@ -20,7 +20,6 @@
             transition: background-color 0.4s ease; 
         }
         
-        /* ===== ESTRUTURA DO APLICATIVO - COR FIXA BRANCA ===== */
         .container { 
             width: 100%; 
             height: 100%; 
@@ -206,7 +205,6 @@
             align-content: flex-start; 
         }
         
-        /* ===== BALÕES ===== */
         .word-balloon { 
             padding: clamp(4px, 0.6vh, 8px) clamp(6px, 1vw, 14px); 
             font-size: clamp(11px, 1.8vh, 16px); 
@@ -358,7 +356,6 @@
         }
         .bottom-btn-wrapper { display: flex; flex-direction: column; align-items: center; }
         
-        /* ===== BOTÃO VOLTAR OCULTO - CANTO INFERIOR ESQUERDO ===== */
         .back-link-hidden {
             position: fixed;
             bottom: clamp(8px, 2vh, 20px);
@@ -386,7 +383,6 @@
         }
         .back-link-hidden:active { transform: scale(0.95); }
         
-        /* ===== MATCH GAME ===== */
         #match-screen { 
             display: none; 
             flex-direction: column; 
@@ -438,7 +434,6 @@
             align-content: stretch; 
         }
         
-        /* ===== CARDS DO MATCH GAME ===== */
         .match-card { 
             background: #1a1a1a; 
             border: 2px solid #2a2a2a; 
@@ -483,7 +478,6 @@
         .match-card.matched { animation: matchPop 0.5s ease; }
         .match-card.showing-translation { color: #ffaa00 !important; border-color: #ffaa00 !important; box-shadow: 0 0 40px rgba(255, 170, 0, 0.3) !important; transform: scale(1.02); transition: all 0.3s ease; }
         
-        /* ===== CONTROLES INFERIORES DO MATCH - BOTÕES MAIORES ===== */
         .match-bottom-controls { 
             display: flex; 
             justify-content: center; 
@@ -555,7 +549,6 @@
         .btn-match-close { background: rgba(255,255,255,0.08); color: #ffffff; border: 2px solid rgba(255,255,255,0.15) !important; }
         .btn-match-close:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3) !important; }
         
-        /* ===== CONFIG MODAL - TELA TODA ===== */
         .config-modal { 
             display: none; 
             position: fixed; 
@@ -760,49 +753,16 @@
         .game-scrollable-content::-webkit-scrollbar-track, #topics-screen::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
         .game-scrollable-content::-webkit-scrollbar-thumb, #topics-screen::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
         
-        /* ===== RESPONSIVIDADE ESPECÍFICA PARA TABLET ===== */
         @media (min-width: 768px) {
-            .match-grid { 
-                gap: clamp(6px, 1vh, 12px); 
-                max-height: 85vh; 
-            }
-            .match-card { 
-                min-height: clamp(50px, 8vh, 80px); 
-                max-height: clamp(70px, 12vh, 120px);
-                font-size: clamp(18px, 3.5vh, 32px) !important;
-                border-radius: clamp(12px, 2vh, 20px);
-                padding: clamp(8px, 1.5vh, 16px);
-            }
-            .match-bottom-controls {
-                gap: clamp(10px, 2vw, 20px);
-                padding: clamp(6px, 1vh, 14px);
-            }
-            .match-mode-btn {
-                padding: clamp(8px, 1.5vh, 16px) clamp(16px, 3vw, 32px);
-                font-size: clamp(14px, 2.5vh, 22px);
-                border-radius: clamp(16px, 3vh, 28px);
-            }
-            .match-font-btn {
-                width: clamp(36px, 6vh, 56px);
-                height: clamp(36px, 6vh, 56px);
-                font-size: clamp(18px, 3vh, 28px);
-            }
-            .match-font-size-display {
-                font-size: clamp(14px, 2.5vh, 22px);
-                min-width: clamp(36px, 5vw, 60px);
-            }
-            .match-controls-right button {
-                padding: clamp(8px, 1.5vh, 16px) clamp(16px, 3vw, 32px);
-                font-size: clamp(14px, 2.5vh, 22px);
-                border-radius: clamp(16px, 3vh, 28px);
-            }
-            .match-win-message {
-                font-size: clamp(18px, 3vh, 30px);
-            }
-            .match-card.matched::after {
-                font-size: clamp(14px, 2.5vh, 24px);
-                right: 8px;
-            }
+            .match-grid { gap: clamp(6px, 1vh, 12px); max-height: 85vh; }
+            .match-card { min-height: clamp(50px, 8vh, 80px); max-height: clamp(70px, 12vh, 120px); font-size: clamp(18px, 3.5vh, 32px) !important; border-radius: clamp(12px, 2vh, 20px); padding: clamp(8px, 1.5vh, 16px); }
+            .match-bottom-controls { gap: clamp(10px, 2vw, 20px); padding: clamp(6px, 1vh, 14px); }
+            .match-mode-btn { padding: clamp(8px, 1.5vh, 16px) clamp(16px, 3vw, 32px); font-size: clamp(14px, 2.5vh, 22px); border-radius: clamp(16px, 3vh, 28px); }
+            .match-font-btn { width: clamp(36px, 6vh, 56px); height: clamp(36px, 6vh, 56px); font-size: clamp(18px, 3vh, 28px); }
+            .match-font-size-display { font-size: clamp(14px, 2.5vh, 22px); min-width: clamp(36px, 5vw, 60px); }
+            .match-controls-right button { padding: clamp(8px, 1.5vh, 16px) clamp(16px, 3vw, 32px); font-size: clamp(14px, 2.5vh, 22px); border-radius: clamp(16px, 3vh, 28px); }
+            .match-win-message { font-size: clamp(18px, 3vh, 30px); }
+            .match-card.matched::after { font-size: clamp(14px, 2.5vh, 24px); right: 8px; }
         }
         
         @media (max-width: 400px) {
@@ -876,10 +836,8 @@
     </div>
 </div>
 
-<!-- ===== BOTÃO VOLTAR OCULTO - CANTO INFERIOR ESQUERDO ===== -->
 <div class="back-link-hidden" id="backLinkHidden" onclick="showTopicsScreen()">⬅ Voltar</div>
 
-<!-- ===== MATCH GAME ===== -->
 <div id="match-screen">
     <div class="match-stats" id="matchStats"></div>
     <div id="matchWinMessage" class="match-win-message">🎉 PARABÉNS! Você combinou todas! 🎉</div>
@@ -903,7 +861,6 @@
     </div>
 </div>
 
-<!-- ===== CONFIG MODAL - TELA TODA ===== -->
 <div class="config-modal" id="configModal">
     <div class="config-modal-content">
         <button class="config-modal-close" onclick="toggleConfigModal()">✕</button>
@@ -964,7 +921,7 @@
 
 <script>
     // ============================================================
-    // BANCO DE DADOS DE FRASES
+    // BANCO DE DADOS DE FRASES - AGORA COM 4 BLOCOS (8 FRASES)
     // ============================================================
     const phraseDatabase = [
         {
@@ -983,6 +940,13 @@
             frases: [
                 { en: "The cat is black.", pt: "O gato é preto." },
                 { en: "The dog is white.", pt: "O cachorro é branco." }
+            ]
+        },
+        // NOVO BLOCO 4 PARA TESTE
+        {
+            frases: [
+                { en: "The sky is blue.", pt: "O céu é azul." },
+                { en: "The grass is green.", pt: "A grama é verde." }
             ]
         }
     ];
@@ -1017,31 +981,34 @@
         { pt: "velho", en: "old" }
     ];
 
+    // ============================================================
+    // BANCO DE DADOS DE ANTÔNIMOS - CORRIGIDO COM TRADUÇÃO INDIVIDUAL
+    // ============================================================
     const antonymPairs = [
-        { en: "hot", oposto: "cold", traducao: "quente" },
-        { en: "big", oposto: "small", traducao: "grande" },
-        { en: "fast", oposto: "slow", traducao: "rápido" },
-        { en: "happy", oposto: "sad", traducao: "feliz" },
-        { en: "strong", oposto: "weak", traducao: "forte" },
-        { en: "tall", oposto: "short", traducao: "alto" },
-        { en: "fat", oposto: "thin", traducao: "gordo" },
-        { en: "old", oposto: "new", traducao: "velho" },
-        { en: "light", oposto: "dark", traducao: "claro" },
-        { en: "clean", oposto: "dirty", traducao: "limpo" },
-        { en: "full", oposto: "empty", traducao: "cheio" },
-        { en: "hard", oposto: "soft", traducao: "duro" },
-        { en: "dry", oposto: "wet", traducao: "seco" },
-        { en: "sweet", oposto: "bitter", traducao: "doce" },
-        { en: "rich", oposto: "poor", traducao: "rico" },
-        { en: "beautiful", oposto: "ugly", traducao: "bonito" },
-        { en: "smart", oposto: "dumb", traducao: "inteligente" },
-        { en: "brave", oposto: "coward", traducao: "corajoso" },
-        { en: "kind", oposto: "cruel", traducao: "gentil" },
-        { en: "young", oposto: "old", traducao: "jovem" },
-        { en: "wide", oposto: "narrow", traducao: "largo" },
-        { en: "deep", oposto: "shallow", traducao: "fundo" },
-        { en: "loud", oposto: "quiet", traducao: "barulhento" },
-        { en: "rough", oposto: "smooth", traducao: "áspero" }
+        { en: "hot", oposto: "cold", traducao_en: "quente", traducao_oposto: "frio" },
+        { en: "big", oposto: "small", traducao_en: "grande", traducao_oposto: "pequeno" },
+        { en: "fast", oposto: "slow", traducao_en: "rápido", traducao_oposto: "lento" },
+        { en: "happy", oposto: "sad", traducao_en: "feliz", traducao_oposto: "triste" },
+        { en: "strong", oposto: "weak", traducao_en: "forte", traducao_oposto: "fraco" },
+        { en: "tall", oposto: "short", traducao_en: "alto", traducao_oposto: "baixo" },
+        { en: "fat", oposto: "thin", traducao_en: "gordo", traducao_oposto: "magro" },
+        { en: "old", oposto: "new", traducao_en: "velho", traducao_oposto: "novo" },
+        { en: "light", oposto: "dark", traducao_en: "claro", traducao_oposto: "escuro" },
+        { en: "clean", oposto: "dirty", traducao_en: "limpo", traducao_oposto: "sujo" },
+        { en: "full", oposto: "empty", traducao_en: "cheio", traducao_oposto: "vazio" },
+        { en: "hard", oposto: "soft", traducao_en: "duro", traducao_oposto: "mole" },
+        { en: "dry", oposto: "wet", traducao_en: "seco", traducao_oposto: "molhado" },
+        { en: "sweet", oposto: "bitter", traducao_en: "doce", traducao_oposto: "amargo" },
+        { en: "rich", oposto: "poor", traducao_en: "rico", traducao_oposto: "pobre" },
+        { en: "beautiful", oposto: "ugly", traducao_en: "bonito", traducao_oposto: "feio" },
+        { en: "smart", oposto: "dumb", traducao_en: "inteligente", traducao_oposto: "burro" },
+        { en: "brave", oposto: "coward", traducao_en: "corajoso", traducao_oposto: "covarde" },
+        { en: "kind", oposto: "cruel", traducao_en: "gentil", traducao_oposto: "cruel" },
+        { en: "young", oposto: "old", traducao_en: "jovem", traducao_oposto: "velho" },
+        { en: "wide", oposto: "narrow", traducao_en: "largo", traducao_oposto: "estreito" },
+        { en: "deep", oposto: "shallow", traducao_en: "fundo", traducao_oposto: "raso" },
+        { en: "loud", oposto: "quiet", traducao_en: "barulhento", traducao_oposto: "silencioso" },
+        { en: "rough", oposto: "smooth", traducao_en: "áspero", traducao_oposto: "liso" }
     ];
 
     // ============================================================
@@ -1316,7 +1283,7 @@
     }
 
     // ============================================================
-    // FUNÇÕES DA TELA DE CONFIGURAÇÃO (TELA TODA)
+    // FUNÇÕES DA TELA DE CONFIGURAÇÃO
     // ============================================================
     function toggleConfigModal() {
         const modal = document.getElementById('configModal');
@@ -1499,7 +1466,6 @@
         const currentPhrase = pair.frases[currentPhraseIndex];
         const targetWords = currentPhrase.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
 
-        // Palavras selecionadas na área de construção
         selectedWords.forEach((word, index) => {
             const balloon = document.createElement("span");
             balloon.className = "word-balloon";
@@ -1526,18 +1492,15 @@
             constructZone.appendChild(balloon);
         });
 
-        // VERIFICAÇÃO CORRIGIDA - Compara as palavras selecionadas com as palavras alvo
         const selectedWordsClean = selectedWords.map(w => w.toLowerCase().trim());
         const targetWordsClean = targetWords.map(w => w.toLowerCase().trim());
         
-        // Verifica se todas as palavras alvo estão selecionadas E na mesma ordem
         const isPhraseComplete = selectedWordsClean.length === targetWordsClean.length && 
                                  selectedWordsClean.every((w, i) => w === targetWordsClean[i]);
 
         if (isPhraseComplete && !phraseCompleted) {
             phraseCompleted = true;
             if (currentPhraseIndex === 0) {
-                // Frase 1 completa
                 document.getElementById("phrase-pt-2").classList.remove("phrase-hidden");
                 document.getElementById("phrase-pt-2").classList.add("revealed");
                 document.getElementById("track-number").innerText = `Bloco ${currentPhrasePairIndex + 1} - Frase 2:`;
@@ -1547,7 +1510,6 @@
                 renderZones();
                 return;
             } else {
-                // Frase 2 completa - BLOCO FINALIZADO!
                 allCompleted = true;
                 document.getElementById("status-message").innerHTML = `<span class="status-correct">🎉 PARABÉNS! Bloco completo!</span>`;
                 document.getElementById("construction-zone").classList.add("completed");
@@ -1564,17 +1526,12 @@
             }
         }
 
-        // Se não completou, mostra as palavras disponíveis
         wordsZone.style.display = "flex";
         wordsZone.innerHTML = "";
         
-        // Pega todas as palavras do par
         const allWords = getWordsForPair();
-        
-        // Palavras que ainda não foram selecionadas
         let availableWords = allWords.filter(w => !selectedWords.includes(w));
         
-        // Se já completou a frase 1 (mas não a 2), filtra apenas palavras da frase 2
         if (phraseCompleted && currentPhraseIndex === 1) {
             const secondPhrase = pair.frases[1].en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
             availableWords = availableWords.filter(w => secondPhrase.includes(w));
@@ -1693,8 +1650,9 @@
                 matchCards.push({ type: 'pt', word: pair.pt, pairId: idx });
                 matchCards.push({ type: 'en', word: pair.en, pairId: idx });
             } else {
-                matchCards.push({ type: 'a', word: pair.en, pairId: idx, traducao: pair.traducao });
-                matchCards.push({ type: 'b', word: pair.oposto, pairId: idx, traducao: pair.traducao });
+                // Modo Antônimos - cada palavra tem sua própria tradução
+                matchCards.push({ type: 'a', word: pair.en, pairId: idx, traducao: pair.traducao_en });
+                matchCards.push({ type: 'b', word: pair.oposto, pairId: idx, traducao: pair.traducao_oposto });
             }
         });
         matchCards.sort(() => Math.random() - 0.5);
@@ -1789,7 +1747,7 @@
     }
 
     // ============================================================
-    // FUNÇÃO PARA MOSTRAR TRADUÇÃO NO MODO ANTÔNIMOS
+    // FUNÇÃO PARA MOSTRAR TRADUÇÃO NO MODO ANTÔNIMOS (CORRIGIDA)
     // ============================================================
     function showTranslation(index) {
         if (matchMode !== 'antonyms') return;
@@ -1805,6 +1763,7 @@
         const originalText = card.word;
         const traducao = card.traducao || '';
         
+        // Mostra APENAS a tradução da palavra específica
         el.textContent = traducao;
         el.classList.add('showing-translation');
         
