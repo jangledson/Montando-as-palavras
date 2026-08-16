@@ -9,54 +9,209 @@
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #000000; color: #00ff66; user-select: none; overflow: hidden; transition: background-color 0.4s ease; }
+        html, body { 
+            height: 100%; 
+            width: 100%; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background: #000000; 
+            color: #00ff66; 
+            user-select: none; 
+            overflow: hidden; 
+            transition: background-color 0.4s ease; 
+        }
         
         /* ===== ESTRUTURA DO APLICATIVO - COR FIXA BRANCA ===== */
-        .container { width: 100%; height: 100%; padding: 10px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; background: #000000; transition: background-color 0.4s ease; }
+        .container { 
+            width: 100%; 
+            height: 100%; 
+            padding: clamp(6px, 1.5vh, 14px); 
+            display: flex; 
+            flex-direction: column; 
+            gap: clamp(4px, 1vh, 10px); 
+            overflow: hidden; 
+            background: #000000; 
+            transition: background-color 0.4s ease; 
+        }
         
-        h2 { text-align: center; color: #ffffff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0px 0px 20px rgba(255,255,255,0.15); margin-top: 2px; font-size: 18px; font-weight: 800; }
-        .counter-banner { text-align: center; color: #cccccc; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
+        h2 { 
+            text-align: center; 
+            color: #ffffff; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            text-shadow: 0px 0px 20px rgba(255,255,255,0.15); 
+            margin-top: 2px; 
+            font-size: clamp(14px, 2.5vh, 22px); 
+            font-weight: 800; 
+        }
+        .counter-banner { 
+            text-align: center; 
+            color: #cccccc; 
+            font-size: clamp(8px, 1.2vh, 12px); 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            opacity: 0.7; 
+        }
         
         .screen { display: none; flex-direction: column; width: 100%; height: 100%; flex: 1; overflow: hidden; }
         .screen.active { display: flex; }
-        #topics-screen { overflow-y: auto; gap: 8px; padding-bottom: 10px; }
-        #topics-list { display: flex; flex-direction: column; gap: 6px; padding-bottom: 6px; }
+        #topics-screen { overflow-y: auto; gap: clamp(4px, 1vh, 10px); padding-bottom: 10px; }
+        #topics-list { display: flex; flex-direction: column; gap: clamp(4px, 0.8vh, 8px); padding-bottom: 6px; }
         
-        .topic-card { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.15); padding: 12px 16px; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; border-left: 8px solid #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.8); text-align: left; color: #ffffff; width: 100%; display: flex; align-items: center; min-height: 50px; transition: all 0.3s ease; }
+        .topic-card { 
+            background: rgba(255,255,255,0.05); 
+            border: 2px solid rgba(255,255,255,0.15); 
+            padding: clamp(8px, 1.5vh, 16px) clamp(10px, 2vw, 20px); 
+            border-radius: clamp(8px, 1.5vh, 14px); 
+            cursor: pointer; 
+            font-size: clamp(13px, 2vh, 18px); 
+            font-weight: bold; 
+            border-left: 8px solid #ffffff; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8); 
+            text-align: left; 
+            color: #ffffff; 
+            width: 100%; 
+            display: flex; 
+            align-items: center; 
+            min-height: clamp(40px, 6vh, 60px); 
+            transition: all 0.3s ease; 
+        }
         .topic-card:hover { transform: scale(1.01); border-left-color: #aaaaaa; }
         .topic-card:active { transform: scale(0.98); }
         .topic-card.misto-btn { background: rgba(255,255,255,0.08); border-left-color: #ffffff; border-color: rgba(255,255,255,0.25); color: #ffffff; }
         
-        .btn-show-stats { background: rgba(0, 0, 0, 0.8); color: #ffffff; border: 2px dashed rgba(255,255,255,0.3); padding: 5px 12px; font-size: 11px; font-weight: bold; border-radius: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease; }
+        .btn-show-stats { 
+            background: rgba(0, 0, 0, 0.8); 
+            color: #ffffff; 
+            border: 2px dashed rgba(255,255,255,0.3); 
+            padding: clamp(4px, 0.8vh, 8px) clamp(8px, 1.5vw, 16px); 
+            font-size: clamp(9px, 1.2vh, 13px); 
+            font-weight: bold; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px; 
+            transition: all 0.3s ease; 
+        }
         .btn-show-stats:hover { border-color: #ffffff; }
-        .stats-report-box { display: none; background: rgba(0, 0, 0, 0.9); border: 2px solid #ffffff; padding: 10px; border-radius: 12px; margin: 4px auto 0 auto; font-size: 12px; color: #ffffff; font-weight: bold; text-align: left; line-height: 1.5; max-width: 550px; }
+        .stats-report-box { 
+            display: none; 
+            background: rgba(0, 0, 0, 0.9); 
+            border: 2px solid #ffffff; 
+            padding: clamp(6px, 1vh, 12px); 
+            border-radius: clamp(8px, 1.5vh, 14px); 
+            margin: 4px auto 0 auto; 
+            font-size: clamp(10px, 1.2vh, 14px); 
+            color: #ffffff; 
+            font-weight: bold; 
+            text-align: left; 
+            line-height: 1.5; 
+            max-width: 550px; 
+        }
         
         #game-screen { display: none; flex-direction: column; height: 100%; overflow: hidden; }
         #game-screen.active { display: flex; }
-        .game-scrollable-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-bottom: 6px; padding-right: 2px; }
+        .game-scrollable-content { 
+            flex: 1; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: clamp(4px, 0.8vh, 8px); 
+            padding-bottom: 6px; 
+            padding-right: 2px; 
+        }
         
-        .top-challenge { background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.08); padding: 8px 10px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 6px; backdrop-filter: blur(8px); }
-        .phrase-pt { font-size: 16px; font-weight: bold; text-align: center; line-height: 1.3; color: #ffffff; text-shadow: 0 2px 10px rgba(255,255,255,0.1); word-wrap: break-word; padding: 4px 0; }
+        .top-challenge { 
+            background: rgba(255,255,255,0.04); 
+            border: 2px solid rgba(255,255,255,0.08); 
+            padding: clamp(6px, 1.2vh, 12px) clamp(8px, 1.5vw, 14px); 
+            border-radius: clamp(8px, 1.5vh, 14px); 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8); 
+            display: flex; 
+            flex-direction: column; 
+            gap: clamp(4px, 0.6vh, 8px); 
+            backdrop-filter: blur(8px); 
+        }
+        .phrase-pt { 
+            font-size: clamp(14px, 2.2vh, 20px); 
+            font-weight: bold; 
+            text-align: center; 
+            line-height: 1.3; 
+            color: #ffffff; 
+            text-shadow: 0 2px 10px rgba(255,255,255,0.1); 
+            word-wrap: break-word; 
+            padding: 4px 0; 
+        }
         .phrase-hidden { filter: blur(8px); opacity: 0.3; transition: all 0.6s ease; pointer-events: none; }
         .phrase-hidden.revealed { filter: blur(0); opacity: 1; pointer-events: auto; }
         
-        .btn-audio-top { background: rgba(255,255,255,0.05); color: #ffffff; border: 2px solid rgba(255,255,255,0.15); padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 10px; cursor: pointer; flex: 1; text-align: center; transition: all 0.3s ease; }
+        .btn-audio-top { 
+            background: rgba(255,255,255,0.05); 
+            color: #ffffff; 
+            border: 2px solid rgba(255,255,255,0.15); 
+            padding: clamp(3px, 0.6vh, 6px) clamp(6px, 1vw, 12px); 
+            font-size: clamp(9px, 1.2vh, 13px); 
+            font-weight: bold; 
+            border-radius: clamp(6px, 1vh, 12px); 
+            cursor: pointer; 
+            flex: 1; 
+            text-align: center; 
+            transition: all 0.3s ease; 
+        }
         .btn-audio-top:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
         .btn-audio-top:active { transform: scale(0.95); }
         .audio-controls-row { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 2px; gap: 4px; }
         
-        .construction-zone { background: rgba(255,255,255,0.04); border: 2px dashed rgba(255,255,255,0.15); border-radius: 10px; min-height: 60px; padding: 8px; display: flex; flex-wrap: wrap; gap: 5px; align-content: flex-start; position: relative; transition: border-color 0.4s ease; }
+        .construction-zone { 
+            background: rgba(255,255,255,0.04); 
+            border: 2px dashed rgba(255,255,255,0.15); 
+            border-radius: clamp(8px, 1.5vh, 12px); 
+            min-height: clamp(50px, 8vh, 80px); 
+            padding: clamp(6px, 1vh, 12px); 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: clamp(4px, 0.6vh, 8px); 
+            align-content: flex-start; 
+            position: relative; 
+            transition: border-color 0.4s ease; 
+        }
         .construction-zone.completed { border-color: #00ff66; background: rgba(0, 255, 102, 0.05); }
-        .success-text-box { display: none; background: rgba(0, 255, 102, 0.05); border: 2px solid #00ff66; border-radius: 10px; min-height: 50px; padding: 10px; font-size: 16px; font-weight: bold; color: #00ff66; text-align: center; align-items: center; justify-content: center; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); }
+        .success-text-box { 
+            display: none; 
+            background: rgba(0, 255, 102, 0.05); 
+            border: 2px solid #00ff66; 
+            border-radius: clamp(8px, 1.5vh, 12px); 
+            min-height: clamp(40px, 6vh, 60px); 
+            padding: clamp(6px, 1vh, 12px); 
+            font-size: clamp(13px, 2vh, 18px); 
+            font-weight: bold; 
+            color: #00ff66; 
+            text-align: center; 
+            align-items: center; 
+            justify-content: center; 
+            text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); 
+        }
         
-        .words-zone { background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.06); border-radius: 10px; min-height: 60px; padding: 8px; display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-start; align-content: flex-start; }
+        .words-zone { 
+            background: rgba(255,255,255,0.03); 
+            border: 2px solid rgba(255,255,255,0.06); 
+            border-radius: clamp(8px, 1.5vh, 12px); 
+            min-height: clamp(40px, 6vh, 70px); 
+            padding: clamp(6px, 1vh, 12px); 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: clamp(4px, 0.6vh, 8px); 
+            justify-content: flex-start; 
+            align-content: flex-start; 
+        }
         
         /* ===== BALÕES ===== */
         .word-balloon { 
-            padding: 5px 10px; 
-            font-size: 14px; 
+            padding: clamp(4px, 0.6vh, 8px) clamp(6px, 1vw, 14px); 
+            font-size: clamp(11px, 1.8vh, 16px); 
             font-weight: 800; 
-            border-radius: 18px; 
+            border-radius: clamp(14px, 2vh, 22px); 
             cursor: pointer; 
             box-shadow: 0 3px 10px rgba(0,0,0,0.6); 
             display: inline-block; 
@@ -74,10 +229,25 @@
         }
         .word-balloon:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 30px rgba(0,0,0,0.8); border-color: #3a3a3a; }
         .word-balloon:active { transform: scale(0.93); }
-        .construction-zone .word-balloon { background: #1a1a1a; border: 2px solid #2a2a2a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5); cursor: grab; color: #00ff66; font-size: 13px; padding: 4px 8px; }
+        .construction-zone .word-balloon { 
+            background: #1a1a1a; 
+            border: 2px solid #2a2a2a; 
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5); 
+            cursor: grab; 
+            color: #00ff66; 
+            font-size: clamp(10px, 1.6vh, 15px); 
+            padding: clamp(3px, 0.5vh, 6px) clamp(6px, 0.8vw, 12px); 
+        }
         .construction-zone .word-balloon:hover { box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7); border-color: #3a3a3a; }
         .construction-zone .word-balloon:active { cursor: grabbing; transform: scale(0.93); }
-        .words-zone .word-balloon { background: #1a1a1a; border: 2px solid #2a2a2a; box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4); color: #00ffaa; font-size: 12px; padding: 4px 8px; }
+        .words-zone .word-balloon { 
+            background: #1a1a1a; 
+            border: 2px solid #2a2a2a; 
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4); 
+            color: #00ffaa; 
+            font-size: clamp(10px, 1.5vh, 14px); 
+            padding: clamp(3px, 0.5vh, 6px) clamp(6px, 0.8vw, 12px); 
+        }
         .words-zone .word-balloon:hover { border-color: #3a3a3a; box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6); }
         .word-balloon.dragging { opacity: 0.4; border: 2px dashed #ffff00 !important; background: rgba(255, 255, 0, 0.05) !important; transform: scale(0.9); }
         .word-balloon.speaking { animation: speakGlow 0.6s ease; }
@@ -89,37 +259,116 @@
         @keyframes statusPop { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
         @keyframes statusShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
         
-        .control-panel { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; border-top: 2px solid rgba(255,255,255,0.05); align-items: center; width: 100%; }
-        .action-btn { width: 100%; max-width: 500px; padding: 8px 14px; color: #000000; border: none; border-radius: 25px; font-size: 14px; font-weight: bold; cursor: pointer; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6); display: block; transition: all 0.3s ease; letter-spacing: 0.5px; }
+        .control-panel { 
+            display: flex; 
+            flex-direction: column; 
+            gap: clamp(3px, 0.6vh, 6px); 
+            padding-top: clamp(4px, 0.6vh, 8px); 
+            border-top: 2px solid rgba(255,255,255,0.05); 
+            align-items: center; 
+            width: 100%; 
+        }
+        .action-btn { 
+            width: 100%; 
+            max-width: 500px; 
+            padding: clamp(6px, 1vh, 12px) clamp(10px, 2vw, 20px); 
+            color: #000000; 
+            border: none; 
+            border-radius: clamp(20px, 3vh, 30px); 
+            font-size: clamp(12px, 1.8vh, 16px); 
+            font-weight: bold; 
+            cursor: pointer; 
+            text-align: center; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6); 
+            display: block; 
+            transition: all 0.3s ease; 
+            letter-spacing: 0.5px; 
+        }
         .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8); }
         .action-btn:active { transform: scale(0.97); }
         .btn-check { background: linear-gradient(135deg, #00aa22 0%, #00ff66 100%); color: #000000; font-weight: 800; }
         .btn-next { background: linear-gradient(135deg, #00ddff 0%, #00ffaa 100%); color: #000000; display: none; font-weight: 800; }
-        .btn-reveal { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.15); padding: 5px 12px; font-size: 12px; color: #ffffff; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; }
+        .btn-reveal { 
+            background: rgba(255,255,255,0.05); 
+            border: 2px solid rgba(255,255,255,0.15); 
+            padding: clamp(4px, 0.6vh, 8px) clamp(8px, 1.5vw, 16px); 
+            font-size: clamp(10px, 1.4vh, 14px); 
+            color: #ffffff; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+        }
         .btn-reveal:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.05); }
-        .revealed-answer-box { background: rgba(0, 0, 0, 0.9); border: 2px solid #ffffff; color: #ffffff; padding: 8px; border-radius: 12px; text-align: center; font-size: 13px; font-weight: bold; display: none; word-wrap: break-word; width: 100%; max-width: 500px; }
+        .revealed-answer-box { 
+            background: rgba(0, 0, 0, 0.9); 
+            border: 2px solid #ffffff; 
+            color: #ffffff; 
+            padding: clamp(6px, 1vh, 12px); 
+            border-radius: clamp(8px, 1.5vh, 14px); 
+            text-align: center; 
+            font-size: clamp(11px, 1.5vh, 15px); 
+            font-weight: bold; 
+            display: none; 
+            word-wrap: break-word; 
+            width: 100%; 
+            max-width: 500px; 
+        }
         
         .bottom-buttons-row { display: flex; justify-content: space-around; width: 100%; padding: 0 5px; gap: 10px; }
-        .config-btn { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; width: 38px; height: 38px; font-size: 16px; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .config-btn { 
+            background: rgba(255,255,255,0.05); 
+            border: 2px solid rgba(255,255,255,0.2); 
+            border-radius: 50%; 
+            width: clamp(32px, 5vh, 44px); 
+            height: clamp(32px, 5vh, 44px); 
+            font-size: clamp(14px, 2.5vh, 20px); 
+            color: #ffffff; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: all 0.3s ease; 
+        }
         .config-btn:hover { transform: scale(1.1) rotate(60deg); background: rgba(255,255,255,0.1); }
         .config-btn.active { background: #ffffff; color: #000000; }
-        .match-btn { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; width: 38px; height: 38px; font-size: 16px; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .match-btn { 
+            background: rgba(255,255,255,0.05); 
+            border: 2px solid rgba(255,255,255,0.2); 
+            border-radius: 50%; 
+            width: clamp(32px, 5vh, 44px); 
+            height: clamp(32px, 5vh, 44px); 
+            font-size: clamp(14px, 2.5vh, 20px); 
+            color: #ffffff; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: all 0.3s ease; 
+        }
         .match-btn:hover { transform: scale(1.1); background: rgba(255,255,255,0.1); }
         .match-btn.active { background: #ffffff; color: #000000; }
-        .config-btn-label, .match-btn-label { font-size: 6px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.4; text-align: center; margin-top: 2px; color: #ffffff; }
+        .config-btn-label, .match-btn-label { 
+            font-size: clamp(5px, 0.8vh, 8px); 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            opacity: 0.4; 
+            text-align: center; 
+            margin-top: 2px; 
+            color: #ffffff; 
+        }
         .bottom-btn-wrapper { display: flex; flex-direction: column; align-items: center; }
         
         /* ===== BOTÃO VOLTAR OCULTO - CANTO INFERIOR ESQUERDO ===== */
         .back-link-hidden {
             position: fixed;
-            bottom: 10px;
-            left: 10px;
+            bottom: clamp(8px, 2vh, 20px);
+            left: clamp(8px, 2vw, 20px);
             color: #ffffff;
             font-weight: bold;
-            font-size: 13px;
+            font-size: clamp(11px, 1.8vh, 16px);
             cursor: pointer;
-            padding: 8px 14px;
-            border-radius: 10px;
+            padding: clamp(6px, 1vh, 12px) clamp(10px, 2vw, 18px);
+            border-radius: clamp(8px, 1.5vh, 14px);
             background: rgba(0,0,0,0.7);
             border: 2px solid rgba(255,255,255,0.15);
             z-index: 50;
@@ -148,7 +397,7 @@
             left: 0; 
             background: #000000; 
             z-index: 500; 
-            padding: 4px 6px 4px 6px; 
+            padding: clamp(3px, 0.6vh, 8px) clamp(4px, 0.8vw, 10px); 
             overflow: hidden; 
             transition: background-color 0.4s ease; 
         }
@@ -157,27 +406,53 @@
         .match-header { display: none; }
         .match-stats { display: none; }
         
-        .match-win-message { display: none; text-align: center; color: #ffaa00; font-size: 16px; font-weight: bold; padding: 2px; text-shadow: 0 0 40px rgba(255, 170, 0, 0.4); animation: winPulse 1.5s ease infinite alternate; flex-shrink: 0; }
+        .match-win-message { 
+            display: none; 
+            text-align: center; 
+            color: #ffaa00; 
+            font-size: clamp(13px, 2.2vh, 20px); 
+            font-weight: bold; 
+            padding: 2px; 
+            text-shadow: 0 0 40px rgba(255, 170, 0, 0.4); 
+            animation: winPulse 1.5s ease infinite alternate; 
+            flex-shrink: 0; 
+        }
         @keyframes winPulse { 0% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); } 100% { transform: scale(1.03); text-shadow: 0 0 60px rgba(255, 170, 0, 0.6); } }
         
-        .match-grid-wrapper { flex: 1; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 0; padding: 1px 0; }
-        .match-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; width: 100%; height: 100%; max-height: 82vh; align-content: stretch; }
+        .match-grid-wrapper { 
+            flex: 1; 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 0; 
+            padding: 1px 0; 
+        }
+        .match-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr; 
+            gap: clamp(3px, 0.6vh, 6px); 
+            width: 100%; 
+            height: 100%; 
+            max-height: 82vh; 
+            align-content: stretch; 
+        }
         
         /* ===== CARDS DO MATCH GAME ===== */
         .match-card { 
             background: #1a1a1a; 
             border: 2px solid #2a2a2a; 
-            border-radius: 10px; 
-            padding: 4px 3px; 
+            border-radius: clamp(6px, 1.2vh, 12px); 
+            padding: clamp(3px, 0.5vh, 6px) clamp(2px, 0.4vw, 6px); 
             text-align: center; 
-            font-size: 18px !important;
+            font-size: clamp(12px, 2.2vh, 22px) !important;
             font-weight: 900 !important;
             font-family: 'Playfair Display', 'Georgia', serif !important;
             color: #00ff66; 
             cursor: pointer; 
             transition: all 0.25s ease, color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; 
-            min-height: 42px; 
-            max-height: 65px;
+            min-height: clamp(30px, 5vh, 55px); 
+            max-height: clamp(50px, 8vh, 75px);
             display: flex; 
             align-items: center; 
             justify-content: center; 
@@ -201,7 +476,7 @@
             transform: scale(0.92); 
             pointer-events: auto;
         }
-        .match-card.matched::after { content: "✓"; position: absolute; top: 0px; right: 4px; font-size: 14px; color: #00ff66; text-shadow: 0 0 30px rgba(0, 255, 102, 0.5); }
+        .match-card.matched::after { content: "✓"; position: absolute; top: 0px; right: 4px; font-size: clamp(10px, 1.5vh, 16px); color: #00ff66; text-shadow: 0 0 30px rgba(0, 255, 102, 0.5); }
         .match-card.wrong { animation: wrongShake 0.4s ease; border-color: #ff3333; box-shadow: 0 0 30px rgba(255, 51, 51, 0.2); }
         @keyframes wrongShake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
         @keyframes matchPop { 0% { transform: scale(1.2); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(0.92); opacity: 0.7; } }
@@ -213,18 +488,18 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            gap: 6px; 
-            padding: 4px 2px 2px 2px; 
+            gap: clamp(4px, 0.8vw, 10px); 
+            padding: clamp(3px, 0.5vh, 6px) clamp(2px, 0.4vw, 6px); 
             border-top: 1px solid rgba(255,255,255,0.06); 
             flex-shrink: 0; 
             margin-top: 2px;
             flex-wrap: nowrap;
         }
-        .match-mode-group { display: flex; gap: 5px; align-items: center; }
+        .match-mode-group { display: flex; gap: clamp(3px, 0.6vw, 8px); align-items: center; }
         .match-mode-btn { 
-            padding: 6px 14px; 
-            border-radius: 16px; 
-            font-size: 13px; 
+            padding: clamp(4px, 0.8vh, 10px) clamp(10px, 1.5vw, 18px); 
+            border-radius: clamp(12px, 2vh, 20px); 
+            font-size: clamp(10px, 1.6vh, 16px); 
             font-weight: bold; 
             cursor: pointer; 
             border: 2px solid rgba(255,255,255,0.2); 
@@ -236,15 +511,15 @@
         .match-mode-btn.active { background: #ffffff; color: #000000; border-color: #ffffff; }
         .match-mode-btn:active { transform: scale(0.95); }
         
-        .match-font-controls { display: flex; align-items: center; gap: 5px; margin-left: 6px; }
+        .match-font-controls { display: flex; align-items: center; gap: clamp(3px, 0.6vw, 8px); margin-left: 6px; }
         .match-font-btn { 
             background: rgba(255,255,255,0.08); 
             border: 2px solid rgba(255,255,255,0.2); 
             color: #ffffff; 
-            width: 34px; 
-            height: 34px; 
+            width: clamp(28px, 4vh, 40px); 
+            height: clamp(28px, 4vh, 40px); 
             border-radius: 50%; 
-            font-size: 18px; 
+            font-size: clamp(14px, 2.5vh, 22px); 
             font-weight: bold; 
             cursor: pointer; 
             display: flex; 
@@ -254,13 +529,19 @@
         }
         .match-font-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
         .match-font-btn:active { transform: scale(0.9); }
-        .match-font-size-display { color: #ffffff; font-size: 13px; font-weight: bold; min-width: 32px; text-align: center; }
+        .match-font-size-display { 
+            color: #ffffff; 
+            font-size: clamp(10px, 1.6vh, 16px); 
+            font-weight: bold; 
+            min-width: clamp(24px, 3vw, 40px); 
+            text-align: center; 
+        }
         
-        .match-controls-right { display: flex; gap: 5px; align-items: center; margin-left: 6px; }
+        .match-controls-right { display: flex; gap: clamp(3px, 0.6vw, 8px); align-items: center; margin-left: 6px; }
         .match-controls-right button { 
-            padding: 6px 16px; 
-            border-radius: 16px; 
-            font-size: 13px; 
+            padding: clamp(4px, 0.8vh, 10px) clamp(10px, 1.5vw, 20px); 
+            border-radius: clamp(12px, 2vh, 20px); 
+            font-size: clamp(10px, 1.6vh, 16px); 
             font-weight: bold; 
             cursor: pointer; 
             border: none; 
@@ -287,8 +568,8 @@
             justify-content: center; 
             align-items: center; 
             animation: fadeIn 0.3s ease; 
-            padding: 20px;
-            overflow-y: auto;
+            padding: clamp(12px, 3vh, 30px); 
+            overflow-y: auto; 
         }
         .config-modal.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -296,8 +577,8 @@
         .config-modal-content { 
             background: rgba(20,20,20,0.98); 
             border: 2px solid rgba(255,255,255,0.1); 
-            border-radius: 20px; 
-            padding: 24px 20px; 
+            border-radius: clamp(14px, 2.5vh, 24px); 
+            padding: clamp(16px, 3vh, 30px) clamp(14px, 2.5vw, 24px); 
             max-width: 420px; 
             width: 100%; 
             max-height: 90vh; 
@@ -307,7 +588,7 @@
         .config-modal-content h3 { 
             color: #ffffff; 
             text-align: center; 
-            font-size: 20px; 
+            font-size: clamp(16px, 2.8vh, 24px); 
             margin-bottom: 16px; 
             text-transform: uppercase; 
             letter-spacing: 2px; 
@@ -317,7 +598,7 @@
             background: transparent; 
             border: none; 
             color: #ffffff; 
-            font-size: 24px; 
+            font-size: clamp(18px, 3vh, 28px); 
             cursor: pointer; 
             padding: 0 4px; 
             line-height: 1; 
@@ -325,13 +606,22 @@
         }
         .config-modal-close:hover { color: #ff4444; transform: rotate(90deg); }
         
-        .color-picker-group { margin-bottom: 14px; }
-        .color-picker-group label { display: block; color: #ffffff; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; opacity: 0.7; }
+        .color-picker-group { margin-bottom: clamp(10px, 1.8vh, 18px); }
+        .color-picker-group label { 
+            display: block; 
+            color: #ffffff; 
+            font-size: clamp(10px, 1.4vh, 14px); 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            margin-bottom: 4px; 
+            letter-spacing: 0.5px; 
+            opacity: 0.7; 
+        }
         
         .rainbow-slider { 
             -webkit-appearance: none; 
             width: 100%; 
-            height: 26px; 
+            height: clamp(20px, 3vh, 30px); 
             border-radius: 13px; 
             outline: none; 
             background: linear-gradient(to right, #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0000ff, #8000ff, #ff00ff, #ff0000); 
@@ -342,8 +632,8 @@
         .rainbow-slider::-webkit-slider-thumb { 
             -webkit-appearance: none; 
             appearance: none; 
-            width: 28px; 
-            height: 28px; 
+            width: clamp(22px, 3.5vh, 32px); 
+            height: clamp(22px, 3.5vh, 32px); 
             border-radius: 50%; 
             background: #ffffff; 
             border: 3px solid #000000; 
@@ -351,17 +641,25 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.8); 
         }
         .rainbow-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
-        .rainbow-slider::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: #ffffff; border: 3px solid #000000; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        .rainbow-slider::-moz-range-thumb { 
+            width: clamp(22px, 3.5vh, 32px); 
+            height: clamp(22px, 3.5vh, 32px); 
+            border-radius: 50%; 
+            background: #ffffff; 
+            border: 3px solid #000000; 
+            cursor: pointer; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.8); 
+        }
         
         .font-size-controls { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
         .font-size-btn { 
             background: rgba(255,255,255,0.05); 
             border: 2px solid rgba(255,255,255,0.15); 
             color: #ffffff; 
-            font-size: 14px; 
+            font-size: clamp(12px, 2vh, 18px); 
             font-weight: bold; 
-            width: 34px; 
-            height: 32px; 
+            width: clamp(28px, 4vh, 40px); 
+            height: clamp(28px, 4vh, 40px); 
             border-radius: 8px; 
             cursor: pointer; 
             display: flex; 
@@ -370,16 +668,22 @@
             transition: all 0.3s ease; 
         }
         .font-size-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
-        .font-size-display { color: #ffffff; font-size: 14px; font-weight: bold; text-align: center; flex: 1; }
+        .font-size-display { 
+            color: #ffffff; 
+            font-size: clamp(12px, 2vh, 18px); 
+            font-weight: bold; 
+            text-align: center; 
+            flex: 1; 
+        }
         
         .font-family-select { 
             width: 100%; 
             background: rgba(0, 0, 0, 0.8); 
             border: 2px solid rgba(255,255,255,0.15); 
             color: #ffffff; 
-            padding: 8px 12px; 
-            border-radius: 10px; 
-            font-size: 13px; 
+            padding: clamp(6px, 1vh, 12px) clamp(8px, 1.5vw, 16px); 
+            border-radius: clamp(8px, 1.5vh, 14px); 
+            font-size: clamp(11px, 1.6vh, 15px); 
             font-weight: bold; 
             cursor: pointer; 
             outline: none; 
@@ -390,24 +694,29 @@
         .tts-engine-box { 
             background: rgba(255,255,255,0.03); 
             border: 2px solid rgba(255,255,255,0.08); 
-            padding: 12px; 
-            border-radius: 12px; 
+            padding: clamp(8px, 1.5vh, 16px); 
+            border-radius: clamp(8px, 1.5vh, 14px); 
             text-align: center; 
             margin-bottom: 4px; 
             display: flex; 
             flex-direction: column; 
             gap: 8px; 
         }
-        .tts-status-text { font-size: 12px; font-weight: bold; color: #ffffff; opacity: 0.7; }
+        .tts-status-text { 
+            font-size: clamp(10px, 1.4vh, 14px); 
+            font-weight: bold; 
+            color: #ffffff; 
+            opacity: 0.7; 
+        }
         .voice-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 2px; }
         .btn-download-voice { 
             background: rgba(255,255,255,0.05); 
             border: 2px solid rgba(255,255,255,0.15); 
             color: #ffffff; 
-            padding: 8px 6px; 
-            font-size: 11px; 
+            padding: clamp(6px, 1vh, 12px) clamp(4px, 0.8vw, 10px); 
+            font-size: clamp(9px, 1.2vh, 13px); 
             font-weight: 800; 
-            border-radius: 10px; 
+            border-radius: clamp(8px, 1.5vh, 12px); 
             cursor: pointer; 
             transition: all 0.3s ease; 
             text-align: center; 
@@ -420,10 +729,10 @@
         .audio-test-box { 
             background: rgba(255,255,255,0.03); 
             border: 1px dashed rgba(255,255,255,0.15); 
-            padding: 8px; 
-            border-radius: 8px; 
+            padding: clamp(6px, 1vh, 12px); 
+            border-radius: clamp(6px, 1.2vh, 10px); 
             text-align: center; 
-            font-size: 12px; 
+            font-size: clamp(10px, 1.4vh, 14px); 
             color: #ffffff; 
             cursor: pointer; 
             transition: all 0.3s ease; 
@@ -435,9 +744,9 @@
             background: rgba(255, 0, 0, 0.1); 
             border: 2px solid rgba(255, 50, 50, 0.2); 
             color: #ff4444; 
-            padding: 8px 16px; 
-            border-radius: 12px; 
-            font-size: 12px; 
+            padding: clamp(6px, 1vh, 12px) clamp(10px, 2vw, 20px); 
+            border-radius: clamp(8px, 1.5vh, 14px); 
+            font-size: clamp(10px, 1.4vh, 14px); 
             font-weight: bold; 
             cursor: pointer; 
             width: 100%; 
@@ -451,31 +760,72 @@
         .game-scrollable-content::-webkit-scrollbar-track, #topics-screen::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
         .game-scrollable-content::-webkit-scrollbar-thumb, #topics-screen::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
         
-        /* Responsividade */
+        /* ===== RESPONSIVIDADE ESPECÍFICA PARA TABLET ===== */
+        @media (min-width: 768px) {
+            .match-grid { 
+                gap: clamp(6px, 1vh, 12px); 
+                max-height: 85vh; 
+            }
+            .match-card { 
+                min-height: clamp(50px, 8vh, 80px); 
+                max-height: clamp(70px, 12vh, 120px);
+                font-size: clamp(18px, 3.5vh, 32px) !important;
+                border-radius: clamp(12px, 2vh, 20px);
+                padding: clamp(8px, 1.5vh, 16px);
+            }
+            .match-bottom-controls {
+                gap: clamp(10px, 2vw, 20px);
+                padding: clamp(6px, 1vh, 14px);
+            }
+            .match-mode-btn {
+                padding: clamp(8px, 1.5vh, 16px) clamp(16px, 3vw, 32px);
+                font-size: clamp(14px, 2.5vh, 22px);
+                border-radius: clamp(16px, 3vh, 28px);
+            }
+            .match-font-btn {
+                width: clamp(36px, 6vh, 56px);
+                height: clamp(36px, 6vh, 56px);
+                font-size: clamp(18px, 3vh, 28px);
+            }
+            .match-font-size-display {
+                font-size: clamp(14px, 2.5vh, 22px);
+                min-width: clamp(36px, 5vw, 60px);
+            }
+            .match-controls-right button {
+                padding: clamp(8px, 1.5vh, 16px) clamp(16px, 3vw, 32px);
+                font-size: clamp(14px, 2.5vh, 22px);
+                border-radius: clamp(16px, 3vh, 28px);
+            }
+            .match-win-message {
+                font-size: clamp(18px, 3vh, 30px);
+            }
+            .match-card.matched::after {
+                font-size: clamp(14px, 2.5vh, 24px);
+                right: 8px;
+            }
+        }
+        
         @media (max-width: 400px) {
-            .match-card { font-size: 14px !important; min-height: 34px; max-height: 52px; padding: 3px 2px; border-radius: 8px; }
+            .match-card { font-size: clamp(10px, 2vh, 14px) !important; min-height: 30px; max-height: 46px; padding: 3px 2px; border-radius: 6px; }
             .match-grid { gap: 3px; }
-            .match-mode-btn { font-size: 11px; padding: 4px 10px; }
-            .match-controls-right button { font-size: 11px; padding: 4px 12px; }
-            .match-font-btn { width: 30px; height: 30px; font-size: 15px; }
-            .match-font-size-display { font-size: 11px; min-width: 28px; }
-            .match-bottom-controls { gap: 4px; flex-wrap: wrap; justify-content: center; }
+            .match-mode-btn { font-size: clamp(8px, 1.4vh, 11px); padding: 3px 8px; }
+            .match-controls-right button { font-size: clamp(8px, 1.4vh, 11px); padding: 3px 8px; }
+            .match-font-btn { width: clamp(24px, 4vh, 32px); height: clamp(24px, 4vh, 32px); font-size: clamp(12px, 2vh, 16px); }
+            .match-font-size-display { font-size: clamp(8px, 1.4vh, 12px); min-width: 20px; }
+            .match-bottom-controls { gap: 3px; flex-wrap: wrap; justify-content: center; }
         }
         @media (max-width: 350px) {
-            .match-card { font-size: 12px !important; min-height: 28px; max-height: 44px; padding: 2px 1px; border-radius: 6px; }
+            .match-card { font-size: clamp(8px, 1.6vh, 11px) !important; min-height: 24px; max-height: 38px; padding: 2px 1px; border-radius: 4px; }
             .match-grid { gap: 2px; }
-            .match-mode-btn { font-size: 10px; padding: 3px 8px; }
-            .match-controls-right button { font-size: 10px; padding: 3px 10px; }
-            .match-font-btn { width: 26px; height: 26px; font-size: 13px; }
         }
         @media (max-height: 600px) {
-            .match-card { min-height: 28px; max-height: 40px; font-size: 14px !important; }
+            .match-card { min-height: 26px; max-height: 38px; font-size: clamp(10px, 2vh, 14px) !important; }
             .match-grid { gap: 3px; }
             .match-bottom-controls { padding: 2px 0 0 0; }
-            .match-mode-btn { font-size: 10px; padding: 3px 8px; }
-            .match-controls-right button { font-size: 10px; padding: 3px 10px; }
-            .match-font-btn { width: 28px; height: 28px; font-size: 14px; }
-            .match-font-size-display { font-size: 10px; min-width: 26px; }
+            .match-mode-btn { font-size: clamp(8px, 1.2vh, 10px); padding: 2px 6px; }
+            .match-controls-right button { font-size: clamp(8px, 1.2vh, 10px); padding: 2px 8px; }
+            .match-font-btn { width: clamp(22px, 3.5vh, 28px); height: clamp(22px, 3.5vh, 28px); font-size: clamp(12px, 2vh, 16px); }
+            .match-font-size-display { font-size: clamp(8px, 1.2vh, 11px); min-width: 20px; }
         }
     </style>
 </head>
@@ -494,7 +844,6 @@
 
     <div id="game-screen" class="screen">
         <div class="game-scrollable-content">
-            <!-- Botão Voltar REMOVIDO do topo -->
             <div class="top-challenge">
                 <div id="phrase-pt-1" class="phrase-pt">Carregando frase 1...</div>
                 <div id="phrase-pt-2" class="phrase-pt phrase-hidden">🔒 Segunda frase (complete a primeira)</div>
@@ -719,7 +1068,6 @@
     let availableVoices = [];
     let selectedVoiceGender = 'female';
     
-    // Controle de toques para mostrar o botão Voltar
     let tapCount = 0;
     let tapTimer = null;
 
@@ -1049,19 +1397,16 @@
     function showTopicsScreen() {
         document.getElementById("topics-screen").classList.add("active");
         document.getElementById("game-screen").classList.remove("active");
-        // Oculta o botão Voltar ao voltar para o menu
         document.getElementById('backLinkHidden').classList.remove('visible');
         renderTopics();
     }
 
     // ============================================================
-    // FUNÇÃO PARA DETECTAR 2 TOQUES NA TELA (MOSTRAR BOTÃO VOLTAR)
+    // FUNÇÃO PARA DETECTAR 2 TOQUES NA TELA
     // ============================================================
     function setupDoubleTap() {
         document.addEventListener('click', function(e) {
-            // Ignora cliques no botão Voltar
             if (e.target.id === 'backLinkHidden') return;
-            
             tapCount++;
             if (tapCount === 1) {
                 tapTimer = setTimeout(() => {
@@ -1070,10 +1415,8 @@
             } else if (tapCount === 2) {
                 clearTimeout(tapTimer);
                 tapCount = 0;
-                // Mostra o botão Voltar
                 const backBtn = document.getElementById('backLinkHidden');
                 backBtn.classList.toggle('visible');
-                // Esconde automaticamente após 5 segundos
                 setTimeout(() => {
                     backBtn.classList.remove('visible');
                 }, 5000);
@@ -1123,6 +1466,7 @@
         document.getElementById("construction-zone").style.display = "flex";
         document.getElementById("construction-zone").classList.remove("completed");
         document.getElementById("success-text-box").style.display = "none";
+        document.getElementById("words-zone").style.display = "flex";
 
         document.getElementById("phrase-pt-1").innerText = pair.frases[0].pt;
         document.getElementById("phrase-pt-1").classList.remove("phrase-hidden");
@@ -1155,6 +1499,7 @@
         const currentPhrase = pair.frases[currentPhraseIndex];
         const targetWords = currentPhrase.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
 
+        // Palavras selecionadas na área de construção
         selectedWords.forEach((word, index) => {
             const balloon = document.createElement("span");
             balloon.className = "word-balloon";
@@ -1181,57 +1526,61 @@
             constructZone.appendChild(balloon);
         });
 
-        // Verifica se a frase atual foi completada
-        if (selectedWords.length === targetWords.length && 
-            selectedWords.join(" ").toLowerCase() === currentPhrase.en.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "")) {
-            if (!phraseCompleted) {
-                phraseCompleted = true;
-                if (currentPhraseIndex === 0) {
-                    // Frase 1 completa - revela a frase 2
-                    document.getElementById("phrase-pt-2").classList.remove("phrase-hidden");
-                    document.getElementById("phrase-pt-2").classList.add("revealed");
-                    document.getElementById("track-number").innerText = `Bloco ${currentPhrasePairIndex + 1} - Frase 2:`;
-                    document.getElementById("status-message").innerHTML = `<span class="status-correct">✅ Frase 1 completa! Agora monte a frase 2.</span>`;
-                    currentPhraseIndex = 1;
-                    selectedWords = [];
-                    renderZones();
-                    return;
-                } else {
-                    // Frase 2 completa - BLOCO FINALIZADO!
-                    allCompleted = true;
-                    document.getElementById("status-message").innerHTML = `<span class="status-correct">🎉 PARABÉNS! Bloco completo!</span>`;
-                    document.getElementById("construction-zone").classList.add("completed");
-                    document.getElementById("construction-zone").style.display = "none";
-                    document.getElementById("words-zone").style.display = "none"; // Esconde todas as palavras
-                    document.getElementById("check-btn").style.display = "none";
-                    document.getElementById("next-btn").style.display = "block";
-                    document.getElementById("next-btn").textContent = "➜ Próximo Par";
-                    const successBox = document.getElementById("success-text-box");
-                    successBox.innerText = `✅ ${pair.frases[0].en} ✅ ${pair.frases[1].en}`;
-                    successBox.style.display = "flex";
-                    speak(pair.frases[0].en + ". " + pair.frases[1].en);
-                    return;
-                }
+        // VERIFICAÇÃO CORRIGIDA - Compara as palavras selecionadas com as palavras alvo
+        const selectedWordsClean = selectedWords.map(w => w.toLowerCase().trim());
+        const targetWordsClean = targetWords.map(w => w.toLowerCase().trim());
+        
+        // Verifica se todas as palavras alvo estão selecionadas E na mesma ordem
+        const isPhraseComplete = selectedWordsClean.length === targetWordsClean.length && 
+                                 selectedWordsClean.every((w, i) => w === targetWordsClean[i]);
+
+        if (isPhraseComplete && !phraseCompleted) {
+            phraseCompleted = true;
+            if (currentPhraseIndex === 0) {
+                // Frase 1 completa
+                document.getElementById("phrase-pt-2").classList.remove("phrase-hidden");
+                document.getElementById("phrase-pt-2").classList.add("revealed");
+                document.getElementById("track-number").innerText = `Bloco ${currentPhrasePairIndex + 1} - Frase 2:`;
+                document.getElementById("status-message").innerHTML = `<span class="status-correct">✅ Frase 1 completa! Agora monte a frase 2.</span>`;
+                currentPhraseIndex = 1;
+                selectedWords = [];
+                renderZones();
+                return;
+            } else {
+                // Frase 2 completa - BLOCO FINALIZADO!
+                allCompleted = true;
+                document.getElementById("status-message").innerHTML = `<span class="status-correct">🎉 PARABÉNS! Bloco completo!</span>`;
+                document.getElementById("construction-zone").classList.add("completed");
+                document.getElementById("construction-zone").style.display = "none";
+                document.getElementById("words-zone").style.display = "none";
+                document.getElementById("check-btn").style.display = "none";
+                document.getElementById("next-btn").style.display = "block";
+                document.getElementById("next-btn").textContent = "➜ Próximo Par";
+                const successBox = document.getElementById("success-text-box");
+                successBox.innerText = `✅ ${pair.frases[0].en} ✅ ${pair.frases[1].en}`;
+                successBox.style.display = "flex";
+                speak(pair.frases[0].en + ". " + pair.frases[1].en);
+                return;
             }
         }
 
-        // Se ainda não completou, mostra as palavras disponíveis
+        // Se não completou, mostra as palavras disponíveis
         wordsZone.style.display = "flex";
         wordsZone.innerHTML = "";
+        
+        // Pega todas as palavras do par
         const allWords = getWordsForPair();
-        // Filtra apenas palavras que não foram selecionadas E que pertencem à frase atual
-        const remainingWords = allWords.filter(w => {
-            const isSelected = selectedWords.includes(w);
-            const belongsToCurrent = targetWords.includes(w);
-            // Se já completou a frase 1, usa as palavras da frase 2
-            if (phraseCompleted && currentPhraseIndex === 1) {
-                const secondPhrase = pair.frases[1].en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
-                return !isSelected && secondPhrase.includes(w);
-            }
-            return !isSelected && belongsToCurrent;
-        });
+        
+        // Palavras que ainda não foram selecionadas
+        let availableWords = allWords.filter(w => !selectedWords.includes(w));
+        
+        // Se já completou a frase 1 (mas não a 2), filtra apenas palavras da frase 2
+        if (phraseCompleted && currentPhraseIndex === 1) {
+            const secondPhrase = pair.frases[1].en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
+            availableWords = availableWords.filter(w => secondPhrase.includes(w));
+        }
 
-        remainingWords.forEach(word => {
+        availableWords.forEach(word => {
             const btn = document.createElement("span");
             btn.className = "word-balloon";
             btn.innerText = word;
@@ -1272,7 +1621,6 @@
             showTopicsScreen();
             return;
         }
-        // Restaura a visibilidade da área de palavras
         document.getElementById("words-zone").style.display = "flex";
         loadPhrasePair();
     }
@@ -1480,7 +1828,6 @@
         document.getElementById('matchFontSizeDisplay').textContent = matchFontSize;
         localStorage.setItem('matchFontSize', matchFontSize);
         
-        // Aplica o novo tamanho a todos os cards
         document.querySelectorAll('.match-card').forEach(el => {
             el.style.fontSize = matchFontSize + 'px';
         });
@@ -1505,7 +1852,6 @@
         matchFontSize = parseInt(localStorage.getItem('matchFontSize')) || 18;
         document.getElementById('matchFontSizeDisplay').textContent = matchFontSize;
         
-        // Configura o detector de duplo toque
         setupDoubleTap();
     }
 
