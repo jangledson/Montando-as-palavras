@@ -382,7 +382,7 @@
         }
         .back-link-hidden:active { transform: scale(0.95); }
         
-        /* ===== NOVO MATCH GAME - BALÃO GIGANTE ===== */
+        /* ===== MATCH GAME - BALÃO GIGANTE ===== */
         #match-screen { 
             display: none; 
             flex-direction: column; 
@@ -424,7 +424,6 @@
         }
         @keyframes winPulse { 0% { transform: translate(-50%, -50%) scale(1); text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); } 100% { transform: translate(-50%, -50%) scale(1.05); text-shadow: 0 0 60px rgba(255, 170, 0, 0.6); } }
         
-        /* ===== BALÃO GIGANTE ===== */
         .match-grid-wrapper { 
             flex: 1; 
             overflow: hidden; 
@@ -465,7 +464,6 @@
             border-radius: 10px;
         }
         
-        /* ===== PALAVRAS DENTRO DO BALÃO ===== */
         .match-word {
             padding: clamp(6px, 1.2vh, 16px) clamp(10px, 1.8vw, 22px);
             font-size: clamp(14px, 2.2vh, 22px);
@@ -846,7 +844,7 @@
 <div class="back-link-hidden" id="backLinkHidden" onclick="showTopicsScreen()">⬅ Voltar</div>
 
 <!-- ============================================================ -->
-<!-- NOVO MATCH GAME - BALÃO GIGANTE                              -->
+<!-- MATCH GAME - BALÃO GIGANTE                                     -->
 <!-- ============================================================ -->
 <div id="match-screen">
     <div class="match-stats" id="matchStats"></div>
@@ -1025,7 +1023,7 @@
     let phrase2Completed = false;
     let allCompleted = false;
 
-    // Match Game - Nova estrutura
+    // Match Game
     let matchMode = 'translation';
     let matchWords = [];
     let matchPairs = [];
@@ -1172,7 +1170,7 @@
     }
 
     // ============================================================
-    // FUNÇÕES DE COR
+    // FUNÇÕES DE COR - REFEITAS PARA SINCRONIZAR COM O MATCH GAME
     // ============================================================
     function hslToHex(h, s, l) {
         l /= 100;
@@ -1193,12 +1191,17 @@
     }
 
     function applyBalloonColor(color) {
-        document.querySelectorAll('.word-balloon, .match-balloon, .match-word').forEach(el => {
-            if (el.classList.contains('match-balloon')) {
-                el.style.backgroundColor = color;
-            } else {
-                el.style.backgroundColor = color;
-            }
+        // Aplica no balão do Match Game
+        document.querySelectorAll('.match-balloon').forEach(el => {
+            el.style.backgroundColor = color;
+        });
+        // Aplica nos balões do jogo de frases
+        document.querySelectorAll('.word-balloon').forEach(el => {
+            el.style.backgroundColor = color;
+        });
+        // Aplica nas palavras do Match Game
+        document.querySelectorAll('.match-word').forEach(el => {
+            el.style.backgroundColor = color;
         });
         document.getElementById('balloonColorSlider').value = configSettings.balloonHue;
     }
@@ -1225,17 +1228,22 @@
     }
 
     function applyTextColor(color) {
-        document.querySelectorAll('.word-balloon, .match-word:not(.matched)').forEach(el => {
+        // Aplica nas palavras do Match Game
+        document.querySelectorAll('.match-word:not(.matched)').forEach(el => {
             el.style.color = color;
         });
         document.querySelectorAll('.match-word.matched').forEach(el => {
+            el.style.color = color;
+        });
+        // Aplica nos balões do jogo de frases
+        document.querySelectorAll('.word-balloon').forEach(el => {
             el.style.color = color;
         });
         document.querySelectorAll('.status-correct').forEach(el => { el.style.color = color; });
     }
 
     // ============================================================
-    // FUNÇÕES DE FONTE - LIMITE DE 90px
+    // FUNÇÕES DE FONTE - REFEITAS PARA SINCRONIZAR COM O MATCH GAME
     // ============================================================
     function adjustFontSize(delta) {
         let newSize = configSettings.fontSize + delta;
@@ -1262,11 +1270,13 @@
         const size = `${configSettings.fontSize}px`;
         const family = configSettings.fontFamily;
         
+        // Aplica nos balões do jogo de frases
         document.querySelectorAll('.word-balloon').forEach(el => {
             el.style.fontSize = size;
             el.style.fontFamily = family;
         });
         
+        // Aplica nas palavras do Match Game
         document.querySelectorAll('.match-word').forEach(el => {
             el.style.fontSize = size;
             el.style.fontFamily = family;
@@ -1622,7 +1632,7 @@
     }
 
     // ============================================================
-    // FUNÇÕES DO NOVO MATCH GAME - BALÃO GIGANTE
+    // FUNÇÕES DO MATCH GAME - BALÃO GIGANTE
     // ============================================================
     function setMatchMode(mode) {
         matchMode = mode;
@@ -1645,16 +1655,16 @@
             document.getElementById('modeAntonyms').classList.add('active');
             document.getElementById('modeTranslation').classList.remove('active');
         }
+        // Aplica as cores e fonte antes de renderizar
+        const textColor = hslToHex(configSettings.textHue, 100, 55);
+        const balloonColor = hslToHex(configSettings.balloonHue || 0, 60, 18);
+        const bgColor = hslToHex(configSettings.bgHue, 60, 8);
+        applyTextColor(textColor);
+        applyBgColor(bgColor);
+        applyBalloonColor(balloonColor);
+        applyFontToAllElements();
+        
         resetMatchGame();
-        setTimeout(() => {
-            const textColor = hslToHex(configSettings.textHue, 100, 55);
-            const balloonColor = hslToHex(configSettings.balloonHue || 0, 60, 18);
-            const bgColor = hslToHex(configSettings.bgHue, 60, 8);
-            applyTextColor(textColor);
-            applyBgColor(bgColor);
-            applyBalloonColor(balloonColor);
-            applyFontToAllElements();
-        }, 100);
     }
 
     function closeMatchGame() {
@@ -1674,7 +1684,6 @@
         // Monta as palavras baseado no modo
         let sourcePairs = matchMode === 'translation' ? translationPairs : antonymPairs;
         let shuffled = [...sourcePairs].sort(() => Math.random() - 0.5);
-        // Pega todos os pares disponíveis
         matchPairs = shuffled;
         totalMatchPairs = matchPairs.length;
         
@@ -1733,15 +1742,14 @@
         if (allMatched && totalMatchPairs > 0) {
             document.getElementById('matchWinMessage').style.display = 'block';
             speak("Congratulations! You matched all pairs!");
-            // Reseta após 3 segundos para novas palavras (quando houver mais dados)
+            // Reseta após 3 segundos
             setTimeout(() => {
                 document.getElementById('matchWinMessage').style.display = 'none';
-                // Se tiver mais palavras no banco, carrega mais
-                // Por enquanto, apenas mostra a mensagem
+                resetMatchGame();
             }, 3000);
         }
         
-        // Atualiza o contador (opcional, mantido oculto)
+        // Atualiza o contador
         const matchedCount = matchWords.filter(item => item.matched).length / 2;
         document.getElementById('matchStats').textContent = `Pares: ${matchedCount} / ${totalMatchPairs}`;
     }
