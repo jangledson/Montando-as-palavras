@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Formando as Frases - Duas por Vez</title>
     <style>
-        /* Fonte Elegância */
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -383,6 +382,7 @@
         }
         .back-link-hidden:active { transform: scale(0.95); }
         
+        /* ===== NOVO MATCH GAME - BALÃO GIGANTE ===== */
         #match-screen { 
             display: none; 
             flex-direction: column; 
@@ -393,7 +393,7 @@
             left: 0; 
             background: #000000; 
             z-index: 500; 
-            padding: clamp(3px, 0.6vh, 8px) clamp(4px, 0.8vw, 10px); 
+            padding: clamp(4px, 0.8vh, 10px); 
             overflow: hidden; 
             transition: background-color 0.4s ease; 
         }
@@ -406,15 +406,25 @@
             display: none; 
             text-align: center; 
             color: #ffaa00; 
-            font-size: clamp(13px, 2.2vh, 20px); 
+            font-size: clamp(16px, 2.8vh, 26px); 
             font-weight: bold; 
-            padding: 2px; 
+            padding: 4px; 
             text-shadow: 0 0 40px rgba(255, 170, 0, 0.4); 
             animation: winPulse 1.5s ease infinite alternate; 
             flex-shrink: 0; 
+            z-index: 10;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.85);
+            padding: clamp(20px, 4vh, 40px);
+            border-radius: 20px;
+            border: 2px solid #ffaa00;
         }
-        @keyframes winPulse { 0% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); } 100% { transform: scale(1.03); text-shadow: 0 0 60px rgba(255, 170, 0, 0.6); } }
+        @keyframes winPulse { 0% { transform: translate(-50%, -50%) scale(1); text-shadow: 0 0 30px rgba(255, 170, 0, 0.3); } 100% { transform: translate(-50%, -50%) scale(1.05); text-shadow: 0 0 60px rgba(255, 170, 0, 0.6); } }
         
+        /* ===== BALÃO GIGANTE ===== */
         .match-grid-wrapper { 
             flex: 1; 
             overflow: hidden; 
@@ -422,78 +432,108 @@
             align-items: center; 
             justify-content: center; 
             min-height: 0; 
-            padding: 1px 0; 
-        }
-        .match-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr 1fr; 
-            gap: clamp(3px, 0.6vh, 6px); 
-            width: 100%; 
-            height: 100%; 
-            max-height: 82vh; 
-            align-content: stretch; 
+            padding: 2px 0; 
+            width: 100%;
         }
         
-        .match-card { 
-            background: #1a1a1a; 
-            border: 2px solid #2a2a2a; 
-            border-radius: clamp(6px, 1.2vh, 12px); 
-            padding: clamp(3px, 0.5vh, 6px) clamp(2px, 0.4vw, 6px); 
-            text-align: center; 
-            font-size: clamp(12px, 2.2vh, 22px) !important;
-            font-weight: 900 !important;
-            font-family: 'Playfair Display', 'Georgia', serif !important;
-            color: #00ff66; 
-            cursor: pointer; 
-            transition: all 0.25s ease, color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; 
-            min-height: clamp(30px, 5vh, 55px); 
-            max-height: clamp(50px, 8vh, 75px);
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            word-wrap: break-word; 
-            word-break: break-word;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.5); 
-            position: relative; 
-            letter-spacing: 0.5px; 
-            line-height: 1.1;
-            overflow: hidden;
-            text-transform: capitalize;
+        .match-balloon {
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            border: 3px solid #2a2a2a;
+            border-radius: clamp(16px, 3vh, 30px);
+            padding: clamp(10px, 2vh, 25px);
+            display: flex;
+            flex-wrap: wrap;
+            align-content: center;
+            justify-content: center;
+            gap: clamp(6px, 1.2vh, 16px);
+            overflow-y: auto;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            box-shadow: inset 0 0 60px rgba(0,0,0,0.5);
         }
-        .match-card:active { transform: scale(0.93); }
-        .match-card.selected { border-color: #ffaa00; box-shadow: 0 0 30px rgba(255, 170, 0, 0.25); transform: scale(1.03); z-index: 2; }
-        .match-card.matched { 
-            background: rgba(0, 26, 0, 0.5); 
-            border-color: #00ff66; 
-            color: #00ff66; 
+        
+        .match-balloon::-webkit-scrollbar {
+            width: 4px;
+        }
+        .match-balloon::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+        }
+        .match-balloon::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+        }
+        
+        /* ===== PALAVRAS DENTRO DO BALÃO ===== */
+        .match-word {
+            padding: clamp(6px, 1.2vh, 16px) clamp(10px, 1.8vw, 22px);
+            font-size: clamp(14px, 2.2vh, 22px);
+            font-weight: 800;
+            border-radius: clamp(14px, 2.5vh, 24px);
             cursor: pointer;
-            opacity: 0.7; 
-            transform: scale(0.92); 
-            pointer-events: auto;
+            display: inline-block;
+            user-select: none;
+            transition: all 0.2s ease;
+            background: #0a0a0a;
+            border: 2px solid #2a2a2a;
+            color: #00ff66;
+            font-family: 'Playfair Display', 'Georgia', serif;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            text-shadow: 0 0 20px rgba(0, 255, 34, 0.1);
+            letter-spacing: 0.3px;
+            line-height: 1.2;
+            flex-shrink: 0;
         }
-        .match-card.matched::after { content: "✓"; position: absolute; top: 0px; right: 4px; font-size: clamp(10px, 1.5vh, 16px); color: #00ff66; text-shadow: 0 0 30px rgba(0, 255, 102, 0.5); }
-        .match-card.wrong { animation: wrongShake 0.4s ease; border-color: #ff3333; box-shadow: 0 0 30px rgba(255, 51, 51, 0.2); }
-        @keyframes wrongShake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
-        @keyframes matchPop { 0% { transform: scale(1.2); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(0.92); opacity: 0.7; } }
-        .match-card.matched { animation: matchPop 0.5s ease; }
-        .match-card.showing-translation { color: #ffaa00 !important; border-color: #ffaa00 !important; box-shadow: 0 0 40px rgba(255, 170, 0, 0.3) !important; transform: scale(1.02); transition: all 0.3s ease; }
+        .match-word:active { transform: scale(0.92); }
+        .match-word.selected { 
+            border-color: #ffaa00; 
+            box-shadow: 0 0 30px rgba(255, 170, 0, 0.3); 
+            transform: scale(1.05);
+            z-index: 2;
+        }
+        .match-word.matched { 
+            opacity: 0.3;
+            transform: scale(0.88);
+            pointer-events: none;
+            border-color: #00ff66;
+        }
+        .match-word.matched::after { 
+            content: "✓"; 
+            margin-left: 4px;
+            font-size: clamp(10px, 1.5vh, 16px);
+            color: #00ff66;
+        }
+        .match-word.wrong { 
+            animation: wrongShake 0.4s ease; 
+            border-color: #ff3333; 
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.2); 
+        }
+        @keyframes wrongShake { 
+            0%, 100% { transform: translateX(0); } 
+            20% { transform: translateX(-8px); } 
+            40% { transform: translateX(8px); } 
+            60% { transform: translateX(-5px); } 
+            80% { transform: translateX(5px); } 
+        }
+        .match-word.speaking { animation: speakGlow 0.6s ease; }
         
         .match-bottom-controls { 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            gap: clamp(4px, 0.8vw, 10px); 
-            padding: clamp(3px, 0.5vh, 6px) clamp(2px, 0.4vw, 6px); 
+            gap: clamp(6px, 1.2vw, 14px); 
+            padding: clamp(6px, 1vh, 12px) clamp(4px, 0.6vw, 10px); 
             border-top: 1px solid rgba(255,255,255,0.06); 
             flex-shrink: 0; 
             margin-top: 2px;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
         }
-        .match-mode-group { display: flex; gap: clamp(3px, 0.6vw, 8px); align-items: center; }
+        .match-mode-group { display: flex; gap: clamp(4px, 0.8vw, 10px); align-items: center; }
         .match-mode-btn { 
-            padding: clamp(4px, 0.8vh, 10px) clamp(10px, 1.5vw, 18px); 
-            border-radius: clamp(12px, 2vh, 20px); 
-            font-size: clamp(10px, 1.6vh, 16px); 
+            padding: clamp(6px, 1vh, 12px) clamp(14px, 2vw, 26px); 
+            border-radius: clamp(14px, 2.2vh, 22px); 
+            font-size: clamp(11px, 1.6vh, 16px); 
             font-weight: bold; 
             cursor: pointer; 
             border: 2px solid rgba(255,255,255,0.2); 
@@ -505,37 +545,11 @@
         .match-mode-btn.active { background: #ffffff; color: #000000; border-color: #ffffff; }
         .match-mode-btn:active { transform: scale(0.95); }
         
-        .match-font-controls { display: flex; align-items: center; gap: clamp(3px, 0.6vw, 8px); margin-left: 6px; }
-        .match-font-btn { 
-            background: rgba(255,255,255,0.08); 
-            border: 2px solid rgba(255,255,255,0.2); 
-            color: #ffffff; 
-            width: clamp(28px, 4vh, 40px); 
-            height: clamp(28px, 4vh, 40px); 
-            border-radius: 50%; 
-            font-size: clamp(14px, 2.5vh, 22px); 
-            font-weight: bold; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            transition: all 0.3s ease; 
-        }
-        .match-font-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
-        .match-font-btn:active { transform: scale(0.9); }
-        .match-font-size-display { 
-            color: #ffffff; 
-            font-size: clamp(10px, 1.6vh, 16px); 
-            font-weight: bold; 
-            min-width: clamp(24px, 3vw, 40px); 
-            text-align: center; 
-        }
-        
-        .match-controls-right { display: flex; gap: clamp(3px, 0.6vw, 8px); align-items: center; margin-left: 6px; }
+        .match-controls-right { display: flex; gap: clamp(4px, 0.8vw, 10px); align-items: center; }
         .match-controls-right button { 
-            padding: clamp(4px, 0.8vh, 10px) clamp(10px, 1.5vw, 20px); 
-            border-radius: clamp(12px, 2vh, 20px); 
-            font-size: clamp(10px, 1.6vh, 16px); 
+            padding: clamp(6px, 1vh, 12px) clamp(14px, 2vw, 26px); 
+            border-radius: clamp(14px, 2.2vh, 22px); 
+            font-size: clamp(11px, 1.6vh, 16px); 
             font-weight: bold; 
             cursor: pointer; 
             border: none; 
@@ -549,6 +563,7 @@
         .btn-match-close { background: rgba(255,255,255,0.08); color: #ffffff; border: 2px solid rgba(255,255,255,0.15) !important; }
         .btn-match-close:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3) !important; }
         
+        /* ===== CONFIG MODAL ===== */
         .config-modal { 
             display: none; 
             position: fixed; 
@@ -754,38 +769,30 @@
         .game-scrollable-content::-webkit-scrollbar-thumb, #topics-screen::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
         
         @media (min-width: 768px) {
-            .match-grid { gap: clamp(6px, 1vh, 12px); max-height: 85vh; }
-            .match-card { min-height: clamp(50px, 8vh, 80px); max-height: clamp(70px, 12vh, 120px); font-size: clamp(18px, 3.5vh, 32px) !important; border-radius: clamp(12px, 2vh, 20px); padding: clamp(8px, 1.5vh, 16px); }
-            .match-bottom-controls { gap: clamp(10px, 2vw, 20px); padding: clamp(6px, 1vh, 14px); }
-            .match-mode-btn { padding: clamp(8px, 1.5vh, 16px) clamp(16px, 3vw, 32px); font-size: clamp(14px, 2.5vh, 22px); border-radius: clamp(16px, 3vh, 28px); }
-            .match-font-btn { width: clamp(36px, 6vh, 56px); height: clamp(36px, 6vh, 56px); font-size: clamp(18px, 3vh, 28px); }
-            .match-font-size-display { font-size: clamp(14px, 2.5vh, 22px); min-width: clamp(36px, 5vw, 60px); }
-            .match-controls-right button { padding: clamp(8px, 1.5vh, 16px) clamp(16px, 3vw, 32px); font-size: clamp(14px, 2.5vh, 22px); border-radius: clamp(16px, 3vh, 28px); }
-            .match-win-message { font-size: clamp(18px, 3vh, 30px); }
-            .match-card.matched::after { font-size: clamp(14px, 2.5vh, 24px); right: 8px; }
+            .match-word { font-size: clamp(18px, 3vh, 30px) !important; padding: clamp(10px, 2vh, 20px) clamp(16px, 3vw, 32px); }
+            .match-balloon { gap: clamp(10px, 1.8vh, 24px); padding: clamp(16px, 3vh, 35px); }
+            .match-mode-btn { padding: clamp(8px, 1.5vh, 16px) clamp(18px, 3vw, 36px); font-size: clamp(14px, 2.5vh, 22px); border-radius: clamp(16px, 3vh, 28px); }
+            .match-controls-right button { padding: clamp(8px, 1.5vh, 16px) clamp(18px, 3vw, 36px); font-size: clamp(14px, 2.5vh, 22px); border-radius: clamp(16px, 3vh, 28px); }
+            .match-bottom-controls { gap: clamp(12px, 2vw, 24px); padding: clamp(8px, 1.5vh, 16px); }
         }
         
         @media (max-width: 400px) {
-            .match-card { font-size: clamp(10px, 2vh, 14px) !important; min-height: 30px; max-height: 46px; padding: 3px 2px; border-radius: 6px; }
-            .match-grid { gap: 3px; }
-            .match-mode-btn { font-size: clamp(8px, 1.4vh, 11px); padding: 3px 8px; }
-            .match-controls-right button { font-size: clamp(8px, 1.4vh, 11px); padding: 3px 8px; }
-            .match-font-btn { width: clamp(24px, 4vh, 32px); height: clamp(24px, 4vh, 32px); font-size: clamp(12px, 2vh, 16px); }
-            .match-font-size-display { font-size: clamp(8px, 1.4vh, 12px); min-width: 20px; }
-            .match-bottom-controls { gap: 3px; flex-wrap: wrap; justify-content: center; }
+            .match-word { font-size: clamp(11px, 2vh, 15px) !important; padding: clamp(4px, 0.8vh, 8px) clamp(8px, 1.5vw, 14px); border-radius: 10px; }
+            .match-balloon { gap: clamp(4px, 0.8vh, 8px); padding: clamp(6px, 1.2vh, 14px); }
+            .match-mode-btn { font-size: clamp(9px, 1.4vh, 12px); padding: clamp(4px, 0.8vh, 8px) clamp(10px, 1.8vw, 16px); }
+            .match-controls-right button { font-size: clamp(9px, 1.4vh, 12px); padding: clamp(4px, 0.8vh, 8px) clamp(10px, 1.8vw, 16px); }
+            .match-bottom-controls { gap: 4px; flex-wrap: wrap; justify-content: center; }
         }
         @media (max-width: 350px) {
-            .match-card { font-size: clamp(8px, 1.6vh, 11px) !important; min-height: 24px; max-height: 38px; padding: 2px 1px; border-radius: 4px; }
-            .match-grid { gap: 2px; }
+            .match-word { font-size: clamp(9px, 1.6vh, 12px) !important; padding: clamp(3px, 0.6vh, 6px) clamp(6px, 1vw, 10px); border-radius: 8px; }
+            .match-balloon { gap: clamp(3px, 0.6vh, 6px); padding: clamp(4px, 0.8vh, 10px); }
         }
         @media (max-height: 600px) {
-            .match-card { min-height: 26px; max-height: 38px; font-size: clamp(10px, 2vh, 14px) !important; }
-            .match-grid { gap: 3px; }
-            .match-bottom-controls { padding: 2px 0 0 0; }
-            .match-mode-btn { font-size: clamp(8px, 1.2vh, 10px); padding: 2px 6px; }
-            .match-controls-right button { font-size: clamp(8px, 1.2vh, 10px); padding: 2px 8px; }
-            .match-font-btn { width: clamp(22px, 3.5vh, 28px); height: clamp(22px, 3.5vh, 28px); font-size: clamp(12px, 2vh, 16px); }
-            .match-font-size-display { font-size: clamp(8px, 1.2vh, 11px); min-width: 20px; }
+            .match-word { font-size: clamp(10px, 1.8vh, 14px) !important; padding: clamp(4px, 0.7vh, 8px) clamp(8px, 1.2vw, 14px); }
+            .match-balloon { gap: clamp(4px, 0.7vh, 8px); padding: clamp(6px, 1vh, 12px); }
+            .match-mode-btn { font-size: clamp(9px, 1.2vh, 11px); padding: clamp(3px, 0.6vh, 6px) clamp(8px, 1.2vw, 12px); }
+            .match-controls-right button { font-size: clamp(9px, 1.2vh, 11px); padding: clamp(3px, 0.6vh, 6px) clamp(8px, 1.2vw, 12px); }
+            .match-bottom-controls { padding: clamp(3px, 0.5vh, 6px); }
         }
     </style>
 </head>
@@ -838,21 +845,19 @@
 
 <div class="back-link-hidden" id="backLinkHidden" onclick="showTopicsScreen()">⬅ Voltar</div>
 
+<!-- ============================================================ -->
+<!-- NOVO MATCH GAME - BALÃO GIGANTE                              -->
+<!-- ============================================================ -->
 <div id="match-screen">
     <div class="match-stats" id="matchStats"></div>
     <div id="matchWinMessage" class="match-win-message">🎉 PARABÉNS! Você combinou todas! 🎉</div>
     <div class="match-grid-wrapper">
-        <div class="match-grid" id="matchGrid"></div>
+        <div class="match-balloon" id="matchBalloon"></div>
     </div>
     <div class="match-bottom-controls">
         <div class="match-mode-group">
             <button class="match-mode-btn active" id="modeTranslation" onclick="setMatchMode('translation')">🌐 Tradução</button>
             <button class="match-mode-btn" id="modeAntonyms" onclick="setMatchMode('antonyms')">🔀 Antônimos</button>
-        </div>
-        <div class="match-font-controls">
-            <button class="match-font-btn" onclick="adjustMatchFontSize(-1)">−</button>
-            <span class="match-font-size-display" id="matchFontSizeDisplay">18</span>
-            <button class="match-font-btn" onclick="adjustMatchFontSize(1)">+</button>
         </div>
         <div class="match-controls-right">
             <button class="btn-match-reset" onclick="resetMatchGame()">🔄 Embaralhar</button>
@@ -882,11 +887,11 @@
         </div>
         
         <div class="color-picker-group">
-            <label>🔤 Tamanho da Fonte (Balões)</label>
+            <label>🔤 Tamanho da Fonte (Balões e Match Game) - até 90px</label>
             <div class="font-size-controls">
-                <button class="font-size-btn" onclick="adjustFontSize(-1)">A-</button>
+                <button class="font-size-btn" onclick="adjustFontSize(-5)">A-</button>
                 <div class="font-size-display" id="fontSizeDisplay">15px</div>
-                <button class="font-size-btn" onclick="adjustFontSize(1)">A+</button>
+                <button class="font-size-btn" onclick="adjustFontSize(5)">A+</button>
             </div>
         </div>
         
@@ -921,7 +926,7 @@
 
 <script>
     // ============================================================
-    // BANCO DE DADOS DE FRASES - AGORA COM 4 BLOCOS (8 FRASES)
+    // BANCO DE DADOS DE FRASES - 4 BLOCOS (8 FRASES)
     // ============================================================
     const phraseDatabase = [
         {
@@ -942,7 +947,6 @@
                 { en: "The dog is white.", pt: "O cachorro é branco." }
             ]
         },
-        // NOVO BLOCO 4 PARA TESTE
         {
             frases: [
                 { en: "The sky is blue.", pt: "O céu é azul." },
@@ -952,7 +956,7 @@
     ];
 
     // ============================================================
-    // BANCO DE DADOS DO MATCH GAME - 24 PARES (48 PALAVRAS)
+    // BANCO DE DADOS DO MATCH GAME - 24 PARES
     // ============================================================
     const translationPairs = [
         { pt: "amor", en: "love" },
@@ -981,9 +985,6 @@
         { pt: "velho", en: "old" }
     ];
 
-    // ============================================================
-    // BANCO DE DADOS DE ANTÔNIMOS - CORRIGIDO COM TRADUÇÃO INDIVIDUAL
-    // ============================================================
     const antonymPairs = [
         { en: "hot", oposto: "cold", traducao_en: "quente", traducao_oposto: "frio" },
         { en: "big", oposto: "small", traducao_en: "grande", traducao_oposto: "pequeno" },
@@ -1020,17 +1021,18 @@
     let phrasePairs = [];
     let selectedWords = [];
     let currentPhraseIndex = 0;
-    let phraseCompleted = false;
+    let phrase1Completed = false;
+    let phrase2Completed = false;
     let allCompleted = false;
 
+    // Match Game - Nova estrutura
     let matchMode = 'translation';
+    let matchWords = [];
     let matchPairs = [];
-    let matchCards = [];
-    let matchedPairs = 0;
-    let selectedMatchCard = null;
+    let selectedMatchWord = null;
+    let matchedPairsCount = 0;
+    let totalMatchPairs = 0;
     let isProcessingMatch = false;
-    let translationTimeout = null;
-    let matchFontSize = 18;
 
     let availableVoices = [];
     let selectedVoiceGender = 'female';
@@ -1048,6 +1050,7 @@
                 const parsed = JSON.parse(saved);
                 if (parsed.balloonColor === undefined) parsed.balloonColor = '#1a1a1a';
                 if (parsed.bgColor === undefined) parsed.bgColor = '#000000';
+                if (parsed.fontSize === undefined) parsed.fontSize = 15;
                 return parsed;
             }
         } catch (e) {}
@@ -1126,7 +1129,7 @@
 
     function speakWord(word) {
         speak(word);
-        document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
+        document.querySelectorAll('.word-balloon, .match-word').forEach(el => {
             if (el.textContent.toLowerCase().includes(word.toLowerCase())) {
                 el.classList.add('speaking');
                 setTimeout(() => el.classList.remove('speaking'), 700);
@@ -1190,8 +1193,12 @@
     }
 
     function applyBalloonColor(color) {
-        document.querySelectorAll('.word-balloon, .match-card').forEach(el => {
-            el.style.backgroundColor = color;
+        document.querySelectorAll('.word-balloon, .match-balloon, .match-word').forEach(el => {
+            if (el.classList.contains('match-balloon')) {
+                el.style.backgroundColor = color;
+            } else {
+                el.style.backgroundColor = color;
+            }
         });
         document.getElementById('balloonColorSlider').value = configSettings.balloonHue;
     }
@@ -1218,36 +1225,49 @@
     }
 
     function applyTextColor(color) {
-        document.querySelectorAll('.word-balloon, .match-card:not(.matched)').forEach(el => {
+        document.querySelectorAll('.word-balloon, .match-word:not(.matched)').forEach(el => {
             el.style.color = color;
         });
-        document.querySelectorAll('.match-card.matched').forEach(el => {
+        document.querySelectorAll('.match-word.matched').forEach(el => {
             el.style.color = color;
         });
         document.querySelectorAll('.status-correct').forEach(el => { el.style.color = color; });
     }
 
     // ============================================================
-    // FUNÇÕES DE FONTE
+    // FUNÇÕES DE FONTE - LIMITE DE 90px
     // ============================================================
     function adjustFontSize(delta) {
-        configSettings.fontSize = Math.max(10, Math.min(30, configSettings.fontSize + delta));
+        let newSize = configSettings.fontSize + delta;
+        if (newSize < 8) newSize = 8;
+        if (newSize > 90) newSize = 90;
+        configSettings.fontSize = newSize;
+        
         updateFontSizeDisplay();
-        applyFontStyles();
+        applyFontToAllElements();
         saveConfig();
     }
+    
     function updateFontSizeDisplay() {
         document.getElementById('fontSizeDisplay').textContent = `${configSettings.fontSize}px`;
     }
+    
     function changeFontFamily(fontValue) {
         configSettings.fontFamily = fontValue;
-        applyFontStyles();
+        applyFontToAllElements();
         saveConfig();
     }
-    function applyFontStyles() {
+    
+    function applyFontToAllElements() {
         const size = `${configSettings.fontSize}px`;
         const family = configSettings.fontFamily;
+        
         document.querySelectorAll('.word-balloon').forEach(el => {
+            el.style.fontSize = size;
+            el.style.fontFamily = family;
+        });
+        
+        document.querySelectorAll('.match-word').forEach(el => {
             el.style.fontSize = size;
             el.style.fontFamily = family;
         });
@@ -1278,7 +1298,7 @@
         btnF.textContent = "📥 Voz Feminina";
         btnM.className = "btn-download-voice";
         btnM.textContent = "📥 Voz Masculina";
-        applyFontStyles();
+        applyFontToAllElements();
         saveConfig();
     }
 
@@ -1411,17 +1431,21 @@
 
     function loadPhrasePair() {
         if (currentPhrasePairIndex >= phrasePairs.length) {
-            alert("🎉 Fim de todos os blocos! Voltando ao início.");
-            currentPhrasePairIndex = 0;
+            alert("🎉 Você completou todos os blocos! Voltando ao menu.");
+            showTopicsScreen();
+            return;
         }
+        
         const pair = phrasePairs[currentPhrasePairIndex];
         if (!pair || !pair.frases || pair.frases.length < 2) {
             alert("Erro: este bloco não tem duas frases.");
             showTopicsScreen();
             return;
         }
+        
         currentPhraseIndex = 0;
-        phraseCompleted = false;
+        phrase1Completed = false;
+        phrase2Completed = false;
         allCompleted = false;
         selectedWords = [];
 
@@ -1442,17 +1466,14 @@
         document.getElementById("phrase-pt-2").classList.remove("revealed");
 
         document.getElementById("track-number").innerText = `Bloco ${currentPhrasePairIndex + 1} de ${phrasePairs.length} - Frase 1:`;
+        
         renderZones();
     }
 
-    function getWordsForPair() {
+    function getWordsForPhrase(phraseIndex) {
         const pair = phrasePairs[currentPhrasePairIndex];
-        const frase1 = pair.frases[0];
-        const frase2 = pair.frases[1];
-        let words1 = frase1.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
-        let words2 = frase2.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
-        let allWords = [...words1, ...words2];
-        return allWords.sort(() => Math.random() - 0.5);
+        const frase = pair.frases[phraseIndex];
+        return frase.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
     }
 
     function renderZones() {
@@ -1461,10 +1482,20 @@
         const currentTextColor = hslToHex(configSettings.textHue, 100, 55);
         const currentBalloonColor = hslToHex(configSettings.balloonHue || 0, 60, 18);
 
+        if (allCompleted) {
+            constructZone.style.display = "none";
+            wordsZone.style.display = "none";
+            return;
+        }
+
+        constructZone.style.display = "flex";
+        wordsZone.style.display = "flex";
         constructZone.innerHTML = "";
+        wordsZone.innerHTML = "";
+
         const pair = phrasePairs[currentPhrasePairIndex];
         const currentPhrase = pair.frases[currentPhraseIndex];
-        const targetWords = currentPhrase.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
+        const targetWords = getWordsForPhrase(currentPhraseIndex);
 
         selectedWords.forEach((word, index) => {
             const balloon = document.createElement("span");
@@ -1492,50 +1523,53 @@
             constructZone.appendChild(balloon);
         });
 
-        const selectedWordsClean = selectedWords.map(w => w.toLowerCase().trim());
-        const targetWordsClean = targetWords.map(w => w.toLowerCase().trim());
-        
-        const isPhraseComplete = selectedWordsClean.length === targetWordsClean.length && 
-                                 selectedWordsClean.every((w, i) => w === targetWordsClean[i]);
+        const selectedClean = selectedWords.map(w => w.toLowerCase().trim());
+        const targetClean = targetWords.map(w => w.toLowerCase().trim());
+        const isCurrentPhraseComplete = selectedClean.length === targetClean.length && 
+                                        selectedClean.every((w, i) => w === targetClean[i]);
 
-        if (isPhraseComplete && !phraseCompleted) {
-            phraseCompleted = true;
-            if (currentPhraseIndex === 0) {
-                document.getElementById("phrase-pt-2").classList.remove("phrase-hidden");
-                document.getElementById("phrase-pt-2").classList.add("revealed");
-                document.getElementById("track-number").innerText = `Bloco ${currentPhrasePairIndex + 1} - Frase 2:`;
-                document.getElementById("status-message").innerHTML = `<span class="status-correct">✅ Frase 1 completa! Agora monte a frase 2.</span>`;
-                currentPhraseIndex = 1;
-                selectedWords = [];
-                renderZones();
-                return;
-            } else {
-                allCompleted = true;
-                document.getElementById("status-message").innerHTML = `<span class="status-correct">🎉 PARABÉNS! Bloco completo!</span>`;
-                document.getElementById("construction-zone").classList.add("completed");
-                document.getElementById("construction-zone").style.display = "none";
-                document.getElementById("words-zone").style.display = "none";
-                document.getElementById("check-btn").style.display = "none";
-                document.getElementById("next-btn").style.display = "block";
-                document.getElementById("next-btn").textContent = "➜ Próximo Par";
-                const successBox = document.getElementById("success-text-box");
-                successBox.innerText = `✅ ${pair.frases[0].en} ✅ ${pair.frases[1].en}`;
-                successBox.style.display = "flex";
-                speak(pair.frases[0].en + ". " + pair.frases[1].en);
-                return;
-            }
+        if (isCurrentPhraseComplete && !phrase1Completed && currentPhraseIndex === 0) {
+            phrase1Completed = true;
+            document.getElementById("status-message").innerHTML = `<span class="status-correct">✅ Frase 1 completa! Agora monte a frase 2.</span>`;
+            
+            document.getElementById("phrase-pt-2").classList.remove("phrase-hidden");
+            document.getElementById("phrase-pt-2").classList.add("revealed");
+            document.getElementById("track-number").innerText = `Bloco ${currentPhrasePairIndex + 1} - Frase 2:`;
+            
+            currentPhraseIndex = 1;
+            selectedWords = [];
+            renderZones();
+            return;
         }
 
-        wordsZone.style.display = "flex";
-        wordsZone.innerHTML = "";
-        
-        const allWords = getWordsForPair();
-        let availableWords = allWords.filter(w => !selectedWords.includes(w));
-        
-        if (phraseCompleted && currentPhraseIndex === 1) {
-            const secondPhrase = pair.frases[1].en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
-            availableWords = availableWords.filter(w => secondPhrase.includes(w));
+        if (isCurrentPhraseComplete && phrase1Completed && currentPhraseIndex === 1 && !phrase2Completed) {
+            phrase2Completed = true;
+            allCompleted = true;
+            
+            document.getElementById("status-message").innerHTML = `<span class="status-correct">🎉 PARABÉNS! Bloco completo!</span>`;
+            document.getElementById("construction-zone").classList.add("completed");
+            document.getElementById("construction-zone").style.display = "none";
+            document.getElementById("words-zone").style.display = "none";
+            document.getElementById("check-btn").style.display = "none";
+            document.getElementById("next-btn").style.display = "block";
+            document.getElementById("next-btn").textContent = "➜ Próximo Par";
+            
+            const successBox = document.getElementById("success-text-box");
+            successBox.innerText = `✅ ${pair.frases[0].en} ✅ ${pair.frases[1].en}`;
+            successBox.style.display = "flex";
+            speak(pair.frases[0].en + ". " + pair.frases[1].en);
+            return;
         }
+
+        let availableWords = [];
+        if (currentPhraseIndex === 0) {
+            availableWords = targetWords.filter(w => !selectedWords.includes(w));
+        } else if (currentPhraseIndex === 1 && phrase1Completed) {
+            const targetWords2 = getWordsForPhrase(1);
+            availableWords = targetWords2.filter(w => !selectedWords.includes(w));
+        }
+
+        availableWords.sort(() => Math.random() - 0.5);
 
         availableWords.forEach(word => {
             const btn = document.createElement("span");
@@ -1551,13 +1585,19 @@
             wordsZone.appendChild(btn);
         });
 
-        applyFontStyles();
+        applyFontToAllElements();
     }
 
     function checkAnswer() {
         const statusMsg = document.getElementById("status-message");
-        statusMsg.innerHTML = '<span class="status-info">ℹ️ A verificação é automática ao montar a frase!</span>';
-        setTimeout(() => { statusMsg.innerHTML = ""; }, 2000);
+        if (allCompleted) {
+            statusMsg.innerHTML = '<span class="status-correct">🎉 Bloco já foi concluído! Clique em "Próximo Par" para avançar.</span>';
+        } else {
+            statusMsg.innerHTML = '<span class="status-info">ℹ️ A verificação é automática ao montar a frase!</span>';
+        }
+        setTimeout(() => { 
+            if (!allCompleted) statusMsg.innerHTML = ""; 
+        }, 2000);
     }
 
     function revealAnswer() {
@@ -1572,18 +1612,17 @@
     }
 
     function nextPhrasePair() {
-        currentPhrasePairIndex++;
-        if (currentPhrasePairIndex >= phrasePairs.length) {
-            alert("🎉 Você completou todos os blocos! Voltando ao menu.");
-            showTopicsScreen();
+        if (!allCompleted) {
+            document.getElementById("status-message").innerHTML = '<span class="status-wrong">⚠️ Complete o bloco atual primeiro!</span>';
+            setTimeout(() => { document.getElementById("status-message").innerHTML = ""; }, 2000);
             return;
         }
-        document.getElementById("words-zone").style.display = "flex";
+        currentPhrasePairIndex++;
         loadPhrasePair();
     }
 
     // ============================================================
-    // FUNÇÕES DO MATCH GAME
+    // FUNÇÕES DO NOVO MATCH GAME - BALÃO GIGANTE
     // ============================================================
     function setMatchMode(mode) {
         matchMode = mode;
@@ -1606,8 +1645,6 @@
             document.getElementById('modeAntonyms').classList.add('active');
             document.getElementById('modeTranslation').classList.remove('active');
         }
-        matchFontSize = parseInt(localStorage.getItem('matchFontSize')) || 18;
-        document.getElementById('matchFontSizeDisplay').textContent = matchFontSize;
         resetMatchGame();
         setTimeout(() => {
             const textColor = hslToHex(configSettings.textHue, 100, 55);
@@ -1616,180 +1653,147 @@
             applyTextColor(textColor);
             applyBgColor(bgColor);
             applyBalloonColor(balloonColor);
+            applyFontToAllElements();
         }, 100);
     }
 
     function closeMatchGame() {
         document.getElementById('match-screen').classList.remove('active');
         document.getElementById('matchBtn').classList.remove('active');
-        if (translationTimeout) {
-            clearTimeout(translationTimeout);
-            translationTimeout = null;
-        }
-        document.querySelectorAll('.match-card.showing-translation').forEach(el => {
-            el.classList.remove('showing-translation');
-        });
+        document.getElementById('matchWinMessage').style.display = 'none';
+        selectedMatchWord = null;
+        isProcessingMatch = false;
     }
 
     function resetMatchGame() {
-        if (translationTimeout) {
-            clearTimeout(translationTimeout);
-            translationTimeout = null;
-        }
-        document.querySelectorAll('.match-card.showing-translation').forEach(el => {
-            el.classList.remove('showing-translation');
-        });
-
+        document.getElementById('matchWinMessage').style.display = 'none';
+        selectedMatchWord = null;
+        isProcessingMatch = false;
+        matchedPairsCount = 0;
+        
+        // Monta as palavras baseado no modo
         let sourcePairs = matchMode === 'translation' ? translationPairs : antonymPairs;
         let shuffled = [...sourcePairs].sort(() => Math.random() - 0.5);
-        let selected = shuffled.slice(0, Math.min(24, shuffled.length));
-        matchPairs = selected;
-        matchCards = [];
+        // Pega todos os pares disponíveis
+        matchPairs = shuffled;
+        totalMatchPairs = matchPairs.length;
+        
+        // Cria a lista de palavras com seus pares
+        matchWords = [];
         matchPairs.forEach((pair, idx) => {
             if (matchMode === 'translation') {
-                matchCards.push({ type: 'pt', word: pair.pt, pairId: idx });
-                matchCards.push({ type: 'en', word: pair.en, pairId: idx });
+                matchWords.push({ word: pair.pt, pairId: idx, matched: false });
+                matchWords.push({ word: pair.en, pairId: idx, matched: false });
             } else {
-                // Modo Antônimos - cada palavra tem sua própria tradução
-                matchCards.push({ type: 'a', word: pair.en, pairId: idx, traducao: pair.traducao_en });
-                matchCards.push({ type: 'b', word: pair.oposto, pairId: idx, traducao: pair.traducao_oposto });
+                matchWords.push({ word: pair.en, pairId: idx, matched: false });
+                matchWords.push({ word: pair.oposto, pairId: idx, matched: false });
             }
         });
-        matchCards.sort(() => Math.random() - 0.5);
-        matchedPairs = 0;
-        selectedMatchCard = null;
-        isProcessingMatch = false;
-        document.getElementById('matchWinMessage').style.display = 'none';
+        
+        // Embaralha as palavras
+        matchWords.sort(() => Math.random() - 0.5);
+        
         renderMatchGame();
     }
 
     function renderMatchGame() {
-        const grid = document.getElementById('matchGrid');
-        grid.innerHTML = '';
+        const balloon = document.getElementById('matchBalloon');
+        balloon.innerHTML = '';
+        
         const textColor = hslToHex(configSettings.textHue, 100, 55);
         const balloonColor = hslToHex(configSettings.balloonHue || 0, 60, 18);
+        const fontSize = configSettings.fontSize + 'px';
+        const fontFamily = configSettings.fontFamily;
         
-        matchCards.forEach((card, index) => {
-            const div = document.createElement('div');
-            div.className = 'match-card';
-            div.textContent = card.word;
-            div.dataset.index = index;
-            div.dataset.pairId = card.pairId;
-            div.dataset.type = card.type;
-            if (matchMode === 'antonyms') {
-                div.dataset.traducao = card.traducao || '';
+        // Aplica a cor do balão
+        balloon.style.backgroundColor = balloonColor;
+        balloon.style.borderColor = 'rgba(255,255,255,0.1)';
+        
+        matchWords.forEach((item, index) => {
+            const wordEl = document.createElement('span');
+            wordEl.className = 'match-word';
+            if (item.matched) wordEl.classList.add('matched');
+            wordEl.textContent = item.word;
+            wordEl.dataset.index = index;
+            wordEl.dataset.pairId = item.pairId;
+            wordEl.style.fontSize = fontSize;
+            wordEl.style.fontFamily = fontFamily;
+            wordEl.style.color = textColor;
+            wordEl.style.backgroundColor = balloonColor;
+            
+            if (!item.matched) {
+                wordEl.onclick = () => handleMatchWordClick(index);
             }
-            div.style.fontSize = matchFontSize + 'px';
-            div.style.backgroundColor = balloonColor;
-            if (!card.matched) {
-                div.style.color = textColor;
-                div.style.borderColor = 'rgba(255,255,255,0.15)';
-            }
-            if (card.matched) {
-                div.classList.add('matched');
-                div.style.color = textColor;
-                div.style.borderColor = '#00ff66';
-                if (matchMode === 'antonyms') {
-                    div.onclick = () => showTranslation(index);
-                }
-            } else {
-                div.onclick = () => handleMatchCardClick(index);
-            }
-            grid.appendChild(div);
+            
+            balloon.appendChild(wordEl);
         });
-        const totalPairs = matchPairs.length;
-        document.getElementById('matchStats').textContent = `Pares: ${matchedPairs} / ${totalPairs}`;
-        if (matchedPairs === totalPairs && totalPairs > 0) {
+        
+        // Verifica se todos os pares foram encontrados
+        const allMatched = matchWords.every(item => item.matched === true);
+        if (allMatched && totalMatchPairs > 0) {
             document.getElementById('matchWinMessage').style.display = 'block';
             speak("Congratulations! You matched all pairs!");
+            // Reseta após 3 segundos para novas palavras (quando houver mais dados)
+            setTimeout(() => {
+                document.getElementById('matchWinMessage').style.display = 'none';
+                // Se tiver mais palavras no banco, carrega mais
+                // Por enquanto, apenas mostra a mensagem
+            }, 3000);
         }
+        
+        // Atualiza o contador (opcional, mantido oculto)
+        const matchedCount = matchWords.filter(item => item.matched).length / 2;
+        document.getElementById('matchStats').textContent = `Pares: ${matchedCount} / ${totalMatchPairs}`;
     }
 
-    function handleMatchCardClick(index) {
+    function handleMatchWordClick(index) {
         if (isProcessingMatch) return;
-        const card = matchCards[index];
-        if (card.matched) return;
-        if (selectedMatchCard === index) {
-            selectedMatchCard = null;
-            renderMatchGame();
-            return;
-        }
-        if (selectedMatchCard === null) {
-            selectedMatchCard = index;
-            const grid = document.getElementById('matchGrid');
-            const elements = grid.children;
-            elements[index].classList.add('selected');
-            return;
-        }
-        const firstCard = matchCards[selectedMatchCard];
-        const secondCard = card;
-        if (firstCard.pairId === secondCard.pairId && firstCard.type !== secondCard.type) {
-            firstCard.matched = true;
-            secondCard.matched = true;
-            matchedPairs++;
-            selectedMatchCard = null;
-            isProcessingMatch = false;
-            renderMatchGame();
-            const wordToSpeak = matchMode === 'translation' ? firstCard.word : firstCard.word;
-            speakWord(wordToSpeak);
-        } else {
-            isProcessingMatch = true;
-            const grid = document.getElementById('matchGrid');
-            const elements = grid.children;
-            elements[selectedMatchCard].classList.add('wrong');
-            elements[index].classList.add('wrong');
-            setTimeout(() => {
-                selectedMatchCard = null;
+        const item = matchWords[index];
+        if (item.matched) return;
+        
+        // Se já tem uma palavra selecionada
+        if (selectedMatchWord !== null) {
+            const firstItem = matchWords[selectedMatchWord];
+            const firstEl = document.querySelectorAll('.match-word')[selectedMatchWord];
+            
+            // Se clicou na mesma palavra, desmarca
+            if (selectedMatchWord === index) {
+                firstEl.classList.remove('selected');
+                selectedMatchWord = null;
+                return;
+            }
+            
+            // Verifica se formam um par
+            if (firstItem.pairId === item.pairId && firstItem.word !== item.word) {
+                // Par encontrado!
+                firstItem.matched = true;
+                item.matched = true;
+                matchedPairsCount++;
+                selectedMatchWord = null;
                 isProcessingMatch = false;
                 renderMatchGame();
-            }, 500);
+                speakWord(firstItem.word + " " + item.word);
+            } else {
+                // Par errado
+                isProcessingMatch = true;
+                const secondEl = document.querySelectorAll('.match-word')[index];
+                firstEl.classList.add('wrong');
+                secondEl.classList.add('wrong');
+                
+                setTimeout(() => {
+                    firstEl.classList.remove('wrong', 'selected');
+                    secondEl.classList.remove('wrong');
+                    selectedMatchWord = null;
+                    isProcessingMatch = false;
+                    renderMatchGame();
+                }, 500);
+            }
+        } else {
+            // Seleciona a primeira palavra
+            selectedMatchWord = index;
+            const el = document.querySelectorAll('.match-word')[index];
+            el.classList.add('selected');
         }
-    }
-
-    // ============================================================
-    // FUNÇÃO PARA MOSTRAR TRADUÇÃO NO MODO ANTÔNIMOS (CORRIGIDA)
-    // ============================================================
-    function showTranslation(index) {
-        if (matchMode !== 'antonyms') return;
-        const card = matchCards[index];
-        if (!card.matched) return;
-        
-        const grid = document.getElementById('matchGrid');
-        const elements = grid.children;
-        const el = elements[index];
-        
-        if (el.classList.contains('showing-translation')) return;
-        
-        const originalText = card.word;
-        const traducao = card.traducao || '';
-        
-        // Mostra APENAS a tradução da palavra específica
-        el.textContent = traducao;
-        el.classList.add('showing-translation');
-        
-        if (translationTimeout) {
-            clearTimeout(translationTimeout);
-            translationTimeout = null;
-        }
-        
-        translationTimeout = setTimeout(() => {
-            el.textContent = originalText;
-            el.classList.remove('showing-translation');
-            translationTimeout = null;
-        }, 3000);
-    }
-
-    // ============================================================
-    // FUNÇÃO PARA AJUSTAR O TAMANHO DA FONTE NO MATCH GAME (CORRIGIDA)
-    // ============================================================
-    function adjustMatchFontSize(delta) {
-        matchFontSize = Math.max(10, Math.min(40, matchFontSize + delta));
-        document.getElementById('matchFontSizeDisplay').textContent = matchFontSize;
-        localStorage.setItem('matchFontSize', matchFontSize);
-        
-        document.querySelectorAll('.match-card').forEach(el => {
-            el.style.fontSize = matchFontSize + 'px';
-        });
     }
 
     // ============================================================
@@ -1803,13 +1807,10 @@
         applyTextColor(hslToHex(configSettings.textHue, 100, 55));
         applyBgColor(hslToHex(configSettings.bgHue, 60, 8));
         applyBalloonColor(hslToHex(configSettings.balloonHue || 0, 60, 18));
-        applyFontStyles();
+        applyFontToAllElements();
 
         document.getElementById('modeTranslation').classList.add('active');
         matchMode = 'translation';
-        
-        matchFontSize = parseInt(localStorage.getItem('matchFontSize')) || 18;
-        document.getElementById('matchFontSizeDisplay').textContent = matchFontSize;
         
         setupDoubleTap();
     }
