@@ -2,7 +2,10 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Formando as Frases - Duas por Vez</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
@@ -17,7 +20,15 @@
             user-select: none; 
             overflow: hidden; 
             transition: background-color 0.4s ease; 
+            margin: 0;
+            padding: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
+        ::-webkit-scrollbar { display: none; }
         
         .container { 
             width: 100%; 
@@ -29,6 +40,11 @@
             overflow: hidden; 
             background: #000000; 
             transition: background-color 0.4s ease; 
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
         
         h2 { 
@@ -131,7 +147,6 @@
             gap: clamp(4px, 0.6vh, 8px); 
             backdrop-filter: blur(8px); 
         }
-        /* ===== FRASE DE CIMA - FONTE ELEGANTE, 20PX, BRANCA ===== */
         .phrase-pt { 
             font-size: 20px !important; 
             font-weight: 900 !important; 
@@ -384,7 +399,6 @@
         }
         .back-link-hidden:active { transform: scale(0.95); }
         
-        /* ===== MATCH GAME - BALÃO GIGANTE ===== */
         #match-screen { 
             display: none; 
             flex-direction: column; 
@@ -454,17 +468,7 @@
             box-shadow: inset 0 0 60px rgba(0,0,0,0.5);
         }
         
-        .match-balloon::-webkit-scrollbar {
-            width: 4px;
-        }
-        .match-balloon::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.03);
-            border-radius: 10px;
-        }
-        .match-balloon::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.15);
-            border-radius: 10px;
-        }
+        .match-balloon::-webkit-scrollbar { display: none; }
         
         .match-word {
             padding: clamp(10px, 2vh, 24px) clamp(14px, 2.5vw, 32px);
@@ -531,7 +535,6 @@
         }
         .match-word.speaking { animation: speakGlow 0.6s ease; }
         
-        /* ===== BARRA INFERIOR - UMA LINHA SÓ, NUNCA QUEBRA ===== */
         .match-bottom-controls { 
             display: flex; 
             justify-content: space-around;
@@ -596,7 +599,6 @@
         .btn-match-close { background: rgba(255,255,255,0.08); color: #ffffff; border: 2px solid rgba(255,255,255,0.15) !important; }
         .btn-match-close:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3) !important; }
         
-        /* ===== CONFIG MODAL ===== */
         .config-modal { 
             display: none; 
             position: fixed; 
@@ -797,11 +799,8 @@
         }
         .btn-reset-colors:hover { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 50, 50, 0.4); }
         
-        .game-scrollable-content::-webkit-scrollbar, #topics-screen::-webkit-scrollbar { width: 3px; }
-        .game-scrollable-content::-webkit-scrollbar-track, #topics-screen::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
-        .game-scrollable-content::-webkit-scrollbar-thumb, #topics-screen::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .game-scrollable-content::-webkit-scrollbar, #topics-screen::-webkit-scrollbar { display: none; }
         
-        /* ===== FORÇA ESPALHAMENTO NO CELULAR E BARRA EM UMA LINHA ===== */
         @media (max-width: 600px) {
             .match-balloon {
                 justify-content: flex-start !important;
@@ -914,9 +913,6 @@
 
 <div class="back-link-hidden" id="backLinkHidden" onclick="showTopicsScreen()">⬅ Voltar</div>
 
-<!-- ============================================================ -->
-<!-- MATCH GAME - BALÃO GIGANTE                                     -->
-<!-- ============================================================ -->
 <div id="match-screen">
     <div class="match-stats" id="matchStats"></div>
     <div id="matchWinMessage" class="match-win-message">🎉 PARABÉNS! Você combinou todas! 🎉</div>
@@ -994,64 +990,22 @@
 </div>
 
 <script>
-    // ============================================================
-    // BANCO DE DADOS DE FRASES - 4 BLOCOS (8 FRASES)
-    // ============================================================
     const phraseDatabase = [
-        {
-            frases: [
-                { en: "Love is blind.", pt: "O amor é cego." },
-                { en: "Time flies.", pt: "O tempo voa." }
-            ]
-        },
-        {
-            frases: [
-                { en: "The sun is hot.", pt: "O sol é quente." },
-                { en: "The moon is bright.", pt: "A lua é brilhante." }
-            ]
-        },
-        {
-            frases: [
-                { en: "The cat is black.", pt: "O gato é preto." },
-                { en: "The dog is white.", pt: "O cachorro é branco." }
-            ]
-        },
-        {
-            frases: [
-                { en: "The sky is blue.", pt: "O céu é azul." },
-                { en: "The grass is green.", pt: "A grama é verde." }
-            ]
-        }
+        { frases: [ { en: "Love is blind.", pt: "O amor é cego." }, { en: "Time flies.", pt: "O tempo voa." } ] },
+        { frases: [ { en: "The sun is hot.", pt: "O sol é quente." }, { en: "The moon is bright.", pt: "A lua é brilhante." } ] },
+        { frases: [ { en: "The cat is black.", pt: "O gato é preto." }, { en: "The dog is white.", pt: "O cachorro é branco." } ] },
+        { frases: [ { en: "The sky is blue.", pt: "O céu é azul." }, { en: "The grass is green.", pt: "A grama é verde." } ] }
     ];
 
-    // ============================================================
-    // BANCO DE DADOS DO MATCH GAME - 24 PARES
-    // ============================================================
     const translationPairs = [
-        { pt: "amor", en: "love" },
-        { pt: "cego", en: "blind" },
-        { pt: "tempo", en: "time" },
-        { pt: "voa", en: "flies" },
-        { pt: "sol", en: "sun" },
-        { pt: "quente", en: "hot" },
-        { pt: "lua", en: "moon" },
-        { pt: "brilhante", en: "bright" },
-        { pt: "gato", en: "cat" },
-        { pt: "preto", en: "black" },
-        { pt: "cachorro", en: "dog" },
-        { pt: "branco", en: "white" },
-        { pt: "casa", en: "house" },
-        { pt: "grande", en: "big" },
-        { pt: "pequeno", en: "small" },
-        { pt: "rápido", en: "fast" },
-        { pt: "lento", en: "slow" },
-        { pt: "feliz", en: "happy" },
-        { pt: "triste", en: "sad" },
-        { pt: "forte", en: "strong" },
-        { pt: "fraco", en: "weak" },
-        { pt: "alto", en: "tall" },
-        { pt: "baixo", en: "short" },
-        { pt: "velho", en: "old" }
+        { pt: "amor", en: "love" }, { pt: "cego", en: "blind" }, { pt: "tempo", en: "time" },
+        { pt: "voa", en: "flies" }, { pt: "sol", en: "sun" }, { pt: "quente", en: "hot" },
+        { pt: "lua", en: "moon" }, { pt: "brilhante", en: "bright" }, { pt: "gato", en: "cat" },
+        { pt: "preto", en: "black" }, { pt: "cachorro", en: "dog" }, { pt: "branco", en: "white" },
+        { pt: "casa", en: "house" }, { pt: "grande", en: "big" }, { pt: "pequeno", en: "small" },
+        { pt: "rápido", en: "fast" }, { pt: "lento", en: "slow" }, { pt: "feliz", en: "happy" },
+        { pt: "triste", en: "sad" }, { pt: "forte", en: "strong" }, { pt: "fraco", en: "weak" },
+        { pt: "alto", en: "tall" }, { pt: "baixo", en: "short" }, { pt: "velho", en: "old" }
     ];
 
     const antonymPairs = [
@@ -1081,9 +1035,6 @@
         { en: "rough", oposto: "smooth", traducao_en: "áspero", traducao_oposto: "liso" }
     ];
 
-    // ============================================================
-    // CONFIGURAÇÕES E ESTADO GLOBAL
-    // ============================================================
     const STORAGE_KEY = 'wordGameConfigSettings';
     let configSettings = loadSavedConfig();
     let currentPhrasePairIndex = 0;
@@ -1094,7 +1045,6 @@
     let phrase2Completed = false;
     let allCompleted = false;
 
-    // Match Game
     let matchMode = 'translation';
     let matchWords = [];
     let matchPairs = [];
@@ -1103,17 +1053,13 @@
     let totalMatchPairs = 0;
     let isProcessingMatch = false;
     let translationTimeout = null;
-    let matchRound = 0; // para controlar conjuntos futuros
+    let matchRound = 0;
 
     let availableVoices = [];
     let selectedVoiceGender = 'female';
-    
     let tapCount = 0;
     let tapTimer = null;
 
-    // ============================================================
-    // FUNÇÕES DE CONFIGURAÇÃO
-    // ============================================================
     function loadSavedConfig() {
         try {
             const saved = localStorage.getItem(STORAGE_KEY);
@@ -1125,32 +1071,13 @@
                 return parsed;
             }
         } catch (e) {}
-        return { 
-            textHue: 120, 
-            bgHue: 0, 
-            balloonHue: 0,
-            fontSize: 15, 
-            fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", 
-            ttsDownloaded: false, 
-            voiceGender: 'female' 
-        };
+        return { textHue: 120, bgHue: 0, balloonHue: 0, fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", ttsDownloaded: false, voiceGender: 'female' };
     }
     function saveConfig() {
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(configSettings)); } catch (e) {}
     }
-    const defaultConfigSettings = { 
-        textHue: 120, 
-        bgHue: 0, 
-        balloonHue: 0,
-        fontSize: 15, 
-        fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", 
-        ttsDownloaded: false, 
-        voiceGender: 'female' 
-    };
+    const defaultConfigSettings = { textHue: 120, bgHue: 0, balloonHue: 0, fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", ttsDownloaded: false, voiceGender: 'female' };
 
-    // ============================================================
-    // FUNÇÕES DE ÁUDIO
-    // ============================================================
     function loadSystemVoices() {
         if ('speechSynthesis' in window) {
             availableVoices = window.speechSynthesis.getVoices();
@@ -1242,9 +1169,6 @@
         speak("Hello! Audio system ready.");
     }
 
-    // ============================================================
-    // FUNÇÕES DE COR
-    // ============================================================
     function hslToHex(h, s, l) {
         l /= 100;
         const a = s * Math.min(l, 1 - l) / 100;
@@ -1310,15 +1234,11 @@
         document.querySelectorAll('.status-correct').forEach(el => { el.style.color = color; });
     }
 
-    // ============================================================
-    // FUNÇÕES DE FONTE
-    // ============================================================
     function adjustFontSize(delta) {
         let newSize = configSettings.fontSize + delta;
         if (newSize < 8) newSize = 8;
         if (newSize > 90) newSize = 90;
         configSettings.fontSize = newSize;
-        
         updateFontSizeDisplay();
         applyFontToAllElements();
         saveConfig();
@@ -1337,12 +1257,10 @@
     function applyFontToAllElements() {
         const size = `${configSettings.fontSize}px`;
         const family = configSettings.fontFamily;
-        
         document.querySelectorAll('.word-balloon').forEach(el => {
             el.style.fontSize = size;
             el.style.fontFamily = family;
         });
-        
         document.querySelectorAll('.match-word').forEach(el => {
             el.style.fontSize = size;
             el.style.fontFamily = family;
@@ -1378,9 +1296,6 @@
         saveConfig();
     }
 
-    // ============================================================
-    // FUNÇÕES DA TELA DE CONFIGURAÇÃO
-    // ============================================================
     function toggleConfigModal() {
         const modal = document.getElementById('configModal');
         const btn = document.getElementById('configBtn');
@@ -1419,9 +1334,6 @@
         }
     }
 
-    // ============================================================
-    // FUNÇÕES DA TELA DE TÓPICOS
-    // ============================================================
     function renderTopics() {
         const listContainer = document.getElementById("topics-list");
         listContainer.innerHTML = "";
@@ -1464,9 +1376,6 @@
         renderTopics();
     }
 
-    // ============================================================
-    // FUNÇÃO PARA DETECTAR 2 TOQUES NA TELA
-    // ============================================================
     function setupDoubleTap() {
         document.addEventListener('click', function(e) {
             if (e.target.id === 'backLinkHidden') return;
@@ -1487,9 +1396,6 @@
         });
     }
 
-    // ============================================================
-    // FUNÇÕES DO JOGO DE FRASES
-    // ============================================================
     function startTopic(topicId) {
         if (topicId === "MISTO") {
             phrasePairs = [...phraseDatabase];
@@ -1607,11 +1513,9 @@
         if (isCurrentPhraseComplete && !phrase1Completed && currentPhraseIndex === 0) {
             phrase1Completed = true;
             document.getElementById("status-message").innerHTML = `<span class="status-correct">✅ Frase 1 completa! Agora monte a frase 2.</span>`;
-            
             document.getElementById("phrase-pt-2").classList.remove("phrase-hidden");
             document.getElementById("phrase-pt-2").classList.add("revealed");
             document.getElementById("track-number").innerText = `Bloco ${currentPhrasePairIndex + 1} - Frase 2:`;
-            
             currentPhraseIndex = 1;
             selectedWords = [];
             renderZones();
@@ -1621,7 +1525,6 @@
         if (isCurrentPhraseComplete && phrase1Completed && currentPhraseIndex === 1 && !phrase2Completed) {
             phrase2Completed = true;
             allCompleted = true;
-            
             document.getElementById("status-message").innerHTML = `<span class="status-correct">🎉 PARABÉNS! Bloco completo!</span>`;
             document.getElementById("construction-zone").classList.add("completed");
             document.getElementById("construction-zone").style.display = "none";
@@ -1629,7 +1532,6 @@
             document.getElementById("check-btn").style.display = "none";
             document.getElementById("next-btn").style.display = "block";
             document.getElementById("next-btn").textContent = "➜ Próximo Par";
-            
             const successBox = document.getElementById("success-text-box");
             successBox.innerText = `✅ ${pair.frases[0].en} ✅ ${pair.frases[1].en}`;
             successBox.style.display = "flex";
@@ -1697,9 +1599,6 @@
         loadPhrasePair();
     }
 
-    // ============================================================
-    // FUNÇÕES DO MATCH GAME - BALÃO GIGANTE
-    // ============================================================
     function setMatchMode(mode) {
         matchMode = mode;
         document.querySelectorAll('.match-mode-btn').forEach(btn => btn.classList.remove('active'));
@@ -1761,10 +1660,8 @@
         isProcessingMatch = false;
         matchedPairsCount = 0;
         
-        // Carrega o próximo conjunto (por enquanto usa o mesmo, mas incrementa round)
         matchRound++;
         let sourcePairs = matchMode === 'translation' ? translationPairs : antonymPairs;
-        // Embaralha os pares para cada round
         let shuffled = [...sourcePairs].sort(() => Math.random() - 0.5);
         matchPairs = shuffled;
         totalMatchPairs = matchPairs.length;
@@ -1795,19 +1692,15 @@
         balloon.style.backgroundColor = balloonColor;
         balloon.style.borderColor = 'rgba(255,255,255,0.1)';
         
-        // Separar palavras em combinadas (matched) e não combinadas
         const matchedWords = matchWords.filter(item => item.matched === true);
         const unmatchedWords = matchWords.filter(item => item.matched === false);
         
-        // Primeiro renderiza as não combinadas (em cima)
         unmatchedWords.forEach((item) => {
             const wordEl = createMatchWordElement(item);
             balloon.appendChild(wordEl);
         });
         
-        // Depois renderiza as combinadas (embaixo) - com um separador visual
         if (matchedWords.length > 0) {
-            // Adiciona um separador sutil
             const separator = document.createElement('div');
             separator.style.width = '100%';
             separator.style.height = '2px';
@@ -1816,7 +1709,6 @@
             separator.style.borderRadius = '2px';
             balloon.appendChild(separator);
             
-            // Adiciona as palavras combinadas
             matchedWords.forEach((item) => {
                 const wordEl = createMatchWordElement(item);
                 balloon.appendChild(wordEl);
@@ -1827,7 +1719,6 @@
         if (allMatched && totalMatchPairs > 0) {
             document.getElementById('matchWinMessage').style.display = 'block';
             speak("Congratulations! You matched all pairs!");
-            // Após 3 segundos, reinicia com novas palavras
             setTimeout(() => {
                 document.getElementById('matchWinMessage').style.display = 'none';
                 resetMatchGame();
@@ -1843,7 +1734,6 @@
         wordEl.className = 'match-word';
         if (item.matched) wordEl.classList.add('matched');
         wordEl.textContent = item.word;
-        // Usamos o pairId como identificador único, não o índice
         wordEl.dataset.pairId = item.pairId;
         wordEl.dataset.word = item.word;
         
@@ -1870,24 +1760,19 @@
         if (isProcessingMatch) return;
         if (item.matched) return;
         
-        // Encontra o elemento clicado
         const clickedEl = event.currentTarget;
         
         if (selectedMatchWord !== null) {
-            // Já temos uma palavra selecionada
             const firstItem = selectedMatchWord;
             const firstEl = document.querySelector(`.match-word[data-pair-id="${firstItem.pairId}"][data-word="${firstItem.word}"]`);
             
-            // Se clicou na mesma palavra, deseleciona
             if (firstItem === item) {
                 if (firstEl) firstEl.classList.remove('selected');
                 selectedMatchWord = null;
                 return;
             }
             
-            // Verifica se os pares combinam
             if (firstItem.pairId === item.pairId && firstItem.word !== item.word) {
-                // Combinação correta
                 firstItem.matched = true;
                 item.matched = true;
                 matchedPairsCount++;
@@ -1896,7 +1781,6 @@
                 renderMatchGame();
                 speakWord(firstItem.word + " " + item.word);
             } else {
-                // Combinação errada
                 isProcessingMatch = true;
                 const secondEl = event.currentTarget;
                 if (firstEl) firstEl.classList.add('wrong');
@@ -1911,7 +1795,6 @@
                 }, 500);
             }
         } else {
-            // Seleciona a primeira palavra
             selectedMatchWord = item;
             const el = event.currentTarget;
             el.classList.add('selected');
@@ -1944,8 +1827,58 @@
     }
 
     // ============================================================
-    // INICIALIZAÇÃO
+    // TELA CHEIA - FUNÇÃO PRINCIPAL
     // ============================================================
+    function goFullscreen() {
+        // Tenta entrar em tela cheia
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(() => {});
+        } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+        }
+        
+        // Para Android: esconde a barra de navegação via JS
+        if (window.navigator && window.navigator.userAgent && window.navigator.userAgent.toLowerCase().indexOf('android') > -1) {
+            // Força tela cheia com posição fixa
+            document.documentElement.style.position = 'fixed';
+            document.documentElement.style.top = '0';
+            document.documentElement.style.left = '0';
+            document.documentElement.style.right = '0';
+            document.documentElement.style.bottom = '0';
+            document.documentElement.style.width = '100%';
+            document.documentElement.style.height = '100%';
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.top = '0';
+            document.body.style.left = '0';
+            document.body.style.right = '0';
+            document.body.style.bottom = '0';
+            document.body.style.width = '100%';
+            document.body.style.height = '100%';
+            document.body.style.overflow = 'hidden';
+            
+            // Tenta usar tela cheia com a API
+            if (window.navigator && window.navigator.vibrate) {
+                // Força a barra de navegação a sumir em alguns Android
+                try {
+                    const container = document.getElementById('appContainer');
+                    if (container) {
+                        container.style.position = 'absolute';
+                        container.style.top = '0';
+                        container.style.left = '0';
+                        container.style.right = '0';
+                        container.style.bottom = '0';
+                    }
+                } catch(e) {}
+            }
+        }
+        
+        // Scroll para o topo para evitar barras extras
+        window.scrollTo(0, 0);
+    }
+
     function init() {
         requestAudioPermissions();
         renderTopics();
@@ -1960,6 +1893,25 @@
         matchMode = 'translation';
         
         setupDoubleTap();
+        
+        // Tela cheia automaticamente ao abrir
+        setTimeout(goFullscreen, 300);
+        
+        // Tenta novamente quando o usuário interagir (bom para Android)
+        document.addEventListener('click', function() {
+            goFullscreen();
+        }, { once: false });
+        
+        // Tenta a cada 2 segundos por um tempo (para garantir em alguns dispositivos)
+        let attempts = 0;
+        const fullscreenInterval = setInterval(function() {
+            if (attempts < 10) {
+                goFullscreen();
+                attempts++;
+            } else {
+                clearInterval(fullscreenInterval);
+            }
+        }, 2000);
     }
 
     init();
