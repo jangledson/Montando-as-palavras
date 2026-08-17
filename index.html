@@ -444,8 +444,8 @@
             padding: clamp(10px, 2vh, 25px);
             display: flex;
             flex-wrap: wrap;
-            align-content: center;
-            justify-content: center;
+            align-content: flex-start;
+            justify-content: flex-start;
             gap: clamp(6px, 1.2vh, 16px);
             overflow-y: auto;
             transition: background-color 0.3s ease, border-color 0.3s ease;
@@ -466,7 +466,6 @@
         
         .match-word {
             padding: clamp(6px, 1.2vh, 16px) clamp(10px, 1.8vw, 22px);
-            font-size: clamp(14px, 2.2vh, 22px);
             font-weight: 800;
             border-radius: clamp(14px, 2.5vh, 24px);
             cursor: pointer;
@@ -482,6 +481,8 @@
             letter-spacing: 0.3px;
             line-height: 1.2;
             flex-shrink: 0;
+            flex-grow: 0;
+            white-space: nowrap;
         }
         .match-word:active { transform: scale(0.92); }
         .match-word.selected { 
@@ -809,6 +810,24 @@
         .game-scrollable-content::-webkit-scrollbar, #topics-screen::-webkit-scrollbar { width: 3px; }
         .game-scrollable-content::-webkit-scrollbar-track, #topics-screen::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
         .game-scrollable-content::-webkit-scrollbar-thumb, #topics-screen::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        
+        /* ===== FORÇA ESPALHAMENTO NO CELULAR ===== */
+        @media (max-width: 600px) {
+            .match-balloon {
+                justify-content: flex-start !important;
+                align-content: flex-start !important;
+                gap: 6px !important;
+                padding: 8px !important;
+            }
+            .match-word {
+                flex-shrink: 0 !important;
+                flex-grow: 0 !important;
+                white-space: nowrap !important;
+                font-size: clamp(9px, 2.5vw, 14px) !important;
+                padding: 4px 10px !important;
+                border-radius: 10px !important;
+            }
+        }
         
         @media (min-width: 768px) {
             .match-word { font-size: clamp(18px, 3vh, 30px) !important; padding: clamp(10px, 2vh, 20px) clamp(16px, 3vw, 32px); }
@@ -1708,8 +1727,7 @@
             document.getElementById('modeTranslation').classList.remove('active');
         }
         
-        // Carrega o tamanho da fonte salvo para o Match Game
-        matchFontSize = parseInt(localStorage.getItem('matchFontSize')) || configSettings.fontSize || 15;
+        matchFontSize = parseInt(localStorage.getItem('matchFontSize')) || 15;
         document.getElementById('matchFontSizeDisplay').textContent = matchFontSize;
         
         const textColor = hslToHex(configSettings.textHue, 100, 55);
@@ -1778,10 +1796,12 @@
         const textColor = hslToHex(configSettings.textHue, 100, 55);
         const balloonColor = hslToHex(configSettings.balloonHue || 0, 60, 18);
         const fontFamily = configSettings.fontFamily;
-        const fontSize = matchFontSize + 'px';
         
         balloon.style.backgroundColor = balloonColor;
         balloon.style.borderColor = 'rgba(255,255,255,0.1)';
+        
+        const isMobile = window.innerWidth < 600;
+        const baseSize = isMobile ? Math.max(9, Math.min(14, matchFontSize * 0.65)) : matchFontSize;
         
         matchWords.forEach((item, index) => {
             const wordEl = document.createElement('span');
@@ -1790,10 +1810,17 @@
             wordEl.textContent = item.word;
             wordEl.dataset.index = index;
             wordEl.dataset.pairId = item.pairId;
-            wordEl.style.fontSize = fontSize;
+            
+            const finalSize = isMobile ? baseSize : matchFontSize;
+            wordEl.style.fontSize = finalSize + 'px';
             wordEl.style.fontFamily = fontFamily;
             wordEl.style.color = textColor;
             wordEl.style.backgroundColor = balloonColor;
+            
+            if (isMobile) {
+                wordEl.style.padding = '4px 8px';
+                wordEl.style.borderRadius = '8px';
+            }
             
             if (!item.matched) {
                 wordEl.onclick = () => handleMatchWordClick(index);
@@ -1864,9 +1891,6 @@
         }
     }
 
-    // ============================================================
-    // FUNÇÃO PARA MOSTRAR TRADUÇÃO NO MODO ANTÔNIMOS
-    // ============================================================
     function showAntonymTranslation(index) {
         if (matchMode !== 'antonyms') return;
         const item = matchWords[index];
@@ -1896,7 +1920,7 @@
     }
 
     // ============================================================
-    // FUNÇÃO PARA AJUSTAR A FONTE DO MATCH GAME (8px a 90px)
+    // FUNÇÃO PARA AJUSTAR A FONTE DO MATCH GAME - CORRIGIDA
     // ============================================================
     function adjustMatchFontSize(delta) {
         let newSize = matchFontSize + delta;
@@ -1928,7 +1952,7 @@
         document.getElementById('modeTranslation').classList.add('active');
         matchMode = 'translation';
         
-        matchFontSize = parseInt(localStorage.getItem('matchFontSize')) || configSettings.fontSize || 15;
+        matchFontSize = parseInt(localStorage.getItem('matchFontSize')) || 15;
         document.getElementById('matchFontSizeDisplay').textContent = matchFontSize;
         
         setupDoubleTap();
