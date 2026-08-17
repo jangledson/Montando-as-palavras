@@ -1103,6 +1103,7 @@
     let totalMatchPairs = 0;
     let isProcessingMatch = false;
     let translationTimeout = null;
+    let matchRound = 0; // para controlar conjuntos futuros
 
     let availableVoices = [];
     let selectedVoiceGender = 'female';
@@ -1760,7 +1761,10 @@
         isProcessingMatch = false;
         matchedPairsCount = 0;
         
+        // Carrega o próximo conjunto (por enquanto usa o mesmo, mas incrementa round)
+        matchRound++;
         let sourcePairs = matchMode === 'translation' ? translationPairs : antonymPairs;
+        // Embaralha os pares para cada round
         let shuffled = [...sourcePairs].sort(() => Math.random() - 0.5);
         matchPairs = shuffled;
         totalMatchPairs = matchPairs.length;
@@ -1796,8 +1800,8 @@
         const unmatchedWords = matchWords.filter(item => item.matched === false);
         
         // Primeiro renderiza as não combinadas (em cima)
-        unmatchedWords.forEach((item, index) => {
-            const wordEl = createMatchWordElement(item, index);
+        unmatchedWords.forEach((item) => {
+            const wordEl = createMatchWordElement(item);
             balloon.appendChild(wordEl);
         });
         
@@ -1813,8 +1817,8 @@
             balloon.appendChild(separator);
             
             // Adiciona as palavras combinadas
-            matchedWords.forEach((item, index) => {
-                const wordEl = createMatchWordElement(item, index);
+            matchedWords.forEach((item) => {
+                const wordEl = createMatchWordElement(item);
                 balloon.appendChild(wordEl);
             });
         }
@@ -1823,6 +1827,7 @@
         if (allMatched && totalMatchPairs > 0) {
             document.getElementById('matchWinMessage').style.display = 'block';
             speak("Congratulations! You matched all pairs!");
+            // Após 3 segundos, reinicia com novas palavras
             setTimeout(() => {
                 document.getElementById('matchWinMessage').style.display = 'none';
                 resetMatchGame();
@@ -1833,13 +1838,14 @@
         document.getElementById('matchStats').textContent = `Pares: ${matchedCount} / ${totalMatchPairs}`;
     }
 
-    function createMatchWordElement(item, index) {
+    function createMatchWordElement(item) {
         const wordEl = document.createElement('span');
         wordEl.className = 'match-word';
         if (item.matched) wordEl.classList.add('matched');
         wordEl.textContent = item.word;
-        wordEl.dataset.index = index;
+        // Usamos o pairId como identificador único, não o índice
         wordEl.dataset.pairId = item.pairId;
+        wordEl.dataset.word = item.word;
         
         const textColor = hslToHex(configSettings.textHue, 100, 55);
         const balloonColor = hslToHex(configSettings.balloonHue || 0, 60, 18);
@@ -1850,32 +1856,38 @@
         wordEl.style.backgroundColor = balloonColor;
         
         if (!item.matched) {
-            wordEl.onclick = () => handleMatchWordClick(index);
+            wordEl.onclick = (e) => handleMatchWordClick(e, item);
         } else {
             if (matchMode === 'antonyms' && item.traducao) {
-                wordEl.onclick = () => showAntonymTranslation(index);
+                wordEl.onclick = (e) => showAntonymTranslation(e, item);
             }
         }
         
         return wordEl;
     }
 
-    function handleMatchWordClick(index) {
+    function handleMatchWordClick(event, item) {
         if (isProcessingMatch) return;
-        const item = matchWords[index];
         if (item.matched) return;
         
+        // Encontra o elemento clicado
+        const clickedEl = event.currentTarget;
+        
         if (selectedMatchWord !== null) {
-            const firstItem = matchWords[selectedMatchWord];
-            const firstEl = document.querySelectorAll('.match-word')[selectedMatchWord];
+            // Já temos uma palavra selecionada
+            const firstItem = selectedMatchWord;
+            const firstEl = document.querySelector(`.match-word[data-pair-id="${firstItem.pairId}"][data-word="${firstItem.word}"]`);
             
-            if (selectedMatchWord === index) {
-                firstEl.classList.remove('selected');
+            // Se clicou na mesma palavra, deseleciona
+            if (firstItem === item) {
+                if (firstEl) firstEl.classList.remove('selected');
                 selectedMatchWord = null;
                 return;
             }
             
+            // Verifica se os pares combinam
             if (firstItem.pairId === item.pairId && firstItem.word !== item.word) {
+                // Combinação correta
                 firstItem.matched = true;
                 item.matched = true;
                 matchedPairsCount++;
@@ -1884,13 +1896,14 @@
                 renderMatchGame();
                 speakWord(firstItem.word + " " + item.word);
             } else {
+                // Combinação errada
                 isProcessingMatch = true;
-                const secondEl = document.querySelectorAll('.match-word')[index];
-                firstEl.classList.add('wrong');
+                const secondEl = event.currentTarget;
+                if (firstEl) firstEl.classList.add('wrong');
                 secondEl.classList.add('wrong');
                 
                 setTimeout(() => {
-                    firstEl.classList.remove('wrong', 'selected');
+                    if (firstEl) firstEl.classList.remove('wrong', 'selected');
                     secondEl.classList.remove('wrong');
                     selectedMatchWord = null;
                     isProcessingMatch = false;
@@ -1898,20 +1911,18 @@
                 }, 500);
             }
         } else {
-            selectedMatchWord = index;
-            const el = document.querySelectorAll('.match-word')[index];
+            // Seleciona a primeira palavra
+            selectedMatchWord = item;
+            const el = event.currentTarget;
             el.classList.add('selected');
         }
     }
 
-    function showAntonymTranslation(index) {
+    function showAntonymTranslation(event, item) {
         if (matchMode !== 'antonyms') return;
-        const item = matchWords[index];
         if (!item.matched || !item.traducao) return;
         
-        const allWords = document.querySelectorAll('.match-word');
-        const el = allWords[index];
-        
+        const el = event.currentTarget;
         if (el.classList.contains('showing-translation')) return;
         
         const originalText = item.word;
