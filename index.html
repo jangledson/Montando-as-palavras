@@ -8,10 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Formando as Frases - Inglês</title>
 <style>
-/* ===== RESET E BASE ===== */
 * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; margin:0; padding:0; }
-
-/* ===== TEMAS (ESCURO/CLARO) ===== */
 :root {
     --bg: #000;
     --bg2: #111;
@@ -42,90 +39,54 @@
     --balloon-border: #b0b8c0;
     --highlight: rgba(0,170,0,0.12);
 }
-
 html, body { height:100%; width:100%; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); user-select:none; overflow:hidden; transition:background .3s,color .3s; margin:0; padding:0; position:fixed; top:0; left:0; right:0; bottom:0; }
 ::-webkit-scrollbar { display:none; }
-
 .container { width:100%; height:100%; padding:clamp(6px,1.5vh,14px); display:flex; flex-direction:column; gap:clamp(4px,1vh,10px); overflow:hidden; background:var(--bg); transition:background .3s; position:absolute; top:0; left:0; right:0; bottom:0; }
-
 h2 { text-align:center; color:var(--text2); text-transform:uppercase; letter-spacing:2px; text-shadow:0 0 20px rgba(255,255,255,0.08); margin-top:2px; font-size:clamp(14px,2.5vh,22px); font-weight:800; transition:color .3s; }
 .counter-banner { text-align:center; color:var(--text3); font-size:clamp(8px,1.2vh,12px); font-weight:bold; text-transform:uppercase; letter-spacing:1px; opacity:.7; }
-
 .screen { display:none; flex-direction:column; width:100%; height:100%; flex:1; overflow:hidden; }
 .screen.active { display:flex; }
 #topics-screen { overflow-y:auto; gap:clamp(4px,1vh,10px); padding-bottom:10px; }
 #topics-list { display:flex; flex-direction:column; gap:clamp(4px,0.8vh,8px); padding-bottom:6px; }
-
 .topic-card { background:var(--card); border:2px solid var(--border); padding:clamp(8px,1.5vh,16px) clamp(10px,2vw,20px); border-radius:clamp(8px,1.5vh,14px); cursor:pointer; font-size:clamp(13px,2vh,18px); font-weight:bold; border-left:8px solid var(--text2); box-shadow:0 4px 15px var(--shadow); text-align:left; color:var(--text2); width:100%; display:flex; align-items:center; min-height:clamp(40px,6vh,60px); transition:all .3s; }
 .topic-card:hover { transform:scale(1.01); border-left-color:#aaa; }
 .topic-card:active { transform:scale(.98); }
 .topic-card.misto-btn { background:rgba(255,255,255,0.08); border-left-color:var(--text2); border-color:rgba(255,255,255,0.25); color:var(--text2); }
-
 .btn-show-stats { background:rgba(0,0,0,0.7); color:var(--text2); border:2px dashed var(--border); padding:clamp(4px,0.8vh,8px) clamp(8px,1.5vw,16px); font-size:clamp(9px,1.2vh,13px); font-weight:bold; border-radius:20px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all .3s; }
 .btn-show-stats:hover { border-color:var(--text2); }
 .stats-report-box { display:none; background:var(--bg2); border:2px solid var(--border); padding:clamp(6px,1vh,12px); border-radius:clamp(8px,1.5vh,14px); margin:4px auto 0; font-size:clamp(10px,1.2vh,14px); color:var(--text2); font-weight:bold; text-align:left; line-height:1.5; max-width:550px; }
-
 #game-screen { display:none; flex-direction:column; height:100%; overflow:hidden; }
 #game-screen.active { display:flex; }
 .game-scrollable-content { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:clamp(4px,0.8vh,8px); padding-bottom:6px; padding-right:2px; }
-
 .top-challenge { background:var(--card); border:2px solid var(--border); padding:clamp(6px,1.2vh,12px) clamp(8px,1.5vw,14px); border-radius:clamp(8px,1.5vh,14px); box-shadow:0 4px 20px var(--shadow); display:flex; flex-direction:column; gap:clamp(4px,0.6vh,8px); backdrop-filter:blur(8px); }
 .phrase-pt { font-size:clamp(16px,2.4vh,22px); font-weight:900; font-family:'Georgia',serif; text-align:center; line-height:1.3; color:var(--text2) !important; text-shadow:0 2px 10px rgba(255,255,255,0.08); word-wrap:break-word; padding:4px 0; transition:color .3s; }
 .phrase-hidden { filter:blur(8px); opacity:.3; transition:all .6s; pointer-events:none; }
 .phrase-hidden.revealed { filter:blur(0); opacity:1; pointer-events:auto; }
-
-/* ===== FRASE INGLESA DESTACADA ===== */
-.phrase-en-highlight {
-    font-size:clamp(18px,2.8vh,26px);
-    font-weight:900;
-    color:var(--accent);
-    text-align:center;
-    padding:8px;
-    border:2px solid var(--accent);
-    border-radius:12px;
-    background:var(--highlight);
-    animation:pulseHighlight 1.2s ease-in-out;
-    text-shadow:0 0 30px rgba(0,255,102,0.15);
-    word-wrap:break-word;
-}
-@keyframes pulseHighlight {
-    0% { transform:scale(0.92); opacity:0.4; }
-    50% { transform:scale(1.04); opacity:1; }
-    100% { transform:scale(1); opacity:1; }
-}
-
+.phrase-en-highlight { font-size:clamp(18px,2.8vh,26px); font-weight:900; color:var(--accent); text-align:center; padding:8px; border:2px solid var(--accent); border-radius:12px; background:var(--highlight); animation:pulseHighlight 1.2s ease-in-out; text-shadow:0 0 30px rgba(0,255,102,0.15); word-wrap:break-word; }
+@keyframes pulseHighlight { 0% { transform:scale(0.92); opacity:0.4; } 50% { transform:scale(1.04); opacity:1; } 100% { transform:scale(1); opacity:1; } }
 .btn-audio-top { background:rgba(255,255,255,0.05); color:var(--text2); border:2px solid var(--border); padding:clamp(3px,0.6vh,6px) clamp(6px,1vw,12px); font-size:clamp(9px,1.2vh,13px); font-weight:bold; border-radius:clamp(6px,1vh,12px); cursor:pointer; flex:1; text-align:center; transition:all .3s; }
 .btn-audio-top:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.3); }
 .btn-audio-top:active { transform:scale(.95); }
 .audio-controls-row { display:flex; justify-content:space-between; align-items:center; width:100%; margin-top:2px; gap:4px; }
-
 .construction-zone { background:var(--card); border:2px dashed var(--border); border-radius:clamp(8px,1.5vh,12px); min-height:clamp(50px,8vh,80px); padding:clamp(6px,1vh,12px); display:flex; flex-wrap:wrap; gap:clamp(4px,0.6vh,8px); align-content:flex-start; position:relative; transition:border-color .4s,background .3s; }
 .construction-zone.completed { border-color:var(--accent); background:var(--highlight); }
 .construction-zone.drag-over { border-color:var(--accent); background:rgba(0,255,102,0.06); }
-
 .success-text-box { display:none; background:var(--highlight); border:2px solid var(--accent); border-radius:clamp(8px,1.5vh,12px); min-height:clamp(40px,6vh,60px); padding:clamp(6px,1vh,12px); font-size:clamp(13px,2vh,18px); font-weight:bold; color:var(--accent); text-align:center; align-items:center; justify-content:center; text-shadow:0 0 20px rgba(0,255,102,0.2); flex-direction:column; gap:6px; }
-
 .words-zone { background:var(--card); border:2px solid var(--border); border-radius:clamp(8px,1.5vh,12px); min-height:clamp(40px,6vh,70px); padding:clamp(6px,1vh,12px); display:flex; flex-wrap:wrap; gap:clamp(4px,0.6vh,8px); justify-content:flex-start; align-content:flex-start; }
-
 .word-balloon { padding:clamp(4px,0.6vh,8px) clamp(6px,1vw,14px); font-size:clamp(11px,1.8vh,16px); font-weight:800; border-radius:clamp(14px,2vh,22px); cursor:pointer; box-shadow:0 3px 10px var(--shadow); display:inline-block; user-select:none; position:relative; max-width:100%; word-wrap:break-word; touch-action:none; transition:color .3s,background .3s,transform .15s,box-shadow .3s,opacity .3s; background:var(--balloon); border:2px solid var(--balloon-border); color:var(--text); letter-spacing:.3px; line-height:1.2; }
 .word-balloon:hover { transform:translateY(-2px) scale(1.02); box-shadow:0 6px 30px var(--shadow); border-color:rgba(255,255,255,0.3); }
 .word-balloon:active { transform:scale(.93); }
-
 .construction-zone .word-balloon { background:var(--balloon); border:2px solid var(--balloon-border); box-shadow:0 3px 15px var(--shadow); cursor:grab; color:var(--text); font-size:clamp(10px,1.6vh,15px); padding:clamp(3px,0.5vh,6px) clamp(6px,0.8vw,12px); }
 .construction-zone .word-balloon:active { cursor:grabbing; transform:scale(.93); }
 .construction-zone .word-balloon.dragging { opacity:.4; border:2px dashed #ff0 !important; background:rgba(255,255,0,0.05) !important; transform:scale(.9); }
-.construction-zone .word-balloon.drag-over-insert { border-color:var(--accent) !important; background:rgba(0,255,102,0.15) !important; }
-
 .words-zone .word-balloon { background:var(--balloon); border:2px solid var(--balloon-border); box-shadow:0 3px 15px var(--shadow); color:var(--text); font-size:clamp(10px,1.5vh,14px); padding:clamp(3px,0.5vh,6px) clamp(6px,0.8vw,12px); }
 .word-balloon.speaking { animation:speakGlow .6s; }
 @keyframes speakGlow { 0% { box-shadow:0 0 0 transparent; } 50% { box-shadow:0 0 30px rgba(255,255,255,0.12); } 100% { box-shadow:0 0 0 transparent; } }
-
 .status-correct { color:var(--accent); text-shadow:0 0 20px rgba(0,255,102,0.4); animation:statusPop .5s; }
 .status-wrong { color:#f33; text-shadow:0 0 20px rgba(255,51,51,0.4); animation:statusShake .5s; }
 .status-info { color:#fa0; text-shadow:0 0 20px rgba(255,170,0,0.3); }
 @keyframes statusPop { 0% { transform:scale(.8); opacity:0; } 50% { transform:scale(1.1); } 100% { transform:scale(1); opacity:1; } }
 @keyframes statusShake { 0%,100% { transform:translateX(0); } 25% { transform:translateX(-6px); } 75% { transform:translateX(6px); } }
-
 .control-panel { display:flex; flex-direction:column; gap:clamp(3px,0.6vh,6px); padding-top:clamp(4px,0.6vh,8px); border-top:2px solid var(--border); align-items:center; width:100%; }
 .action-btn { width:100%; max-width:500px; padding:clamp(6px,1vh,12px) clamp(10px,2vw,20px); color:#000; border:none; border-radius:clamp(20px,3vh,30px); font-size:clamp(12px,1.8vh,16px); font-weight:bold; cursor:pointer; text-align:center; box-shadow:0 4px 15px var(--shadow); display:block; transition:all .3s; letter-spacing:.5px; }
 .action-btn:hover { transform:translateY(-2px); box-shadow:0 6px 25px var(--shadow); }
@@ -135,7 +96,6 @@ h2 { text-align:center; color:var(--text2); text-transform:uppercase; letter-spa
 .btn-reveal { background:rgba(255,255,255,0.05); border:2px solid var(--border); padding:clamp(4px,0.6vh,8px) clamp(8px,1.5vw,16px); font-size:clamp(10px,1.4vh,14px); color:var(--text2); border-radius:20px; cursor:pointer; transition:all .3s; }
 .btn-reveal:hover { border-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.05); }
 .revealed-answer-box { background:var(--bg2); border:2px solid var(--border); color:var(--text2); padding:clamp(6px,1vh,12px); border-radius:clamp(8px,1.5vh,14px); text-align:center; font-size:clamp(11px,1.5vh,15px); font-weight:bold; display:none; word-wrap:break-word; width:100%; max-width:500px; }
-
 .bottom-buttons-row { display:flex; justify-content:space-around; width:100%; padding:0 5px; gap:10px; }
 .config-btn { background:rgba(255,255,255,0.05); border:2px solid var(--border); border-radius:50%; width:clamp(32px,5vh,44px); height:clamp(32px,5vh,44px); font-size:clamp(14px,2.5vh,20px); color:var(--text2); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .3s; }
 .config-btn:hover { transform:scale(1.1) rotate(60deg); background:rgba(255,255,255,0.1); }
@@ -145,12 +105,10 @@ h2 { text-align:center; color:var(--text2); text-transform:uppercase; letter-spa
 .match-btn.active { background:var(--text2); color:var(--bg); }
 .config-btn-label, .match-btn-label { font-size:clamp(5px,0.8vh,8px); text-transform:uppercase; letter-spacing:.5px; opacity:.4; text-align:center; margin-top:2px; color:var(--text2); }
 .bottom-btn-wrapper { display:flex; flex-direction:column; align-items:center; }
-
 .back-link-hidden { position:fixed; bottom:clamp(8px,2vh,20px); left:clamp(8px,2vw,20px); color:var(--text2); font-weight:bold; font-size:clamp(11px,1.8vh,16px); cursor:pointer; padding:clamp(6px,1vh,12px) clamp(10px,2vw,18px); border-radius:clamp(8px,1.5vh,14px); background:rgba(0,0,0,0.7); border:2px solid var(--border); z-index:50; opacity:0; transition:opacity .3s; pointer-events:none; }
 .back-link-hidden.visible { opacity:1; pointer-events:auto; }
 .back-link-hidden:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.3); }
 .back-link-hidden:active { transform:scale(.95); }
-
 #match-screen { display:none; flex-direction:column; height:100%; width:100%; position:fixed; top:0; left:0; background:var(--bg); z-index:500; padding:clamp(4px,0.8vh,10px); overflow:hidden; transition:background .3s; }
 #match-screen.active { display:flex; }
 .match-stats { display:block; text-align:center; color:var(--text3); font-size:clamp(10px,1.4vh,14px); padding:4px 0; font-weight:bold; }
@@ -169,7 +127,6 @@ h2 { text-align:center; color:var(--text2); text-transform:uppercase; letter-spa
 .match-word.wrong { animation:wrongShake .4s; border-color:#f33; box-shadow:0 0 30px rgba(255,51,51,0.2); }
 @keyframes wrongShake { 0%,100% { transform:translateX(0); } 20% { transform:translateX(-8px); } 40% { transform:translateX(8px); } 60% { transform:translateX(-5px); } 80% { transform:translateX(5px); } }
 .match-word.speaking { animation:speakGlow .6s; }
-
 .match-bottom-controls { display:flex; justify-content:space-around; align-items:center; gap:clamp(2px,0.5vw,8px); padding:clamp(4px,0.8vh,10px) clamp(2px,0.4vw,8px); border-top:1px solid var(--border); flex-shrink:0; margin-top:auto; width:100%; flex-wrap:nowrap !important; min-height:40px; background:var(--bg); transition:background .3s; }
 .match-mode-group { display:flex; gap:clamp(2px,0.5vw,6px); align-items:center; flex-shrink:1; min-width:0; }
 .match-mode-btn { padding:clamp(4px,0.6vh,8px) clamp(6px,1vw,12px); border-radius:clamp(12px,2vh,18px); font-size:clamp(9px,1.2vh,13px); font-weight:bold; cursor:pointer; border:2px solid var(--border); background:rgba(0,0,0,0.4); color:var(--text2); transition:all .3s; white-space:nowrap; flex-shrink:1; min-width:0; text-align:center; }
@@ -181,8 +138,6 @@ h2 { text-align:center; color:var(--text2); text-transform:uppercase; letter-spa
 .btn-match-reset { background:linear-gradient(135deg,#fa0,#fc4); color:#000; font-weight:800; }
 .btn-match-close { background:rgba(255,255,255,0.08); color:var(--text2); border:2px solid var(--border) !important; }
 .btn-match-close:hover { background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.3) !important; }
-
-/* ===== CONFIG MODAL ===== */
 .config-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1000; justify-content:center; align-items:center; animation:fadeIn .3s; padding:clamp(12px,3vh,30px); overflow-y:auto; }
 .config-modal.active { display:flex; }
 @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
@@ -217,7 +172,6 @@ h2 { text-align:center; color:var(--text2); text-transform:uppercase; letter-spa
 .btn-reset-colors { background:rgba(255,0,0,0.1); border:2px solid rgba(255,50,50,0.2); color:#f44; padding:clamp(6px,1vh,12px) clamp(10px,2vw,20px); border-radius:clamp(8px,1.5vh,14px); font-size:clamp(10px,1.4vh,14px); font-weight:bold; cursor:pointer; width:100%; margin-top:6px; transition:all .3s; letter-spacing:.5px; }
 .btn-reset-colors:hover { background:rgba(255,0,0,0.2); border-color:rgba(255,50,50,0.4); }
 .game-scrollable-content::-webkit-scrollbar, #topics-screen::-webkit-scrollbar { display:none; }
-
 @media (max-width:600px) {
 .match-balloon { justify-content:flex-start !important; align-content:flex-start !important; gap:6px !important; padding:8px !important; }
 .match-word { flex-shrink:0 !important; flex-grow:0 !important; white-space:nowrap !important; font-size:30px !important; padding:8px 14px !important; border-radius:12px !important; min-height:36px !important; }
@@ -314,8 +268,6 @@ h2 { text-align:center; color:var(--text2); text-transform:uppercase; letter-spa
     <div class="config-modal-content">
         <button class="config-modal-close" onclick="toggleConfigModal()">✕</button>
         <h3>⚙ Configurações</h3>
-
-        <!-- TEMA ESCURO/CLARO -->
         <div class="color-picker-group">
             <label>🎨 Tema</label>
             <div class="theme-toggle-row">
@@ -323,7 +275,6 @@ h2 { text-align:center; color:var(--text2); text-transform:uppercase; letter-spa
                 <button class="theme-toggle-btn" id="themeLight" onclick="setTheme('light')">☀️ Claro</button>
             </div>
         </div>
-
         <div class="color-picker-group">
             <label>🎨 Cor do Balão (Fundo do Balão)</label>
             <input type="range" min="0" max="360" value="0" class="rainbow-slider" id="balloonColorSlider" oninput="changeBalloonColorSlider(this.value)">
@@ -1449,7 +1400,6 @@ function toggleConfigModal() {
         document.getElementById('balloonColorSlider').value = configSettings.balloonHue || 0;
         updateFontSizeDisplay();
         document.getElementById('fontFamilySelect').value = configSettings.fontFamily;
-        // Atualizar tema nos botões
         document.getElementById('themeDark').classList.toggle('active', currentTheme === 'dark');
         document.getElementById('themeLight').classList.toggle('active', currentTheme === 'light');
         const statusText = document.getElementById('ttsStatusText');
@@ -1529,7 +1479,7 @@ function showTopicsScreen() {
 }
 
 // ============================================================
-// JOGO DE FRASES - COM DRAG AND DROP
+// JOGO DE FRASES - COM DRAG AND DROP (TOQUE + MOUSE)
 // ============================================================
 let dragData = null;
 
@@ -1630,127 +1580,7 @@ function renderZones() {
     const currentPhrase = pair.frases[currentPhraseIndex];
     const targetWords = getWordsForPhrase(currentPhraseIndex);
 
-    // Renderizar palavras na zona de construção (com drag & drop)
-    selectedWords.forEach((word, index) => {
-        const balloon = document.createElement("span");
-        balloon.className = "word-balloon";
-        balloon.innerText = word;
-        balloon.draggable = true;
-        balloon.dataset.index = index;
-        balloon.dataset.word = word;
-        balloon.style.color = currentTextColor;
-        balloon.style.backgroundColor = currentBalloonColor;
-        
-        // Eventos de drag
-        balloon.addEventListener('dragstart', (e) => {
-            dragData = { index: index, word: word };
-            balloon.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', index);
-        });
-        balloon.addEventListener('dragend', () => {
-            balloon.classList.remove('dragging');
-            constructZone.classList.remove('drag-over');
-            document.querySelectorAll('.construction-zone .word-balloon').forEach(el => {
-                el.classList.remove('drag-over-insert');
-            });
-        });
-        // Permitir soltar em cima de outra palavra
-        balloon.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            constructZone.classList.add('drag-over');
-            balloon.classList.add('drag-over-insert');
-        });
-        balloon.addEventListener('dragleave', () => {
-            balloon.classList.remove('drag-over-insert');
-            constructZone.classList.remove('drag-over');
-        });
-        balloon.addEventListener('drop', (e) => {
-            e.preventDefault();
-            constructZone.classList.remove('drag-over');
-            balloon.classList.remove('drag-over-insert');
-            const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
-            if (!isNaN(fromIndex) && fromIndex !== index) {
-                // Reordenar: mover palavra de fromIndex para index
-                const wordMoved = selectedWords.splice(fromIndex, 1)[0];
-                selectedWords.splice(index, 0, wordMoved);
-                renderZones();
-            }
-        });
-        
-        // Clique para remover (já existente)
-        balloon.onclick = (e) => {
-            speakWord(word);
-            if (!balloon.classList.contains('dragging')) {
-                selectedWords.splice(index, 1);
-                renderZones();
-            }
-        };
-        constructZone.appendChild(balloon);
-    });
-
-    // Verificar se a frase está completa
-    const selectedClean = selectedWords.map(w => w.toLowerCase().trim());
-    const targetClean = targetWords.map(w => w.toLowerCase().trim());
-    const isCurrentPhraseComplete = selectedClean.length === targetClean.length && selectedClean.every((w, i) => w === targetClean[i]);
-
-    if (isCurrentPhraseComplete && !phrase1Completed && currentPhraseIndex === 0) {
-        phrase1Completed = true;
-        document.getElementById("status-message").innerHTML = `<span class="status-correct">✅ Frase 1 completa! Agora monte a frase 2.</span>`;
-        document.getElementById("phrase-pt-2").classList.remove("phrase-hidden");
-        document.getElementById("phrase-pt-2").classList.add("revealed");
-        document.getElementById("track-number").innerText = `Bloco ${currentPhrasePairIndex + 1} - Frase 2:`;
-        currentPhraseIndex = 1;
-        selectedWords = [];
-        renderZones();
-        return;
-    }
-
-    if (isCurrentPhraseComplete && phrase1Completed && currentPhraseIndex === 1 && !phrase2Completed) {
-        phrase2Completed = true;
-        allCompleted = true;
-        const pair = phrasePairs[currentPhrasePairIndex];
-        const idx1 = allPhrases.indexOf(pair.frases[0]);
-        const idx2 = allPhrases.indexOf(pair.frases[1]);
-        if (idx1 !== -1) completedPhrases.add(idx1);
-        if (idx2 !== -1) completedPhrases.add(idx2);
-        saveProgress();
-
-        // Mostrar frase em inglês em destaque
-        const highlightDiv = document.getElementById("phrase-en-highlight");
-        highlightDiv.style.display = "block";
-        highlightDiv.className = "phrase-en-highlight";
-        highlightDiv.innerText = `✅ ${pair.frases[0].en} ✅ ${pair.frases[1].en}`;
-
-        document.getElementById("status-message").innerHTML = `<span class="status-correct">🎉 PARABÉNS! Bloco completo!</span>`;
-        document.getElementById("construction-zone").classList.add("completed");
-        document.getElementById("construction-zone").style.display = "none";
-        document.getElementById("words-zone").style.display = "none";
-        document.getElementById("check-btn").style.display = "none";
-        document.getElementById("next-btn").style.display = "block";
-        document.getElementById("next-btn").textContent = "➜ Próximo Par";
-function renderZones() {
-    const constructZone = document.getElementById("construction-zone");
-    const wordsZone = document.getElementById("words-zone");
-    const currentTextColor = hslToHex(configSettings.textHue, 100, 55);
-    const currentBalloonColor = hslToHex(configSettings.balloonHue || 0, 60, 18);
-
-    if (allCompleted) {
-        constructZone.style.display = "none";
-        wordsZone.style.display = "none";
-        return;
-    }
-    constructZone.style.display = "flex";
-    wordsZone.style.display = "flex";
-    constructZone.innerHTML = "";
-    wordsZone.innerHTML = "";
-
-    const pair = phrasePairs[currentPhrasePairIndex];
-    const currentPhrase = pair.frases[currentPhraseIndex];
-    const targetWords = getWordsForPhrase(currentPhraseIndex);
-
-    // ----- Renderizar palavras na zona de construção (com drag & drop + touch) -----
+    // Renderizar palavras na zona de construção (com drag & drop + touch)
     selectedWords.forEach((word, index) => {
         const balloon = document.createElement("span");
         balloon.className = "word-balloon";
@@ -1798,21 +1628,18 @@ function renderZones() {
         });
 
         // --- Eventos de toque (celular) ---
-        let touchStartX = 0;
-        let touchStartY = 0;
+        let touchStartX = 0, touchStartY = 0;
         let touchClone = null;
         let touchTargetIndex = index;
         let isDraggingTouch = false;
 
         balloon.addEventListener('touchstart', (e) => {
-            // Guarda posição inicial e cria um clone para arrastar visualmente
             const touch = e.touches[0];
             touchStartX = touch.clientX;
             touchStartY = touch.clientY;
             touchTargetIndex = index;
             isDraggingTouch = false;
 
-            // Cria um clone da palavra para acompanhar o dedo
             touchClone = balloon.cloneNode(true);
             touchClone.style.position = 'fixed';
             touchClone.style.pointerEvents = 'none';
@@ -1823,11 +1650,8 @@ function renderZones() {
             touchClone.style.top = (touch.clientY - balloon.offsetHeight/2) + 'px';
             document.body.appendChild(touchClone);
 
-            // Remove o original da vista (mas mantém no DOM)
             balloon.style.opacity = '0.3';
             balloon.style.transform = 'scale(0.9)';
-
-            // Impede rolagem da página durante o arraste
             e.preventDefault();
         }, { passive: false });
 
@@ -1838,7 +1662,6 @@ function renderZones() {
                 touchClone.style.left = (touch.clientX - balloon.offsetWidth/2) + 'px';
                 touchClone.style.top = (touch.clientY - balloon.offsetHeight/2) + 'px';
             }
-            // Verifica se o dedo se moveu o suficiente para considerar arraste
             const dx = touch.clientX - touchStartX;
             const dy = touch.clientY - touchStartY;
             if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
@@ -1848,54 +1671,41 @@ function renderZones() {
 
         balloon.addEventListener('touchend', (e) => {
             e.preventDefault();
-            // Remove o clone
             if (touchClone) {
                 touchClone.remove();
                 touchClone = null;
             }
-            // Restaura aparência original
             balloon.style.opacity = '1';
             balloon.style.transform = '';
 
             if (isDraggingTouch && touchTargetIndex !== undefined) {
-                // Encontra em qual posição soltou (baseado nas coordenadas)
                 const touch = e.changedTouches[0];
                 const dropX = touch.clientX;
                 const dropY = touch.clientY;
 
-                // Pega todas as palavras da zona de construção (elementos DOM atuais)
                 const allBaloons = constructZone.querySelectorAll('.word-balloon');
                 let targetInsertIndex = -1;
-
-                // Verifica se soltou sobre alguma palavra (ou entre elas)
                 allBaloons.forEach((el, idx) => {
                     const rect = el.getBoundingClientRect();
-                    // Se soltou na metade direita da palavra, insere depois; senão, antes
                     if (dropX >= rect.left && dropX <= rect.right && dropY >= rect.top && dropY <= rect.bottom) {
                         if (dropX > rect.left + rect.width/2) {
-                            targetInsertIndex = idx + 1; // depois
+                            targetInsertIndex = idx + 1;
                         } else {
-                            targetInsertIndex = idx; // antes
+                            targetInsertIndex = idx;
                         }
                     }
                 });
-
-                // Se não encontrou alvo, solta no final
                 if (targetInsertIndex === -1) {
                     targetInsertIndex = allBaloons.length;
                 }
 
-                // Move a palavra no array
                 const fromIndex = touchTargetIndex;
                 if (fromIndex !== targetInsertIndex && targetInsertIndex >= 0 && targetInsertIndex <= selectedWords.length) {
-                    // Ajusta se a remoção for antes da inserção
                     const wordMoved = selectedWords.splice(fromIndex, 1)[0];
-                    // Se o índice de destino for maior que o original, diminui 1 porque removemos um
                     let insertPos = targetInsertIndex;
                     if (fromIndex < targetInsertIndex) {
                         insertPos = targetInsertIndex - 1;
                     }
-                    // Garante que não ultrapasse os limites
                     if (insertPos > selectedWords.length) insertPos = selectedWords.length;
                     if (insertPos < 0) insertPos = 0;
                     selectedWords.splice(insertPos, 0, wordMoved);
@@ -1921,7 +1731,7 @@ function renderZones() {
         constructZone.appendChild(balloon);
     });
 
-    // ----- Verificação de conclusão de frase (mesmo código de antes) -----
+    // Verificar se a frase está completa
     const selectedClean = selectedWords.map(w => w.toLowerCase().trim());
     const targetClean = targetWords.map(w => w.toLowerCase().trim());
     const isCurrentPhraseComplete = selectedClean.length === targetClean.length && selectedClean.every((w, i) => w === targetClean[i]);
@@ -1967,7 +1777,7 @@ function renderZones() {
         return;
     }
 
-    // ----- Palavras disponíveis (mesmo código) -----
+    // Palavras disponíveis
     let availableWords = [];
     if (currentPhraseIndex === 0) {
         availableWords = targetWords.filter(w => !selectedWords.includes(w));
@@ -1990,7 +1800,6 @@ function renderZones() {
         wordsZone.appendChild(btn);
     });
     applyFontToAllElements();
-}
 }
 
 function checkAnswer() {
@@ -2025,7 +1834,7 @@ function nextPhrasePair() {
 }
 
 // ============================================================
-// MATCH GAME (com contador de acertos/erros)
+// MATCH GAME (contador de acertos/erros)
 // ============================================================
 function setMatchMode(mode) {
     matchMode = mode;
@@ -2223,7 +2032,6 @@ function handleMatchWordClick(event, item) {
             return;
         }
         if (firstItem.pairId === item.pairId && firstItem.word !== item.word) {
-            // Acerto
             firstItem.matched = true;
             item.matched = true;
             matchedPairsCount++;
@@ -2234,7 +2042,6 @@ function handleMatchWordClick(event, item) {
             renderMatchGame();
             speakWord(firstItem.word + " " + item.word);
         } else {
-            // Erro
             matchErrors++;
             saveMatchProgress();
             isProcessingMatch = true;
@@ -2346,7 +2153,6 @@ function setupDoubleTap() {
 // ============================================================
 function init() {
     requestAudioPermissions();
-    // Carregar tema
     setTheme(loadTheme());
     loadProgress();
     loadMatchProgress();
