@@ -47,23 +47,6 @@
             bottom: 0;
         }
         
-        /* BOTÃO MANUAL DE TELA CHEIA */
-        #fullscreen-btn {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 9999;
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.3);
-            color: #fff;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-            display: none; /* escondido por padrão, aparece se necessário */
-        }
-        #fullscreen-btn.visible { display: block; }
-
         h2 { 
             text-align: center; 
             color: #ffffff; 
@@ -882,9 +865,6 @@
     </style>
 </head>
 <body>
-
-<!-- BOTÃO MANUAL PARA TELA CHEIA -->
-<button id="fullscreen-btn" onclick="goFullscreen()">⛶ TELA CHEIA</button>
 
 <div class="container" id="appContainer">
     <div id="topics-screen" class="screen active">
@@ -1847,10 +1827,9 @@
     }
 
     // ============================================================
-    // TELA CHEIA - FUNÇÃO PRINCIPAL MELHORADA
+    // TELA CHEIA - FUNÇÃO AUTOMÁTICA (SEM BOTÃO)
     // ============================================================
     function goFullscreen() {
-        // 1. Tenta a API Fullscreen padrão
         if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen().catch(() => {});
         } else if (document.documentElement.webkitRequestFullscreen) {
@@ -1859,20 +1838,15 @@
             document.documentElement.msRequestFullscreen();
         }
 
-        // 2. Força posição fixa e ocupa 100% da tela (já está no CSS)
-        // 3. Para Android, tenta esconder a barra de navegação via JS puro
+        // Força posição fixa e ocupação total da tela (já está no CSS)
+        // Para Android, tenta esconder a barra de navegação via JS
         if (window.navigator && window.navigator.userAgent) {
             const ua = window.navigator.userAgent.toLowerCase();
             if (ua.indexOf('android') > -1) {
-                // Tenta usar a API de tela cheia do Android (não padrão)
                 try {
-                    // Força o scroll para o topo e esconde a barra
                     window.scrollTo(0, 0);
                     document.documentElement.style.overflow = 'hidden';
                     document.body.style.overflow = 'hidden';
-                    
-                    // Tenta ativar o modo imersivo via CSS (já feito)
-                    // Adiciona um pequeno delay e tenta novamente
                     setTimeout(() => {
                         window.scrollTo(0, 0);
                         document.documentElement.scrollTop = 0;
@@ -1881,17 +1855,6 @@
                 } catch(e) {}
             }
         }
-
-        // Mostra o botão de tela cheia caso não tenha conseguido
-        const btn = document.getElementById('fullscreen-btn');
-        btn.classList.add('visible');
-        // Esconde o botão após 5 segundos se conseguiu
-        setTimeout(() => {
-            // Verifica se está em tela cheia (só funciona em alguns navegadores)
-            if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-                btn.classList.remove('visible');
-            }
-        }, 5000);
     }
 
     // ============================================================
@@ -1912,13 +1875,11 @@
         
         setupDoubleTap();
         
-        // Tenta entrar em tela cheia automaticamente após carregar
+        // Tenta entrar em tela cheia automaticamente
         setTimeout(goFullscreen, 300);
         
-        // Tenta novamente quando o usuário tocar/clicar em qualquer lugar
-        document.addEventListener('click', function() {
-            goFullscreen();
-        }, { once: false });
+        // Tenta novamente quando o usuário tocar/clicar
+        document.addEventListener('click', goFullscreen, { once: false });
         
         // Tenta a cada 2 segundos por 20 segundos
         let attempts = 0;
@@ -1930,15 +1891,6 @@
                 clearInterval(fullscreenInterval);
             }
         }, 2000);
-        
-        // Mostra o botão de tela cheia manual caso não consiga automaticamente
-        const btn = document.getElementById('fullscreen-btn');
-        setTimeout(() => {
-            // Se após 5 segundos não estiver em tela cheia, mostra o botão
-            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-                btn.classList.add('visible');
-            }
-        }, 5000);
     }
 
     init();
