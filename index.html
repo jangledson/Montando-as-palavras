@@ -1730,15 +1730,244 @@ function renderZones() {
         document.getElementById("check-btn").style.display = "none";
         document.getElementById("next-btn").style.display = "block";
         document.getElementById("next-btn").textContent = "➜ Próximo Par";
+function renderZones() {
+    const constructZone = document.getElementById("construction-zone");
+    const wordsZone = document.getElementById("words-zone");
+    const currentTextColor = hslToHex(configSettings.textHue, 100, 55);
+    const currentBalloonColor = hslToHex(configSettings.balloonHue || 0, 60, 18);
+
+    if (allCompleted) {
+        constructZone.style.display = "none";
+        wordsZone.style.display = "none";
+        return;
+    }
+    constructZone.style.display = "flex";
+    wordsZone.style.display = "flex";
+    constructZone.innerHTML = "";
+    wordsZone.innerHTML = "";
+
+    const pair = phrasePairs[currentPhrasePairIndex];
+    const currentPhrase = pair.frases[currentPhraseIndex];
+    const targetWords = getWordsForPhrase(currentPhraseIndex);
+
+    // ----- Renderizar palavras na zona de construção (com drag & drop + touch) -----
+    selectedWords.forEach((word, index) => {
+        const balloon = document.createElement("span");
+        balloon.className = "word-balloon";
+        balloon.innerText = word;
+        balloon.draggable = true;
+        balloon.dataset.index = index;
+        balloon.dataset.word = word;
+        balloon.style.color = currentTextColor;
+        balloon.style.backgroundColor = currentBalloonColor;
+
+        // --- Eventos de drag (mouse/desktop) ---
+        balloon.addEventListener('dragstart', (e) => {
+            dragData = { index: index, word: word };
+            balloon.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', index);
+        });
+        balloon.addEventListener('dragend', () => {
+            balloon.classList.remove('dragging');
+            constructZone.classList.remove('drag-over');
+            document.querySelectorAll('.construction-zone .word-balloon').forEach(el => {
+                el.classList.remove('drag-over-insert');
+            });
+        });
+        balloon.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            constructZone.classList.add('drag-over');
+            balloon.classList.add('drag-over-insert');
+        });
+        balloon.addEventListener('dragleave', () => {
+            balloon.classList.remove('drag-over-insert');
+            constructZone.classList.remove('drag-over');
+        });
+        balloon.addEventListener('drop', (e) => {
+            e.preventDefault();
+            constructZone.classList.remove('drag-over');
+            balloon.classList.remove('drag-over-insert');
+            const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+            if (!isNaN(fromIndex) && fromIndex !== index) {
+                const wordMoved = selectedWords.splice(fromIndex, 1)[0];
+                selectedWords.splice(index, 0, wordMoved);
+                renderZones();
+            }
+        });
+
+        // --- Eventos de toque (celular) ---
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchClone = null;
+        let touchTargetIndex = index;
+        let isDraggingTouch = false;
+
+        balloon.addEventListener('touchstart', (e) => {
+            // Guarda posição inicial e cria um clone para arrastar visualmente
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchTargetIndex = index;
+            isDraggingTouch = false;
+
+            // Cria um clone da palavra para acompanhar o dedo
+            touchClone = balloon.cloneNode(true);
+            touchClone.style.position = 'fixed';
+            touchClone.style.pointerEvents = 'none';
+            touchClone.style.zIndex = '9999';
+            touchClone.style.opacity = '0.85';
+            touchClone.style.transform = 'scale(1.05)';
+            touchClone.style.left = (touch.clientX - balloon.offsetWidth/2) + 'px';
+            touchClone.style.top = (touch.clientY - balloon.offsetHeight/2) + 'px';
+            document.body.appendChild(touchClone);
+
+            // Remove o original da vista (mas mantém no DOM)
+            balloon.style.opacity = '0.3';
+            balloon.style.transform = 'scale(0.9)';
+
+            // Impede rolagem da página durante o arraste
+            e.preventDefault();
+        }, { passive: false });
+
+        balloon.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            if (touchClone) {
+                touchClone.style.left = (touch.clientX - balloon.offsetWidth/2) + 'px';
+                touchClone.style.top = (touch.clientY - balloon.offsetHeight/2) + 'px';
+            }
+            // Verifica se o dedo se moveu o suficiente para considerar arraste
+            const dx = touch.clientX - touchStartX;
+            const dy = touch.clientY - touchStartY;
+            if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                isDraggingTouch = true;
+            }
+        }, { passive: false });
+
+        balloon.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            // Remove o clone
+            if (touchClone) {
+                touchClone.remove();
+                touchClone = null;
+            }
+            // Restaura aparência original
+            balloon.style.opacity = '1';
+            balloon.style.transform = '';
+
+            if (isDraggingTouch && touchTargetIndex !== undefined) {
+                // Encontra em qual posição soltou (baseado nas coordenadas)
+                const touch = e.changedTouches[0];
+                const dropX = touch.clientX;
+                const dropY = touch.clientY;
+
+                // Pega todas as palavras da zona de construção (elementos DOM atuais)
+                const allBaloons = constructZone.querySelectorAll('.word-balloon');
+                let targetInsertIndex = -1;
+
+                // Verifica se soltou sobre alguma palavra (ou entre elas)
+                allBaloons.forEach((el, idx) => {
+                    const rect = el.getBoundingClientRect();
+                    // Se soltou na metade direita da palavra, insere depois; senão, antes
+                    if (dropX >= rect.left && dropX <= rect.right && dropY >= rect.top && dropY <= rect.bottom) {
+                        if (dropX > rect.left + rect.width/2) {
+                            targetInsertIndex = idx + 1; // depois
+                        } else {
+                            targetInsertIndex = idx; // antes
+                        }
+                    }
+                });
+
+                // Se não encontrou alvo, solta no final
+                if (targetInsertIndex === -1) {
+                    targetInsertIndex = allBaloons.length;
+                }
+
+                // Move a palavra no array
+                const fromIndex = touchTargetIndex;
+                if (fromIndex !== targetInsertIndex && targetInsertIndex >= 0 && targetInsertIndex <= selectedWords.length) {
+                    // Ajusta se a remoção for antes da inserção
+                    const wordMoved = selectedWords.splice(fromIndex, 1)[0];
+                    // Se o índice de destino for maior que o original, diminui 1 porque removemos um
+                    let insertPos = targetInsertIndex;
+                    if (fromIndex < targetInsertIndex) {
+                        insertPos = targetInsertIndex - 1;
+                    }
+                    // Garante que não ultrapasse os limites
+                    if (insertPos > selectedWords.length) insertPos = selectedWords.length;
+                    if (insertPos < 0) insertPos = 0;
+                    selectedWords.splice(insertPos, 0, wordMoved);
+                    renderZones();
+                }
+            }
+            isDraggingTouch = false;
+            touchTargetIndex = undefined;
+        }, { passive: false });
+
+        // Clique para remover (mantido)
+        balloon.onclick = (e) => {
+            if (!isDraggingTouch) {
+                speakWord(word);
+                const idx = parseInt(balloon.dataset.index);
+                if (!isNaN(idx)) {
+                    selectedWords.splice(idx, 1);
+                    renderZones();
+                }
+            }
+        };
+
+        constructZone.appendChild(balloon);
+    });
+
+    // ----- Verificação de conclusão de frase (mesmo código de antes) -----
+    const selectedClean = selectedWords.map(w => w.toLowerCase().trim());
+    const targetClean = targetWords.map(w => w.toLowerCase().trim());
+    const isCurrentPhraseComplete = selectedClean.length === targetClean.length && selectedClean.every((w, i) => w === targetClean[i]);
+
+    if (isCurrentPhraseComplete && !phrase1Completed && currentPhraseIndex === 0) {
+        phrase1Completed = true;
+        document.getElementById("status-message").innerHTML = `<span class="status-correct">✅ Frase 1 completa! Agora monte a frase 2.</span>`;
+        document.getElementById("phrase-pt-2").classList.remove("phrase-hidden");
+        document.getElementById("phrase-pt-2").classList.add("revealed");
+        document.getElementById("track-number").innerText = `Bloco ${currentPhrasePairIndex + 1} - Frase 2:`;
+        currentPhraseIndex = 1;
+        selectedWords = [];
+        renderZones();
+        return;
+    }
+
+    if (isCurrentPhraseComplete && phrase1Completed && currentPhraseIndex === 1 && !phrase2Completed) {
+        phrase2Completed = true;
+        allCompleted = true;
+        const pair = phrasePairs[currentPhrasePairIndex];
+        const idx1 = allPhrases.indexOf(pair.frases[0]);
+        const idx2 = allPhrases.indexOf(pair.frases[1]);
+        if (idx1 !== -1) completedPhrases.add(idx1);
+        if (idx2 !== -1) completedPhrases.add(idx2);
+        saveProgress();
+
+        const highlightDiv = document.getElementById("phrase-en-highlight");
+        highlightDiv.style.display = "block";
+        highlightDiv.className = "phrase-en-highlight";
+        highlightDiv.innerText = `✅ ${pair.frases[0].en} ✅ ${pair.frases[1].en}`;
+
+        document.getElementById("status-message").innerHTML = `<span class="status-correct">🎉 PARABÉNS! Bloco completo!</span>`;
+        document.getElementById("construction-zone").classList.add("completed");
+        document.getElementById("construction-zone").style.display = "none";
+        document.getElementById("words-zone").style.display = "none";
+        document.getElementById("check-btn").style.display = "none";
+        document.getElementById("next-btn").style.display = "block";
+        document.getElementById("next-btn").textContent = "➜ Próximo Par";
         const successBox = document.getElementById("success-text-box");
         successBox.style.display = "flex";
         successBox.innerHTML = `<div style="font-size:clamp(14px,2vh,18px);">${pair.frases[0].en}</div><div style="font-size:clamp(14px,2vh,18px);">${pair.frases[1].en}</div>`;
-        // Áudio automático ao completar a frase
         speak(pair.frases[0].en + ". " + pair.frases[1].en);
         return;
     }
 
-    // Renderizar palavras disponíveis
+    // ----- Palavras disponíveis (mesmo código) -----
     let availableWords = [];
     if (currentPhraseIndex === 0) {
         availableWords = targetWords.filter(w => !selectedWords.includes(w));
@@ -1761,6 +1990,7 @@ function renderZones() {
         wordsZone.appendChild(btn);
     });
     applyFontToAllElements();
+}
 }
 
 function checkAnswer() {
