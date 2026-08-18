@@ -1082,6 +1082,7 @@ let selectedVoiceGender = 'female';
 let tapCount = 0;
 let tapTimer = null;
 let currentTheme = loadTheme();
+let dragData = null; // mantido
 
 // ============================================================
 // FUNÇÕES DE CARREGAMENTO E SALVAMENTO
@@ -1481,27 +1482,16 @@ function showTopicsScreen() {
 // ============================================================
 // JOGO DE FRASES - COM DRAG AND DROP (TOQUE + MOUSE)
 // ============================================================
-let dragData = null;
-
 function startTopic(mode) {
-    if (mode === "ALL") {
-        phrasePairs = [];
-        for (let i = 0; i < allPhrases.length; i += 2) {
-            const pair = [];
-            pair.push(allPhrases[i]);
-            if (i + 1 < allPhrases.length) pair.push(allPhrases[i + 1]);
-            while (pair.length < 2) pair.push(pair[0]);
-            phrasePairs.push({ frases: pair });
-        }
-    } else {
-        phrasePairs = [];
-        for (let i = 0; i < allPhrases.length; i += 2) {
-            const pair = [];
-            pair.push(allPhrases[i]);
-            if (i + 1 < allPhrases.length) pair.push(allPhrases[i + 1]);
-            while (pair.length < 2) pair.push(pair[0]);
-            phrasePairs.push({ frases: pair });
-        }
+    // Para esta versão, sempre usamos todas as frases (modo "ALL")
+    // (pode ser expandido no futuro)
+    phrasePairs = [];
+    for (let i = 0; i < allPhrases.length; i += 2) {
+        const pair = [];
+        pair.push(allPhrases[i]);
+        if (i + 1 < allPhrases.length) pair.push(allPhrases[i + 1]);
+        while (pair.length < 2) pair.push(pair[0]);
+        phrasePairs.push({ frases: pair });
     }
     if (phrasePairs.length === 0) {
         alert("Nenhuma frase encontrada.");
@@ -1557,9 +1547,28 @@ function loadPhrasePair() {
 function getWordsForPhrase(phraseIndex) {
     const pair = phrasePairs[currentPhrasePairIndex];
     const frase = pair.frases[phraseIndex];
+    // Remove pontuação, mas mantém contrações com apóstrofo e hífen internos
     return frase.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
 }
 
+// ----- NOVA FUNÇÃO AUXILIAR PARA CONTAR PALAVRAS DISPONÍVEIS -----
+function getAvailableWords(targetWords, selectedWords) {
+    const count = {};
+    targetWords.forEach(w => count[w] = (count[w] || 0) + 1);
+    selectedWords.forEach(w => {
+        if (count[w] > 0) count[w]--;
+    });
+    const result = [];
+    for (const [word, qty] of Object.entries(count)) {
+        for (let i = 0; i < qty; i++) result.push(word);
+    }
+    return result;
+}
+// ----- FIM DA NOVA FUNÇÃO -----
+
+// ============================================================
+// FUNÇÃO RENDERZONES CORRIGIDA (COM TOQUE PARA REMOVER E CONTAGEM)
+// ============================================================
 function renderZones() {
     const constructZone = document.getElementById("construction-zone");
     const wordsZone = document.getElementById("words-zone");
@@ -1580,7 +1589,7 @@ function renderZones() {
     const currentPhrase = pair.frases[currentPhraseIndex];
     const targetWords = getWordsForPhrase(currentPhraseIndex);
 
-    // Renderizar palavras na zona de construção (com drag & drop + touch)
+    // ========== CONSTRUÇÃO ==========
     selectedWords.forEach((word, index) => {
         const balloon = document.createElement("span");
         balloon.className = "word-balloon";
@@ -1591,7 +1600,7 @@ function renderZones() {
         balloon.style.color = currentTextColor;
         balloon.style.backgroundColor = currentBalloonColor;
 
-        // --- Eventos de drag (mouse/desktop) ---
+        // --- Drag (mouse) ---
         balloon.addEventListener('dragstart', (e) => {
             dragData = { index: index, word: word };
             balloon.classList.add('dragging');
@@ -1627,7 +1636,7 @@ function renderZones() {
             }
         });
 
-        // --- Eventos de toque (celular) ---
+        // --- Touch (arrastar + toque para remover) ---
         let touchStartX = 0, touchStartY = 0;
         let touchClone = null;
         let touchTargetIndex = index;
@@ -1678,6 +1687,22 @@ function renderZones() {
             balloon.style.opacity = '1';
             balloon.style.transform = '';
 
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            const dy = e.changedTouches[0].clientY - touchStartY;
+            const distance = Math.sqrt(dx*dx + dy*dy);
+
+            // Se foi um toque curto (não arraste) → remover a palavra
+            if (distance < 10 && !isDraggingTouch) {
+                const idx = parseInt(balloon.dataset.index);
+                if (!isNaN(idx)) {
+                    speakWord(word);
+                    selectedWords.splice(idx, 1);
+                    renderZones();
+                }
+                return;
+            }
+
+            // Se foi arraste, processar drop
             if (isDraggingTouch && touchTargetIndex !== undefined) {
                 const touch = e.changedTouches[0];
                 const dropX = touch.clientX;
@@ -1716,7 +1741,7 @@ function renderZones() {
             touchTargetIndex = undefined;
         }, { passive: false });
 
-        // Clique para remover (mantido)
+        // Clique (mouse) para remover (mantido)
         balloon.onclick = (e) => {
             if (!isDraggingTouch) {
                 speakWord(word);
@@ -1731,7 +1756,7 @@ function renderZones() {
         constructZone.appendChild(balloon);
     });
 
-    // Verificar se a frase está completa
+    // ========== VERIFICAÇÃO DE COMPLETUDE ==========
     const selectedClean = selectedWords.map(w => w.toLowerCase().trim());
     const targetClean = targetWords.map(w => w.toLowerCase().trim());
     const isCurrentPhraseComplete = selectedClean.length === targetClean.length && selectedClean.every((w, i) => w === targetClean[i]);
@@ -1777,14 +1802,20 @@ function renderZones() {
         return;
     }
 
-    // Palavras disponíveis
-    let availableWords = [];
-    if (currentPhraseIndex === 0) {
-        availableWords = targetWords.filter(w => !selectedWords.includes(w));
-    } else if (currentPhraseIndex === 1 && phrase1Completed) {
-        const targetWords2 = getWordsForPhrase(1);
-        availableWords = targetWords2.filter(w => !selectedWords.includes(w));
+    // ========== PALAVRAS DISPONÍVEIS (COM CONTAGEM CORRETA) ==========
+    let availableWords = getAvailableWords(targetWords, selectedWords);
+
+    // Fallback de segurança: se ainda assim ficar vazio mas a frase não estiver completa, 
+    // força a lista a partir do alvo removendo apenas as selecionadas uma a uma
+    if (availableWords.length === 0 && !isCurrentPhraseComplete) {
+        const temp = [...targetWords];
+        selectedWords.forEach(w => {
+            const idx = temp.indexOf(w);
+            if (idx !== -1) temp.splice(idx, 1);
+        });
+        availableWords = temp;
     }
+
     availableWords.sort(() => Math.random() - 0.5);
     availableWords.forEach(word => {
         const btn = document.createElement("span");
@@ -1802,6 +1833,9 @@ function renderZones() {
     applyFontToAllElements();
 }
 
+// ============================================================
+// DEMAIS FUNÇÕES (CHECK, REVEAL, NEXT, MATCH, ETC)
+// ============================================================
 function checkAnswer() {
     const statusMsg = document.getElementById("status-message");
     if (allCompleted) {
