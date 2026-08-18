@@ -60,18 +60,16 @@ h2 { text-align:center; color:var(--text2); text-transform:uppercase; letter-spa
 .game-scrollable-content { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:clamp(4px,0.8vh,8px); padding-bottom:6px; padding-right:2px; }
 .top-challenge { background:var(--card); border:2px solid var(--border); padding:clamp(6px,1.2vh,12px) clamp(8px,1.5vw,14px); border-radius:clamp(8px,1.5vh,14px); box-shadow:0 4px 20px var(--shadow); display:flex; flex-direction:column; gap:clamp(4px,0.6vh,8px); backdrop-filter:blur(8px); }
 .phrase-pt { font-size:clamp(16px,2.4vh,22px); font-weight:900; font-family:'Georgia',serif; text-align:center; line-height:1.3; color:var(--text2) !important; text-shadow:0 2px 10px rgba(255,255,255,0.08); word-wrap:break-word; padding:4px 0; transition:color .3s; }
+.phrase-en { font-size:clamp(14px,2.2vh,20px); font-weight:700; color:var(--accent); text-align:center; padding:4px 0; border-bottom:1px solid var(--border); margin-bottom:4px; }
 .phrase-hidden { filter:blur(8px); opacity:.3; transition:all .6s; pointer-events:none; }
 .phrase-hidden.revealed { filter:blur(0); opacity:1; pointer-events:auto; }
-.phrase-en-highlight { font-size:clamp(18px,2.8vh,26px); font-weight:900; color:var(--accent); text-align:center; padding:8px; border:2px solid var(--accent); border-radius:12px; background:var(--highlight); animation:pulseHighlight 1.2s ease-in-out; text-shadow:0 0 30px rgba(0,255,102,0.15); word-wrap:break-word; }
-@keyframes pulseHighlight { 0% { transform:scale(0.92); opacity:0.4; } 50% { transform:scale(1.04); opacity:1; } 100% { transform:scale(1); opacity:1; } }
-.btn-audio-top { background:rgba(255,255,255,0.05); color:var(--text2); border:2px solid var(--border); padding:clamp(3px,0.6vh,6px) clamp(6px,1vw,12px); font-size:clamp(9px,1.2vh,13px); font-weight:bold; border-radius:clamp(6px,1vh,12px); cursor:pointer; flex:1; text-align:center; transition:all .3s; }
-.btn-audio-top:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.3); }
-.btn-audio-top:active { transform:scale(.95); }
-.audio-controls-row { display:flex; justify-content:space-between; align-items:center; width:100%; margin-top:2px; gap:4px; }
 .construction-zone { background:var(--card); border:2px dashed var(--border); border-radius:clamp(8px,1.5vh,12px); min-height:clamp(50px,8vh,80px); padding:clamp(6px,1vh,12px); display:flex; flex-wrap:wrap; gap:clamp(4px,0.6vh,8px); align-content:flex-start; position:relative; transition:border-color .4s,background .3s; }
 .construction-zone.completed { border-color:var(--accent); background:var(--highlight); }
 .construction-zone.drag-over { border-color:var(--accent); background:rgba(0,255,102,0.06); }
-.success-text-box { display:none; background:var(--highlight); border:2px solid var(--accent); border-radius:clamp(8px,1.5vh,12px); min-height:clamp(40px,6vh,60px); padding:clamp(6px,1vh,12px); font-size:clamp(13px,2vh,18px); font-weight:bold; color:var(--accent); text-align:center; align-items:center; justify-content:center; text-shadow:0 0 20px rgba(0,255,102,0.2); flex-direction:column; gap:6px; }
+.success-text-box { display:none; background:var(--highlight); border:2px solid var(--accent); border-radius:clamp(8px,1.5vh,12px); min-height:clamp(40px,6vh,60px); padding:clamp(6px,1vh,12px); font-size:20px !important; font-weight:bold; color:var(--accent); text-align:center; align-items:center; justify-content:center; text-shadow:0 0 20px rgba(0,255,102,0.2); flex-direction:column; gap:6px; }
+.success-text-box .phrase-line { font-size:20px !important; font-weight:bold; line-height:1.4; }
+.success-text-box .phrase-line .en { color:var(--text2); }
+.success-text-box .phrase-line .pt { color:var(--text3); font-size:16px; font-weight:normal; }
 .words-zone { background:var(--card); border:2px solid var(--border); border-radius:clamp(8px,1.5vh,12px); min-height:clamp(40px,6vh,70px); padding:clamp(6px,1vh,12px); display:flex; flex-wrap:wrap; gap:clamp(4px,0.6vh,8px); justify-content:flex-start; align-content:flex-start; }
 .word-balloon { padding:clamp(4px,0.6vh,8px) clamp(6px,1vw,14px); font-size:clamp(11px,1.8vh,16px); font-weight:800; border-radius:clamp(14px,2vh,22px); cursor:pointer; box-shadow:0 3px 10px var(--shadow); display:inline-block; user-select:none; position:relative; max-width:100%; word-wrap:break-word; touch-action:none; transition:color .3s,background .3s,transform .15s,box-shadow .3s,opacity .3s; background:var(--balloon); border:2px solid var(--balloon-border); color:var(--text); letter-spacing:.3px; line-height:1.2; }
 .word-balloon:hover { transform:translateY(-2px) scale(1.02); box-shadow:0 6px 30px var(--shadow); border-color:rgba(255,255,255,0.3); }
@@ -212,8 +210,9 @@ h2 { text-align:center; color:var(--text2); text-transform:uppercase; letter-spa
         <div class="game-scrollable-content">
             <div class="top-challenge">
                 <div id="phrase-pt-1" class="phrase-pt">Carregando frase 1...</div>
+                <!-- NOVO: exibição da tradução da Frase 1 quando completada -->
+                <div id="phrase-en-1" class="phrase-en" style="display:none;"></div>
                 <div id="phrase-pt-2" class="phrase-pt phrase-hidden">🔒 Segunda frase (complete a primeira)</div>
-                <div id="phrase-en-highlight" style="display:none;"></div>
             </div>
             <div class="zone-title" id="track-number">Montando a frase 1:</div>
             <div class="construction-zone" id="construction-zone"></div>
@@ -324,7 +323,7 @@ h2 { text-align:center; color:var(--text2); text-transform:uppercase; letter-spa
 
 <script>
 // ============================================================
-// DADOS COMPACTOS (strings) - MESMOS DA VERSÃO ANTERIOR
+// DADOS COMPACTOS (strings)
 // ============================================================
 var phrasesStr = 
 "Did I ever tell you what happened?|Já contei para você o que aconteceu?|"+
@@ -1082,7 +1081,7 @@ let selectedVoiceGender = 'female';
 let tapCount = 0;
 let tapTimer = null;
 let currentTheme = loadTheme();
-let dragData = null; // mantido
+let dragData = null;
 
 // ============================================================
 // FUNÇÕES DE CARREGAMENTO E SALVAMENTO
@@ -1480,11 +1479,9 @@ function showTopicsScreen() {
 }
 
 // ============================================================
-// JOGO DE FRASES - COM DRAG AND DROP (TOQUE + MOUSE)
+// JOGO DE FRASES
 // ============================================================
 function startTopic(mode) {
-    // Para esta versão, sempre usamos todas as frases (modo "ALL")
-    // (pode ser expandido no futuro)
     phrasePairs = [];
     for (let i = 0; i < allPhrases.length; i += 2) {
         const pair = [];
@@ -1531,7 +1528,10 @@ function loadPhrasePair() {
     document.getElementById("construction-zone").classList.remove("completed");
     document.getElementById("success-text-box").style.display = "none";
     document.getElementById("words-zone").style.display = "flex";
-    document.getElementById("phrase-en-highlight").style.display = "none";
+    // Esconde a tradução da Frase 1 novamente
+    const en1 = document.getElementById("phrase-en-1");
+    en1.style.display = "none";
+    en1.innerText = "";
 
     document.getElementById("phrase-pt-1").innerText = pair.frases[0].pt;
     document.getElementById("phrase-pt-1").classList.remove("phrase-hidden");
@@ -1547,11 +1547,9 @@ function loadPhrasePair() {
 function getWordsForPhrase(phraseIndex) {
     const pair = phrasePairs[currentPhrasePairIndex];
     const frase = pair.frases[phraseIndex];
-    // Remove pontuação, mas mantém contrações com apóstrofo e hífen internos
     return frase.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~?]/g, "").split(" ").filter(w => w.trim() !== "");
 }
 
-// ----- NOVA FUNÇÃO AUXILIAR PARA CONTAR PALAVRAS DISPONÍVEIS -----
 function getAvailableWords(targetWords, selectedWords) {
     const count = {};
     targetWords.forEach(w => count[w] = (count[w] || 0) + 1);
@@ -1564,14 +1562,11 @@ function getAvailableWords(targetWords, selectedWords) {
     }
     return result;
 }
-// ----- FIM DA NOVA FUNÇÃO -----
 
-// ============================================================
-// FUNÇÃO RENDERZONES CORRIGIDA (COM TOQUE PARA REMOVER E CONTAGEM)
-// ============================================================
 function renderZones() {
     const constructZone = document.getElementById("construction-zone");
     const wordsZone = document.getElementById("words-zone");
+    const successBox = document.getElementById("success-text-box");
     const currentTextColor = hslToHex(configSettings.textHue, 100, 55);
     const currentBalloonColor = hslToHex(configSettings.balloonHue || 0, 60, 18);
 
@@ -1582,11 +1577,11 @@ function renderZones() {
     }
     constructZone.style.display = "flex";
     wordsZone.style.display = "flex";
+    successBox.style.display = "none";
     constructZone.innerHTML = "";
     wordsZone.innerHTML = "";
 
     const pair = phrasePairs[currentPhrasePairIndex];
-    const currentPhrase = pair.frases[currentPhraseIndex];
     const targetWords = getWordsForPhrase(currentPhraseIndex);
 
     // ========== CONSTRUÇÃO ==========
@@ -1691,7 +1686,6 @@ function renderZones() {
             const dy = e.changedTouches[0].clientY - touchStartY;
             const distance = Math.sqrt(dx*dx + dy*dy);
 
-            // Se foi um toque curto (não arraste) → remover a palavra
             if (distance < 10 && !isDraggingTouch) {
                 const idx = parseInt(balloon.dataset.index);
                 if (!isNaN(idx)) {
@@ -1702,7 +1696,6 @@ function renderZones() {
                 return;
             }
 
-            // Se foi arraste, processar drop
             if (isDraggingTouch && touchTargetIndex !== undefined) {
                 const touch = e.changedTouches[0];
                 const dropX = touch.clientX;
@@ -1741,7 +1734,6 @@ function renderZones() {
             touchTargetIndex = undefined;
         }, { passive: false });
 
-        // Clique (mouse) para remover (mantido)
         balloon.onclick = (e) => {
             if (!isDraggingTouch) {
                 speakWord(word);
@@ -1756,13 +1748,17 @@ function renderZones() {
         constructZone.appendChild(balloon);
     });
 
-    // ========== VERIFICAÇÃO DE COMPLETUDE ==========
+    // ========== VERIFICAÇÃO ==========
     const selectedClean = selectedWords.map(w => w.toLowerCase().trim());
     const targetClean = targetWords.map(w => w.toLowerCase().trim());
     const isCurrentPhraseComplete = selectedClean.length === targetClean.length && selectedClean.every((w, i) => w === targetClean[i]);
 
     if (isCurrentPhraseComplete && !phrase1Completed && currentPhraseIndex === 0) {
         phrase1Completed = true;
+        // Exibe a tradução da Frase 1
+        const en1 = document.getElementById("phrase-en-1");
+        en1.style.display = "block";
+        en1.innerText = pair.frases[0].en;
         document.getElementById("status-message").innerHTML = `<span class="status-correct">✅ Frase 1 completa! Agora monte a frase 2.</span>`;
         document.getElementById("phrase-pt-2").classList.remove("phrase-hidden");
         document.getElementById("phrase-pt-2").classList.add("revealed");
@@ -1776,17 +1772,23 @@ function renderZones() {
     if (isCurrentPhraseComplete && phrase1Completed && currentPhraseIndex === 1 && !phrase2Completed) {
         phrase2Completed = true;
         allCompleted = true;
-        const pair = phrasePairs[currentPhrasePairIndex];
         const idx1 = allPhrases.indexOf(pair.frases[0]);
         const idx2 = allPhrases.indexOf(pair.frases[1]);
         if (idx1 !== -1) completedPhrases.add(idx1);
         if (idx2 !== -1) completedPhrases.add(idx2);
         saveProgress();
 
-        const highlightDiv = document.getElementById("phrase-en-highlight");
-        highlightDiv.style.display = "block";
-        highlightDiv.className = "phrase-en-highlight";
-        highlightDiv.innerText = `✅ ${pair.frases[0].en} ✅ ${pair.frases[1].en}`;
+        successBox.style.display = "flex";
+        successBox.innerHTML = `
+            <div class="phrase-line">
+                <span class="en">${pair.frases[0].en}</span><br>
+                <span class="pt">${pair.frases[0].pt}</span>
+            </div>
+            <div class="phrase-line">
+                <span class="en">${pair.frases[1].en}</span><br>
+                <span class="pt">${pair.frases[1].pt}</span>
+            </div>
+        `;
 
         document.getElementById("status-message").innerHTML = `<span class="status-correct">🎉 PARABÉNS! Bloco completo!</span>`;
         document.getElementById("construction-zone").classList.add("completed");
@@ -1795,18 +1797,13 @@ function renderZones() {
         document.getElementById("check-btn").style.display = "none";
         document.getElementById("next-btn").style.display = "block";
         document.getElementById("next-btn").textContent = "➜ Próximo Par";
-        const successBox = document.getElementById("success-text-box");
-        successBox.style.display = "flex";
-        successBox.innerHTML = `<div style="font-size:clamp(14px,2vh,18px);">${pair.frases[0].en}</div><div style="font-size:clamp(14px,2vh,18px);">${pair.frases[1].en}</div>`;
+
         speak(pair.frases[0].en + ". " + pair.frases[1].en);
         return;
     }
 
-    // ========== PALAVRAS DISPONÍVEIS (COM CONTAGEM CORRETA) ==========
+    // ========== PALAVRAS DISPONÍVEIS ==========
     let availableWords = getAvailableWords(targetWords, selectedWords);
-
-    // Fallback de segurança: se ainda assim ficar vazio mas a frase não estiver completa, 
-    // força a lista a partir do alvo removendo apenas as selecionadas uma a uma
     if (availableWords.length === 0 && !isCurrentPhraseComplete) {
         const temp = [...targetWords];
         selectedWords.forEach(w => {
@@ -1834,7 +1831,7 @@ function renderZones() {
 }
 
 // ============================================================
-// DEMAIS FUNÇÕES (CHECK, REVEAL, NEXT, MATCH, ETC)
+// DEMAIS FUNÇÕES (CHECK, REVEAL, NEXT, MATCH, etc.)
 // ============================================================
 function checkAnswer() {
     const statusMsg = document.getElementById("status-message");
@@ -1868,7 +1865,7 @@ function nextPhrasePair() {
 }
 
 // ============================================================
-// MATCH GAME (contador de acertos/erros)
+// MATCH GAME
 // ============================================================
 function setMatchMode(mode) {
     matchMode = mode;
