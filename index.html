@@ -8,137 +8,216 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Formando as Frases - Inglês</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
+/* ===== RESET E BASE ===== */
 * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; margin:0; padding:0; }
-html, body { height:100%; width:100%; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif; background:#000; color:#0f6; user-select:none; overflow:hidden; transition:background .4s; margin:0; padding:0; position:fixed; top:0; left:0; right:0; bottom:0; }
+
+/* ===== TEMAS (ESCURO/CLARO) ===== */
+:root {
+    --bg: #000;
+    --bg2: #111;
+    --bg3: #1a1a1a;
+    --text: #0f6;
+    --text2: #fff;
+    --text3: #ccc;
+    --border: #2a2a2a;
+    --card: rgba(255,255,255,0.05);
+    --shadow: rgba(0,0,0,0.8);
+    --accent: #0f6;
+    --balloon: #1a1a1a;
+    --balloon-border: #2a2a2a;
+    --highlight: rgba(0,255,102,0.15);
+}
+[data-theme="light"] {
+    --bg: #f0f2f5;
+    --bg2: #e4e7ec;
+    --bg3: #d0d4dc;
+    --text: #0a0;
+    --text2: #1a1a1a;
+    --text3: #555;
+    --border: #b0b8c0;
+    --card: rgba(0,0,0,0.04);
+    --shadow: rgba(0,0,0,0.12);
+    --accent: #0a0;
+    --balloon: #e8ecf0;
+    --balloon-border: #b0b8c0;
+    --highlight: rgba(0,170,0,0.12);
+}
+
+html, body { height:100%; width:100%; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); user-select:none; overflow:hidden; transition:background .3s,color .3s; margin:0; padding:0; position:fixed; top:0; left:0; right:0; bottom:0; }
 ::-webkit-scrollbar { display:none; }
-.container { width:100%; height:100%; padding:clamp(6px,1.5vh,14px); display:flex; flex-direction:column; gap:clamp(4px,1vh,10px); overflow:hidden; background:#000; transition:background .4s; position:absolute; top:0; left:0; right:0; bottom:0; }
-h2 { text-align:center; color:#fff; text-transform:uppercase; letter-spacing:2px; text-shadow:0 0 20px rgba(255,255,255,0.15); margin-top:2px; font-size:clamp(14px,2.5vh,22px); font-weight:800; }
-.counter-banner { text-align:center; color:#ccc; font-size:clamp(8px,1.2vh,12px); font-weight:bold; text-transform:uppercase; letter-spacing:1px; opacity:.7; }
+
+.container { width:100%; height:100%; padding:clamp(6px,1.5vh,14px); display:flex; flex-direction:column; gap:clamp(4px,1vh,10px); overflow:hidden; background:var(--bg); transition:background .3s; position:absolute; top:0; left:0; right:0; bottom:0; }
+
+h2 { text-align:center; color:var(--text2); text-transform:uppercase; letter-spacing:2px; text-shadow:0 0 20px rgba(255,255,255,0.08); margin-top:2px; font-size:clamp(14px,2.5vh,22px); font-weight:800; transition:color .3s; }
+.counter-banner { text-align:center; color:var(--text3); font-size:clamp(8px,1.2vh,12px); font-weight:bold; text-transform:uppercase; letter-spacing:1px; opacity:.7; }
+
 .screen { display:none; flex-direction:column; width:100%; height:100%; flex:1; overflow:hidden; }
 .screen.active { display:flex; }
 #topics-screen { overflow-y:auto; gap:clamp(4px,1vh,10px); padding-bottom:10px; }
 #topics-list { display:flex; flex-direction:column; gap:clamp(4px,0.8vh,8px); padding-bottom:6px; }
-.topic-card { background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.15); padding:clamp(8px,1.5vh,16px) clamp(10px,2vw,20px); border-radius:clamp(8px,1.5vh,14px); cursor:pointer; font-size:clamp(13px,2vh,18px); font-weight:bold; border-left:8px solid #fff; box-shadow:0 4px 15px rgba(0,0,0,0.8); text-align:left; color:#fff; width:100%; display:flex; align-items:center; min-height:clamp(40px,6vh,60px); transition:all .3s; }
+
+.topic-card { background:var(--card); border:2px solid var(--border); padding:clamp(8px,1.5vh,16px) clamp(10px,2vw,20px); border-radius:clamp(8px,1.5vh,14px); cursor:pointer; font-size:clamp(13px,2vh,18px); font-weight:bold; border-left:8px solid var(--text2); box-shadow:0 4px 15px var(--shadow); text-align:left; color:var(--text2); width:100%; display:flex; align-items:center; min-height:clamp(40px,6vh,60px); transition:all .3s; }
 .topic-card:hover { transform:scale(1.01); border-left-color:#aaa; }
 .topic-card:active { transform:scale(.98); }
-.topic-card.misto-btn { background:rgba(255,255,255,0.08); border-left-color:#fff; border-color:rgba(255,255,255,0.25); color:#fff; }
-.btn-show-stats { background:rgba(0,0,0,0.8); color:#fff; border:2px dashed rgba(255,255,255,0.3); padding:clamp(4px,0.8vh,8px) clamp(8px,1.5vw,16px); font-size:clamp(9px,1.2vh,13px); font-weight:bold; border-radius:20px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all .3s; }
-.btn-show-stats:hover { border-color:#fff; }
-.stats-report-box { display:none; background:rgba(0,0,0,0.9); border:2px solid #fff; padding:clamp(6px,1vh,12px); border-radius:clamp(8px,1.5vh,14px); margin:4px auto 0; font-size:clamp(10px,1.2vh,14px); color:#fff; font-weight:bold; text-align:left; line-height:1.5; max-width:550px; }
+.topic-card.misto-btn { background:rgba(255,255,255,0.08); border-left-color:var(--text2); border-color:rgba(255,255,255,0.25); color:var(--text2); }
+
+.btn-show-stats { background:rgba(0,0,0,0.7); color:var(--text2); border:2px dashed var(--border); padding:clamp(4px,0.8vh,8px) clamp(8px,1.5vw,16px); font-size:clamp(9px,1.2vh,13px); font-weight:bold; border-radius:20px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all .3s; }
+.btn-show-stats:hover { border-color:var(--text2); }
+.stats-report-box { display:none; background:var(--bg2); border:2px solid var(--border); padding:clamp(6px,1vh,12px); border-radius:clamp(8px,1.5vh,14px); margin:4px auto 0; font-size:clamp(10px,1.2vh,14px); color:var(--text2); font-weight:bold; text-align:left; line-height:1.5; max-width:550px; }
+
 #game-screen { display:none; flex-direction:column; height:100%; overflow:hidden; }
 #game-screen.active { display:flex; }
 .game-scrollable-content { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:clamp(4px,0.8vh,8px); padding-bottom:6px; padding-right:2px; }
-.top-challenge { background:rgba(255,255,255,0.04); border:2px solid rgba(255,255,255,0.08); padding:clamp(6px,1.2vh,12px) clamp(8px,1.5vw,14px); border-radius:clamp(8px,1.5vh,14px); box-shadow:0 4px 20px rgba(0,0,0,0.8); display:flex; flex-direction:column; gap:clamp(4px,0.6vh,8px); backdrop-filter:blur(8px); }
-.phrase-pt { font-size:20px !important; font-weight:900 !important; font-family:'Playfair Display',Georgia,serif !important; text-align:center; line-height:1.3; color:#fff !important; text-shadow:0 2px 10px rgba(255,255,255,0.1); word-wrap:break-word; padding:4px 0; }
+
+.top-challenge { background:var(--card); border:2px solid var(--border); padding:clamp(6px,1.2vh,12px) clamp(8px,1.5vw,14px); border-radius:clamp(8px,1.5vh,14px); box-shadow:0 4px 20px var(--shadow); display:flex; flex-direction:column; gap:clamp(4px,0.6vh,8px); backdrop-filter:blur(8px); }
+.phrase-pt { font-size:clamp(16px,2.4vh,22px); font-weight:900; font-family:'Georgia',serif; text-align:center; line-height:1.3; color:var(--text2) !important; text-shadow:0 2px 10px rgba(255,255,255,0.08); word-wrap:break-word; padding:4px 0; transition:color .3s; }
 .phrase-hidden { filter:blur(8px); opacity:.3; transition:all .6s; pointer-events:none; }
 .phrase-hidden.revealed { filter:blur(0); opacity:1; pointer-events:auto; }
-.btn-audio-top { background:rgba(255,255,255,0.05); color:#fff; border:2px solid rgba(255,255,255,0.15); padding:clamp(3px,0.6vh,6px) clamp(6px,1vw,12px); font-size:clamp(9px,1.2vh,13px); font-weight:bold; border-radius:clamp(6px,1vh,12px); cursor:pointer; flex:1; text-align:center; transition:all .3s; }
+
+/* ===== FRASE INGLESA DESTACADA ===== */
+.phrase-en-highlight {
+    font-size:clamp(18px,2.8vh,26px);
+    font-weight:900;
+    color:var(--accent);
+    text-align:center;
+    padding:8px;
+    border:2px solid var(--accent);
+    border-radius:12px;
+    background:var(--highlight);
+    animation:pulseHighlight 1.2s ease-in-out;
+    text-shadow:0 0 30px rgba(0,255,102,0.15);
+    word-wrap:break-word;
+}
+@keyframes pulseHighlight {
+    0% { transform:scale(0.92); opacity:0.4; }
+    50% { transform:scale(1.04); opacity:1; }
+    100% { transform:scale(1); opacity:1; }
+}
+
+.btn-audio-top { background:rgba(255,255,255,0.05); color:var(--text2); border:2px solid var(--border); padding:clamp(3px,0.6vh,6px) clamp(6px,1vw,12px); font-size:clamp(9px,1.2vh,13px); font-weight:bold; border-radius:clamp(6px,1vh,12px); cursor:pointer; flex:1; text-align:center; transition:all .3s; }
 .btn-audio-top:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.3); }
 .btn-audio-top:active { transform:scale(.95); }
 .audio-controls-row { display:flex; justify-content:space-between; align-items:center; width:100%; margin-top:2px; gap:4px; }
-.construction-zone { background:rgba(255,255,255,0.04); border:2px dashed rgba(255,255,255,0.15); border-radius:clamp(8px,1.5vh,12px); min-height:clamp(50px,8vh,80px); padding:clamp(6px,1vh,12px); display:flex; flex-wrap:wrap; gap:clamp(4px,0.6vh,8px); align-content:flex-start; position:relative; transition:border-color .4s; }
-.construction-zone.completed { border-color:#0f6; background:rgba(0,255,102,0.05); }
-.success-text-box { display:none; background:rgba(0,255,102,0.05); border:2px solid #0f6; border-radius:clamp(8px,1.5vh,12px); min-height:clamp(40px,6vh,60px); padding:clamp(6px,1vh,12px); font-size:clamp(13px,2vh,18px); font-weight:bold; color:#0f6; text-align:center; align-items:center; justify-content:center; text-shadow:0 0 20px rgba(0,255,102,0.4); }
-.words-zone { background:rgba(255,255,255,0.03); border:2px solid rgba(255,255,255,0.06); border-radius:clamp(8px,1.5vh,12px); min-height:clamp(40px,6vh,70px); padding:clamp(6px,1vh,12px); display:flex; flex-wrap:wrap; gap:clamp(4px,0.6vh,8px); justify-content:flex-start; align-content:flex-start; }
-.word-balloon { padding:clamp(4px,0.6vh,8px) clamp(6px,1vw,14px); font-size:clamp(11px,1.8vh,16px); font-weight:800; border-radius:clamp(14px,2vh,22px); cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.6); display:inline-block; user-select:none; position:relative; max-width:100%; word-wrap:break-word; touch-action:none; transition:color .3s,background .3s,transform .15s,box-shadow .3s; background:#1a1a1a; border:2px solid #2a2a2a; color:#0f6; letter-spacing:.3px; line-height:1.2; }
-.word-balloon:hover { transform:translateY(-2px) scale(1.02); box-shadow:0 6px 30px rgba(0,0,0,0.8); border-color:#3a3a3a; }
+
+.construction-zone { background:var(--card); border:2px dashed var(--border); border-radius:clamp(8px,1.5vh,12px); min-height:clamp(50px,8vh,80px); padding:clamp(6px,1vh,12px); display:flex; flex-wrap:wrap; gap:clamp(4px,0.6vh,8px); align-content:flex-start; position:relative; transition:border-color .4s,background .3s; }
+.construction-zone.completed { border-color:var(--accent); background:var(--highlight); }
+.construction-zone.drag-over { border-color:var(--accent); background:rgba(0,255,102,0.06); }
+
+.success-text-box { display:none; background:var(--highlight); border:2px solid var(--accent); border-radius:clamp(8px,1.5vh,12px); min-height:clamp(40px,6vh,60px); padding:clamp(6px,1vh,12px); font-size:clamp(13px,2vh,18px); font-weight:bold; color:var(--accent); text-align:center; align-items:center; justify-content:center; text-shadow:0 0 20px rgba(0,255,102,0.2); flex-direction:column; gap:6px; }
+
+.words-zone { background:var(--card); border:2px solid var(--border); border-radius:clamp(8px,1.5vh,12px); min-height:clamp(40px,6vh,70px); padding:clamp(6px,1vh,12px); display:flex; flex-wrap:wrap; gap:clamp(4px,0.6vh,8px); justify-content:flex-start; align-content:flex-start; }
+
+.word-balloon { padding:clamp(4px,0.6vh,8px) clamp(6px,1vw,14px); font-size:clamp(11px,1.8vh,16px); font-weight:800; border-radius:clamp(14px,2vh,22px); cursor:pointer; box-shadow:0 3px 10px var(--shadow); display:inline-block; user-select:none; position:relative; max-width:100%; word-wrap:break-word; touch-action:none; transition:color .3s,background .3s,transform .15s,box-shadow .3s,opacity .3s; background:var(--balloon); border:2px solid var(--balloon-border); color:var(--text); letter-spacing:.3px; line-height:1.2; }
+.word-balloon:hover { transform:translateY(-2px) scale(1.02); box-shadow:0 6px 30px var(--shadow); border-color:rgba(255,255,255,0.3); }
 .word-balloon:active { transform:scale(.93); }
-.construction-zone .word-balloon { background:#1a1a1a; border:2px solid #2a2a2a; box-shadow:0 3px 15px rgba(0,0,0,0.5); cursor:grab; color:#0f6; font-size:clamp(10px,1.6vh,15px); padding:clamp(3px,0.5vh,6px) clamp(6px,0.8vw,12px); }
-.construction-zone .word-balloon:hover { box-shadow:0 4px 25px rgba(0,0,0,0.7); border-color:#3a3a3a; }
+
+.construction-zone .word-balloon { background:var(--balloon); border:2px solid var(--balloon-border); box-shadow:0 3px 15px var(--shadow); cursor:grab; color:var(--text); font-size:clamp(10px,1.6vh,15px); padding:clamp(3px,0.5vh,6px) clamp(6px,0.8vw,12px); }
 .construction-zone .word-balloon:active { cursor:grabbing; transform:scale(.93); }
-.words-zone .word-balloon { background:#1a1a1a; border:2px solid #2a2a2a; box-shadow:0 3px 15px rgba(0,0,0,0.4); color:#0fa; font-size:clamp(10px,1.5vh,14px); padding:clamp(3px,0.5vh,6px) clamp(6px,0.8vw,12px); }
-.words-zone .word-balloon:hover { border-color:#3a3a3a; box-shadow:0 4px 25px rgba(0,0,0,0.6); }
-.word-balloon.dragging { opacity:.4; border:2px dashed #ff0 !important; background:rgba(255,255,0,0.05) !important; transform:scale(.9); }
+.construction-zone .word-balloon.dragging { opacity:.4; border:2px dashed #ff0 !important; background:rgba(255,255,0,0.05) !important; transform:scale(.9); }
+.construction-zone .word-balloon.drag-over-insert { border-color:var(--accent) !important; background:rgba(0,255,102,0.15) !important; }
+
+.words-zone .word-balloon { background:var(--balloon); border:2px solid var(--balloon-border); box-shadow:0 3px 15px var(--shadow); color:var(--text); font-size:clamp(10px,1.5vh,14px); padding:clamp(3px,0.5vh,6px) clamp(6px,0.8vw,12px); }
 .word-balloon.speaking { animation:speakGlow .6s; }
 @keyframes speakGlow { 0% { box-shadow:0 0 0 transparent; } 50% { box-shadow:0 0 30px rgba(255,255,255,0.12); } 100% { box-shadow:0 0 0 transparent; } }
-.status-correct { color:#0f6; text-shadow:0 0 20px rgba(0,255,102,0.4); animation:statusPop .5s; }
+
+.status-correct { color:var(--accent); text-shadow:0 0 20px rgba(0,255,102,0.4); animation:statusPop .5s; }
 .status-wrong { color:#f33; text-shadow:0 0 20px rgba(255,51,51,0.4); animation:statusShake .5s; }
 .status-info { color:#fa0; text-shadow:0 0 20px rgba(255,170,0,0.3); }
 @keyframes statusPop { 0% { transform:scale(.8); opacity:0; } 50% { transform:scale(1.1); } 100% { transform:scale(1); opacity:1; } }
 @keyframes statusShake { 0%,100% { transform:translateX(0); } 25% { transform:translateX(-6px); } 75% { transform:translateX(6px); } }
-.control-panel { display:flex; flex-direction:column; gap:clamp(3px,0.6vh,6px); padding-top:clamp(4px,0.6vh,8px); border-top:2px solid rgba(255,255,255,0.05); align-items:center; width:100%; }
-.action-btn { width:100%; max-width:500px; padding:clamp(6px,1vh,12px) clamp(10px,2vw,20px); color:#000; border:none; border-radius:clamp(20px,3vh,30px); font-size:clamp(12px,1.8vh,16px); font-weight:bold; cursor:pointer; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.6); display:block; transition:all .3s; letter-spacing:.5px; }
-.action-btn:hover { transform:translateY(-2px); box-shadow:0 6px 25px rgba(0,0,0,0.8); }
+
+.control-panel { display:flex; flex-direction:column; gap:clamp(3px,0.6vh,6px); padding-top:clamp(4px,0.6vh,8px); border-top:2px solid var(--border); align-items:center; width:100%; }
+.action-btn { width:100%; max-width:500px; padding:clamp(6px,1vh,12px) clamp(10px,2vw,20px); color:#000; border:none; border-radius:clamp(20px,3vh,30px); font-size:clamp(12px,1.8vh,16px); font-weight:bold; cursor:pointer; text-align:center; box-shadow:0 4px 15px var(--shadow); display:block; transition:all .3s; letter-spacing:.5px; }
+.action-btn:hover { transform:translateY(-2px); box-shadow:0 6px 25px var(--shadow); }
 .action-btn:active { transform:scale(.97); }
 .btn-check { background:linear-gradient(135deg,#0a2,#0f6); color:#000; font-weight:800; }
 .btn-next { background:linear-gradient(135deg,#0df,#0fa); color:#000; display:none; font-weight:800; }
-.btn-reveal { background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.15); padding:clamp(4px,0.6vh,8px) clamp(8px,1.5vw,16px); font-size:clamp(10px,1.4vh,14px); color:#fff; border-radius:20px; cursor:pointer; transition:all .3s; }
+.btn-reveal { background:rgba(255,255,255,0.05); border:2px solid var(--border); padding:clamp(4px,0.6vh,8px) clamp(8px,1.5vw,16px); font-size:clamp(10px,1.4vh,14px); color:var(--text2); border-radius:20px; cursor:pointer; transition:all .3s; }
 .btn-reveal:hover { border-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.05); }
-.revealed-answer-box { background:rgba(0,0,0,0.9); border:2px solid #fff; color:#fff; padding:clamp(6px,1vh,12px); border-radius:clamp(8px,1.5vh,14px); text-align:center; font-size:clamp(11px,1.5vh,15px); font-weight:bold; display:none; word-wrap:break-word; width:100%; max-width:500px; }
+.revealed-answer-box { background:var(--bg2); border:2px solid var(--border); color:var(--text2); padding:clamp(6px,1vh,12px); border-radius:clamp(8px,1.5vh,14px); text-align:center; font-size:clamp(11px,1.5vh,15px); font-weight:bold; display:none; word-wrap:break-word; width:100%; max-width:500px; }
+
 .bottom-buttons-row { display:flex; justify-content:space-around; width:100%; padding:0 5px; gap:10px; }
-.config-btn { background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.2); border-radius:50%; width:clamp(32px,5vh,44px); height:clamp(32px,5vh,44px); font-size:clamp(14px,2.5vh,20px); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .3s; }
+.config-btn { background:rgba(255,255,255,0.05); border:2px solid var(--border); border-radius:50%; width:clamp(32px,5vh,44px); height:clamp(32px,5vh,44px); font-size:clamp(14px,2.5vh,20px); color:var(--text2); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .3s; }
 .config-btn:hover { transform:scale(1.1) rotate(60deg); background:rgba(255,255,255,0.1); }
-.config-btn.active { background:#fff; color:#000; }
-.match-btn { background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.2); border-radius:50%; width:clamp(32px,5vh,44px); height:clamp(32px,5vh,44px); font-size:clamp(14px,2.5vh,20px); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .3s; }
+.config-btn.active { background:var(--text2); color:var(--bg); }
+.match-btn { background:rgba(255,255,255,0.05); border:2px solid var(--border); border-radius:50%; width:clamp(32px,5vh,44px); height:clamp(32px,5vh,44px); font-size:clamp(14px,2.5vh,20px); color:var(--text2); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .3s; }
 .match-btn:hover { transform:scale(1.1); background:rgba(255,255,255,0.1); }
-.match-btn.active { background:#fff; color:#000; }
-.config-btn-label, .match-btn-label { font-size:clamp(5px,0.8vh,8px); text-transform:uppercase; letter-spacing:.5px; opacity:.4; text-align:center; margin-top:2px; color:#fff; }
+.match-btn.active { background:var(--text2); color:var(--bg); }
+.config-btn-label, .match-btn-label { font-size:clamp(5px,0.8vh,8px); text-transform:uppercase; letter-spacing:.5px; opacity:.4; text-align:center; margin-top:2px; color:var(--text2); }
 .bottom-btn-wrapper { display:flex; flex-direction:column; align-items:center; }
-.back-link-hidden { position:fixed; bottom:clamp(8px,2vh,20px); left:clamp(8px,2vw,20px); color:#fff; font-weight:bold; font-size:clamp(11px,1.8vh,16px); cursor:pointer; padding:clamp(6px,1vh,12px) clamp(10px,2vw,18px); border-radius:clamp(8px,1.5vh,14px); background:rgba(0,0,0,0.7); border:2px solid rgba(255,255,255,0.15); z-index:50; opacity:0; transition:opacity .3s; pointer-events:none; }
+
+.back-link-hidden { position:fixed; bottom:clamp(8px,2vh,20px); left:clamp(8px,2vw,20px); color:var(--text2); font-weight:bold; font-size:clamp(11px,1.8vh,16px); cursor:pointer; padding:clamp(6px,1vh,12px) clamp(10px,2vw,18px); border-radius:clamp(8px,1.5vh,14px); background:rgba(0,0,0,0.7); border:2px solid var(--border); z-index:50; opacity:0; transition:opacity .3s; pointer-events:none; }
 .back-link-hidden.visible { opacity:1; pointer-events:auto; }
 .back-link-hidden:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.3); }
 .back-link-hidden:active { transform:scale(.95); }
-#match-screen { display:none; flex-direction:column; height:100%; width:100%; position:fixed; top:0; left:0; background:#000; z-index:500; padding:clamp(4px,0.8vh,10px); overflow:hidden; transition:background .4s; }
+
+#match-screen { display:none; flex-direction:column; height:100%; width:100%; position:fixed; top:0; left:0; background:var(--bg); z-index:500; padding:clamp(4px,0.8vh,10px); overflow:hidden; transition:background .3s; }
 #match-screen.active { display:flex; }
-.match-stats { display:block; text-align:center; color:#ccc; font-size:clamp(10px,1.4vh,14px); padding:4px 0; font-weight:bold; }
-.match-win-message { display:none; text-align:center; color:#fa0; font-size:clamp(16px,2.8vh,26px); font-weight:bold; padding:4px; text-shadow:0 0 40px rgba(255,170,0,0.4); animation:winPulse 1.5s infinite alternate; flex-shrink:0; z-index:10; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.85); padding:clamp(20px,4vh,40px); border-radius:20px; border:2px solid #fa0; }
+.match-stats { display:block; text-align:center; color:var(--text3); font-size:clamp(10px,1.4vh,14px); padding:4px 0; font-weight:bold; }
+.match-score { text-align:center; font-size:clamp(9px,1.2vh,13px); color:var(--text3); padding:2px 0; }
+.match-win-message { display:none; text-align:center; color:#fa0; font-size:clamp(16px,2.8vh,26px); font-weight:bold; padding:4px; text-shadow:0 0 40px rgba(255,170,0,0.4); animation:winPulse 1.5s infinite alternate; flex-shrink:0; z-index:10; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--bg2); padding:clamp(20px,4vh,40px); border-radius:20px; border:2px solid #fa0; box-shadow:0 0 60px var(--shadow); }
 @keyframes winPulse { 0% { transform:translate(-50%,-50%) scale(1); text-shadow:0 0 30px rgba(255,170,0,0.3); } 100% { transform:translate(-50%,-50%) scale(1.05); text-shadow:0 0 60px rgba(255,170,0,0.6); } }
 .match-grid-wrapper { flex:1; overflow:hidden; display:flex; align-items:center; justify-content:center; min-height:0; padding:2px 0; width:100%; }
-.match-balloon { width:100%; height:100%; background:#1a1a1a; border:3px solid #2a2a2a; border-radius:clamp(16px,3vh,30px); padding:clamp(10px,2vh,25px); display:flex; flex-wrap:wrap; align-content:flex-start; justify-content:flex-start; gap:clamp(8px,1.5vh,20px); overflow-y:auto; transition:background .3s,border-color .3s; box-shadow:inset 0 0 60px rgba(0,0,0,0.5); }
+.match-balloon { width:100%; height:100%; background:var(--balloon); border:3px solid var(--balloon-border); border-radius:clamp(16px,3vh,30px); padding:clamp(10px,2vh,25px); display:flex; flex-wrap:wrap; align-content:flex-start; justify-content:flex-start; gap:clamp(8px,1.5vh,20px); overflow-y:auto; transition:background .3s,border-color .3s; box-shadow:inset 0 0 60px var(--shadow); }
 .match-balloon::-webkit-scrollbar { display:none; }
-.match-word { padding:clamp(10px,2vh,24px) clamp(14px,2.5vw,32px); font-size:30px !important; font-weight:800; border-radius:clamp(14px,2.5vh,24px); cursor:pointer; display:inline-block; user-select:none; transition:all .2s; background:#0a0a0a; border:2px solid #2a2a2a; color:#0f6; font-family:'Playfair Display','Georgia',serif; box-shadow:0 2px 10px rgba(0,0,0,0.4); text-shadow:0 0 20px rgba(0,255,34,0.1); letter-spacing:.5px; line-height:1.2; flex-shrink:0; flex-grow:0; white-space:nowrap; min-height:clamp(38px,6vh,60px); display:inline-flex; align-items:center; justify-content:center; }
+.match-word { padding:clamp(10px,2vh,24px) clamp(14px,2.5vw,32px); font-size:30px !important; font-weight:800; border-radius:clamp(14px,2.5vh,24px); cursor:pointer; display:inline-block; user-select:none; transition:all .2s; background:var(--bg3); border:2px solid var(--balloon-border); color:var(--text); font-family:'Georgia',serif; box-shadow:0 2px 10px var(--shadow); text-shadow:0 0 20px rgba(0,255,34,0.05); letter-spacing:.5px; line-height:1.2; flex-shrink:0; flex-grow:0; white-space:nowrap; min-height:clamp(38px,6vh,60px); display:inline-flex; align-items:center; justify-content:center; }
 .match-word:active { transform:scale(.92); }
 .match-word.selected { border-color:#fa0; box-shadow:0 0 30px rgba(255,170,0,0.3); transform:scale(1.05); z-index:2; }
-.match-word.matched { opacity:.7; transform:scale(.92); pointer-events:auto; border-color:#0f6; cursor:pointer; }
-.match-word.matched::after { content:" ✓"; font-size:clamp(12px,1.8vh,20px); color:#0f6; }
+.match-word.matched { opacity:.7; transform:scale(.92); pointer-events:auto; border-color:var(--accent); cursor:pointer; }
+.match-word.matched::after { content:" ✓"; font-size:clamp(12px,1.8vh,20px); color:var(--accent); }
 .match-word.matched.showing-translation { color:#fa0 !important; border-color:#fa0 !important; box-shadow:0 0 40px rgba(255,170,0,0.3) !important; transform:scale(1.02); transition:all .3s; }
 .match-word.wrong { animation:wrongShake .4s; border-color:#f33; box-shadow:0 0 30px rgba(255,51,51,0.2); }
 @keyframes wrongShake { 0%,100% { transform:translateX(0); } 20% { transform:translateX(-8px); } 40% { transform:translateX(8px); } 60% { transform:translateX(-5px); } 80% { transform:translateX(5px); } }
 .match-word.speaking { animation:speakGlow .6s; }
-.match-bottom-controls { display:flex; justify-content:space-around; align-items:center; gap:clamp(2px,0.5vw,8px); padding:clamp(4px,0.8vh,10px) clamp(2px,0.4vw,8px); border-top:1px solid rgba(255,255,255,0.06); flex-shrink:0; margin-top:auto; width:100%; flex-wrap:nowrap !important; min-height:40px; }
+
+.match-bottom-controls { display:flex; justify-content:space-around; align-items:center; gap:clamp(2px,0.5vw,8px); padding:clamp(4px,0.8vh,10px) clamp(2px,0.4vw,8px); border-top:1px solid var(--border); flex-shrink:0; margin-top:auto; width:100%; flex-wrap:nowrap !important; min-height:40px; background:var(--bg); transition:background .3s; }
 .match-mode-group { display:flex; gap:clamp(2px,0.5vw,6px); align-items:center; flex-shrink:1; min-width:0; }
-.match-mode-btn { padding:clamp(4px,0.6vh,8px) clamp(6px,1vw,12px); border-radius:clamp(12px,2vh,18px); font-size:clamp(9px,1.2vh,13px); font-weight:bold; cursor:pointer; border:2px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.6); color:#fff; transition:all .3s; white-space:nowrap; flex-shrink:1; min-width:0; text-align:center; }
-.match-mode-btn.active { background:#fff; color:#000; border-color:#fff; }
+.match-mode-btn { padding:clamp(4px,0.6vh,8px) clamp(6px,1vw,12px); border-radius:clamp(12px,2vh,18px); font-size:clamp(9px,1.2vh,13px); font-weight:bold; cursor:pointer; border:2px solid var(--border); background:rgba(0,0,0,0.4); color:var(--text2); transition:all .3s; white-space:nowrap; flex-shrink:1; min-width:0; text-align:center; }
+.match-mode-btn.active { background:var(--text2); color:var(--bg); border-color:var(--text2); }
 .match-mode-btn:active { transform:scale(.95); }
 .match-controls-right { display:flex; gap:clamp(2px,0.5vw,6px); align-items:center; flex-shrink:1; min-width:0; }
 .match-controls-right button { padding:clamp(4px,0.6vh,8px) clamp(6px,1vw,12px); border-radius:clamp(12px,2vh,18px); font-size:clamp(9px,1.2vh,13px); font-weight:bold; cursor:pointer; border:none; transition:all .3s; letter-spacing:.3px; white-space:nowrap; flex-shrink:1; min-width:0; text-align:center; }
 .match-controls-right button:active { transform:scale(.95); }
 .btn-match-reset { background:linear-gradient(135deg,#fa0,#fc4); color:#000; font-weight:800; }
-.btn-match-close { background:rgba(255,255,255,0.08); color:#fff; border:2px solid rgba(255,255,255,0.15) !important; }
+.btn-match-close { background:rgba(255,255,255,0.08); color:var(--text2); border:2px solid var(--border) !important; }
 .btn-match-close:hover { background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.3) !important; }
-.config-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:1000; justify-content:center; align-items:center; animation:fadeIn .3s; padding:clamp(12px,3vh,30px); overflow-y:auto; }
+
+/* ===== CONFIG MODAL ===== */
+.config-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1000; justify-content:center; align-items:center; animation:fadeIn .3s; padding:clamp(12px,3vh,30px); overflow-y:auto; }
 .config-modal.active { display:flex; }
 @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-.config-modal-content { background:rgba(20,20,20,0.98); border:2px solid rgba(255,255,255,0.1); border-radius:clamp(14px,2.5vh,24px); padding:clamp(16px,3vh,30px) clamp(14px,2.5vw,24px); max-width:420px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 0 60px rgba(0,0,0,0.8); }
-.config-modal-content h3 { color:#fff; text-align:center; font-size:clamp(16px,2.8vh,24px); margin-bottom:16px; text-transform:uppercase; letter-spacing:2px; }
-.config-modal-close { float:right; background:transparent; border:none; color:#fff; font-size:clamp(18px,3vh,28px); cursor:pointer; padding:0 4px; line-height:1; transition:all .3s; }
+.config-modal-content { background:var(--bg2); border:2px solid var(--border); border-radius:clamp(14px,2.5vh,24px); padding:clamp(16px,3vh,30px) clamp(14px,2.5vw,24px); max-width:420px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 0 60px var(--shadow); transition:background .3s,border .3s; }
+.config-modal-content h3 { color:var(--text2); text-align:center; font-size:clamp(16px,2.8vh,24px); margin-bottom:16px; text-transform:uppercase; letter-spacing:2px; transition:color .3s; }
+.config-modal-close { float:right; background:transparent; border:none; color:var(--text2); font-size:clamp(18px,3vh,28px); cursor:pointer; padding:0 4px; line-height:1; transition:all .3s; }
 .config-modal-close:hover { color:#f44; transform:rotate(90deg); }
 .color-picker-group { margin-bottom:clamp(10px,1.8vh,18px); }
-.color-picker-group label { display:block; color:#fff; font-size:clamp(10px,1.4vh,14px); font-weight:bold; text-transform:uppercase; margin-bottom:4px; letter-spacing:.5px; opacity:.7; }
-.rainbow-slider { -webkit-appearance:none; width:100%; height:clamp(20px,3vh,30px); border-radius:13px; outline:none; background:linear-gradient(to right,#f00,#f80,#ff0,#0f0,#0ff,#00f,#80f,#f0f,#f00); border:2px solid rgba(255,255,255,0.15); box-shadow:0 2px 10px rgba(0,0,0,0.5); cursor:pointer; }
-.rainbow-slider::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:clamp(22px,3.5vh,32px); height:clamp(22px,3.5vh,32px); border-radius:50%; background:#fff; border:3px solid #000; cursor:pointer; box-shadow:0 0 10px rgba(0,0,0,0.8); }
-.rainbow-slider::-webkit-slider-thumb:active { transform:scale(1.2); }
-.rainbow-slider::-moz-range-thumb { width:clamp(22px,3.5vh,32px); height:clamp(22px,3.5vh,32px); border-radius:50%; background:#fff; border:3px solid #000; cursor:pointer; box-shadow:0 0 10px rgba(0,0,0,0.8); }
+.color-picker-group label { display:block; color:var(--text2); font-size:clamp(10px,1.4vh,14px); font-weight:bold; text-transform:uppercase; margin-bottom:4px; letter-spacing:.5px; opacity:.7; transition:color .3s; }
+.rainbow-slider { -webkit-appearance:none; width:100%; height:clamp(20px,3vh,30px); border-radius:13px; outline:none; background:linear-gradient(to right,#f00,#f80,#ff0,#0f0,#0ff,#00f,#80f,#f0f,#f00); border:2px solid var(--border); box-shadow:0 2px 10px var(--shadow); cursor:pointer; }
+.rainbow-slider::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:clamp(22px,3.5vh,32px); height:clamp(22px,3.5vh,32px); border-radius:50%; background:var(--text2); border:3px solid var(--bg); cursor:pointer; box-shadow:0 0 10px var(--shadow); }
 .font-size-controls { display:flex; align-items:center; justify-content:space-between; gap:6px; }
-.font-size-btn { background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.15); color:#fff; font-size:clamp(12px,2vh,18px); font-weight:bold; width:clamp(28px,4vh,40px); height:clamp(28px,4vh,40px); border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .3s; }
+.font-size-btn { background:rgba(255,255,255,0.05); border:2px solid var(--border); color:var(--text2); font-size:clamp(12px,2vh,18px); font-weight:bold; width:clamp(28px,4vh,40px); height:clamp(28px,4vh,40px); border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .3s; }
 .font-size-btn:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.3); }
-.font-size-display { color:#fff; font-size:clamp(12px,2vh,18px); font-weight:bold; text-align:center; flex:1; }
-.font-family-select { width:100%; background:rgba(0,0,0,0.8); border:2px solid rgba(255,255,255,0.15); color:#fff; padding:clamp(6px,1vh,12px) clamp(8px,1.5vw,16px); border-radius:clamp(8px,1.5vh,14px); font-size:clamp(11px,1.6vh,15px); font-weight:bold; cursor:pointer; outline:none; transition:all .3s; }
+.font-size-display { color:var(--text2); font-size:clamp(12px,2vh,18px); font-weight:bold; text-align:center; flex:1; }
+.font-family-select { width:100%; background:var(--bg); border:2px solid var(--border); color:var(--text2); padding:clamp(6px,1vh,12px) clamp(8px,1.5vw,16px); border-radius:clamp(8px,1.5vh,14px); font-size:clamp(11px,1.6vh,15px); font-weight:bold; cursor:pointer; outline:none; transition:all .3s; }
 .font-family-select:hover { border-color:rgba(255,255,255,0.3); }
-.tts-engine-box { background:rgba(255,255,255,0.03); border:2px solid rgba(255,255,255,0.08); padding:clamp(8px,1.5vh,16px); border-radius:clamp(8px,1.5vh,14px); text-align:center; margin-bottom:4px; display:flex; flex-direction:column; gap:8px; }
-.tts-status-text { font-size:clamp(10px,1.4vh,14px); font-weight:bold; color:#fff; opacity:.7; }
+.theme-toggle-row { display:flex; align-items:center; justify-content:space-between; padding:8px 4px; }
+.theme-toggle-btn { background:var(--bg); border:2px solid var(--border); color:var(--text2); padding:clamp(6px,1vh,12px) clamp(12px,2vw,20px); border-radius:clamp(8px,1.5vh,14px); font-size:clamp(12px,1.6vh,16px); font-weight:bold; cursor:pointer; transition:all .3s; flex:1; margin:0 4px; }
+.theme-toggle-btn.active { background:var(--text2); color:var(--bg); border-color:var(--text2); }
+.theme-toggle-btn:active { transform:scale(.95); }
+.tts-engine-box { background:rgba(255,255,255,0.03); border:2px solid var(--border); padding:clamp(8px,1.5vh,16px); border-radius:clamp(8px,1.5vh,14px); text-align:center; margin-bottom:4px; display:flex; flex-direction:column; gap:8px; }
+.tts-status-text { font-size:clamp(10px,1.4vh,14px); font-weight:bold; color:var(--text2); opacity:.7; }
 .voice-options-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:2px; }
-.btn-download-voice { background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.15); color:#fff; padding:clamp(6px,1vh,12px) clamp(4px,0.8vw,10px); font-size:clamp(9px,1.2vh,13px); font-weight:800; border-radius:clamp(8px,1.5vh,12px); cursor:pointer; transition:all .3s; text-align:center; }
+.btn-download-voice { background:rgba(255,255,255,0.05); border:2px solid var(--border); color:var(--text2); padding:clamp(6px,1vh,12px) clamp(4px,0.8vw,10px); font-size:clamp(9px,1.2vh,13px); font-weight:800; border-radius:clamp(8px,1.5vh,12px); cursor:pointer; transition:all .3s; text-align:center; }
 .btn-download-voice:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.3); }
-.btn-download-voice.downloaded { background:rgba(0,120,40,0.8); color:#fff; border-color:#0f6; box-shadow:0 0 15px rgba(0,255,102,0.2); }
+.btn-download-voice.downloaded { background:rgba(0,120,40,0.8); color:#fff; border-color:var(--accent); box-shadow:0 0 15px rgba(0,255,102,0.2); }
 .btn-download-voice.downloading { background:rgba(255,170,0,0.2); border-color:#fa0; color:#fa0; animation:pulseDownload .8s infinite alternate; }
 @keyframes pulseDownload { 0% { opacity:.6; } 100% { opacity:1; } }
-.audio-test-box { background:rgba(255,255,255,0.03); border:1px dashed rgba(255,255,255,0.15); padding:clamp(6px,1vh,12px); border-radius:clamp(6px,1.2vh,10px); text-align:center; font-size:clamp(10px,1.4vh,14px); color:#fff; cursor:pointer; transition:all .3s; margin-top:2px; }
+.audio-test-box { background:rgba(255,255,255,0.03); border:1px dashed var(--border); padding:clamp(6px,1vh,12px); border-radius:clamp(6px,1.2vh,10px); text-align:center; font-size:clamp(10px,1.4vh,14px); color:var(--text2); cursor:pointer; transition:all .3s; margin-top:2px; }
 .audio-test-box:hover { background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.3); }
 .btn-reset-colors { background:rgba(255,0,0,0.1); border:2px solid rgba(255,50,50,0.2); color:#f44; padding:clamp(6px,1vh,12px) clamp(10px,2vw,20px); border-radius:clamp(8px,1.5vh,14px); font-size:clamp(10px,1.4vh,14px); font-weight:bold; cursor:pointer; width:100%; margin-top:6px; transition:all .3s; letter-spacing:.5px; }
 .btn-reset-colors:hover { background:rgba(255,0,0,0.2); border-color:rgba(255,50,50,0.4); }
 .game-scrollable-content::-webkit-scrollbar, #topics-screen::-webkit-scrollbar { display:none; }
+
 @media (max-width:600px) {
 .match-balloon { justify-content:flex-start !important; align-content:flex-start !important; gap:6px !important; padding:8px !important; }
 .match-word { flex-shrink:0 !important; flex-grow:0 !important; white-space:nowrap !important; font-size:30px !important; padding:8px 14px !important; border-radius:12px !important; min-height:36px !important; }
@@ -180,6 +259,7 @@ h2 { text-align:center; color:#fff; text-transform:uppercase; letter-spacing:2px
             <div class="top-challenge">
                 <div id="phrase-pt-1" class="phrase-pt">Carregando frase 1...</div>
                 <div id="phrase-pt-2" class="phrase-pt phrase-hidden">🔒 Segunda frase (complete a primeira)</div>
+                <div id="phrase-en-highlight" style="display:none;"></div>
             </div>
             <div class="zone-title" id="track-number">Montando a frase 1:</div>
             <div class="construction-zone" id="construction-zone"></div>
@@ -213,6 +293,7 @@ h2 { text-align:center; color:#fff; text-transform:uppercase; letter-spacing:2px
 
 <div id="match-screen">
     <div class="match-stats" id="matchStats">Pares: 0 / 30 (Rodada 1 de 22)</div>
+    <div class="match-score" id="matchScore">✅ Acertos: 0  ❌ Erros: 0</div>
     <div id="matchWinMessage" class="match-win-message">🎉 PARABÉNS! Você combinou todas! 🎉</div>
     <div class="match-grid-wrapper">
         <div class="match-balloon" id="matchBalloon"></div>
@@ -233,6 +314,16 @@ h2 { text-align:center; color:#fff; text-transform:uppercase; letter-spacing:2px
     <div class="config-modal-content">
         <button class="config-modal-close" onclick="toggleConfigModal()">✕</button>
         <h3>⚙ Configurações</h3>
+
+        <!-- TEMA ESCURO/CLARO -->
+        <div class="color-picker-group">
+            <label>🎨 Tema</label>
+            <div class="theme-toggle-row">
+                <button class="theme-toggle-btn active" id="themeDark" onclick="setTheme('dark')">🌙 Escuro</button>
+                <button class="theme-toggle-btn" id="themeLight" onclick="setTheme('light')">☀️ Claro</button>
+            </div>
+        </div>
+
         <div class="color-picker-group">
             <label>🎨 Cor do Balão (Fundo do Balão)</label>
             <input type="range" min="0" max="360" value="0" class="rainbow-slider" id="balloonColorSlider" oninput="changeBalloonColorSlider(this.value)">
@@ -282,9 +373,8 @@ h2 { text-align:center; color:#fff; text-transform:uppercase; letter-spacing:2px
 
 <script>
 // ============================================================
-// DADOS COMPACTOS (strings)
+// DADOS COMPACTOS (strings) - MESMOS DA VERSÃO ANTERIOR
 // ============================================================
-// allPhrases: cada frase no formato "en|pt", separadas por "|"
 var phrasesStr = 
 "Did I ever tell you what happened?|Já contei para você o que aconteceu?|"+
 "I'll never forget the time I went to Paris.|Nunca vou me esquecer de quando fui a Paris.|"+
@@ -975,27 +1065,24 @@ var phrasesStr =
 "It's up to you to decide.|A decisão é sua.|"+
 "I need to go back home.|Preciso voltar para casa.|";
 
-// ============================================================
-// CONVERTER STRINGS EM ARRAYS
-// ============================================================
 var allPhrases = [];
 var parts = phrasesStr.split("|");
 for (var i = 0; i < parts.length - 1; i += 2) {
     allPhrases.push({ en: parts[i], pt: parts[i+1] });
 }
 
-// translationPairs compacto: "pt|en|pt|en|..."
 var translationStr = 
 "amor|love|cego|blind|tempo|time|voa|flies|sol|sun|quente|hot|lua|moon|brilhante|bright|gato|cat|preto|black|cachorro|dog|branco|white|casa|house|grande|big|pequeno|small|rápido|fast|lento|slow|feliz|happy|triste|sad|forte|strong|fraco|weak|alto|tall|baixo|short|velho|old|livro|book|amigo|friend|trabalho|work|família|family|viagem|trip|dinheiro|money|carro|car|cidade|city|praia|beach|música|music|vida|life|morte|death|esperança|hope|sonho|dream|verdade|truth|mentira|lie|medo|fear|coragem|courage|paz|peace|guerra|war|água|water|fogo|fire|terra|earth|céu|sky|mar|sea|flor|flower|árvore|tree|janela|window|porta|door|mesa|table|cadeira|chair|comida|food|bebida|drink|roupa|clothes|sapatos|shoes|calor|heat|frio|cold|chuva|rain|neve|snow|vento|wind|luz|light|sombra|shadow|noite|night|dia|day|semana|week|mês|month|ano|year|hora|hour|minuto|minute|segundo|second|homem|man|mulher|woman|menino|boy|menina|girl|pai|father|mãe|mother|irmão|brother|irmã|sister|filho|son|filha|daughter|marido|husband|esposa|wife|professor|teacher|médico|doctor|advogado|lawyer|engenheiro|engineer|arquiteto|architect|artista|artist|músico|musician|escritor|writer|poeta|poet|cantor|singer|dançarino|dancer|ator|actor|atriz|actress|piloto|pilot|motorista|driver|cozinheiro|cook|policial|police|bombeiro|fireman|enfermeiro|nurse|dentista|dentist|veterinário|veterinarian|cientista|scientist|astronauta|astronaut|futebol|soccer|basquete|basketball|vôlei|volleyball|tênis|tennis|natação|swimming|corrida|running|ciclismo|cycling|esqui|skiing|surfe|surfing|escalada|climbing|filosofia|philosophy|psicologia|psychology|sociologia|sociology|antropologia|anthropology|arqueologia|archaeology|história|history|geografia|geography|biologia|biology|química|chemistry|física|physics|matemática|math|estatística|statistics|economia|economy|política|politics|direito|law|medicina|medicine|engenharia|engineering|tecnologia|technology|informática|computers|internet|internet|email|email|telefone|phone|celular|cellphone|computador|computer|televisão|television|rádio|radio|jornal|newspaper|revista|magazine|cinema|cinema|teatro|theater|museu|museum|galeria|gallery|igreja|church|mesquita|mosque|templo|temple|sinagoga|synagogue|feriado|holiday|natal|christmas|ano novo|new year|páscoa|easter|carnaval|carnival|casamento|wedding|aniversário|birthday|formatura|graduation|reunião|meeting|entrevista|interview|palestra|lecture|conferência|conference|seminário|seminar|oficina|workshop|curso|course|aula|class|escola|school|faculdade|college|universidade|university|biblioteca|library|livraria|bookstore|supermercado|supermarket|farmácia|pharmacy|padaria|bakery|restaurante|restaurant|café|coffee shop|bar|bar|pub|pub|discoteca|nightclub|parque|park|jardim|garden|floresta|forest|montanha|mountain|rio|river|lago|lake|oceano|ocean|ilha|island|continente|continent|país|country|estado|state|vila|village|rua|street|avenida|avenue|praça|square|ponte|bridge|túnel|tunnel|estrada|road|rodovia|highway|ferrovia|railway|aeroporto|airport|porto|port|estação|station|parada|stop|ônibus|bus|trem|train|avião|plane|navio|ship|barco|boat|bicicleta|bicycle|moto|motorcycle|caminhão|truck|van|van|taxi|taxi|metrô|subway|tram|tram|notícia|news|informação|information|conhecimento|knowledge|sabedoria|wisdom|inteligência|intelligence|criatividade|creativity|imaginação|imagination|paixão|passion|entusiasmo|enthusiasm|dedicação|dedication|disciplina|discipline|paciência|patience|persistência|persistence|determinação|determination|resiliência|resilience|flexibilidade|flexibility|adaptabilidade|adaptability|curiosidade|curiosity|ceticismo|skepticism|otimismo|optimism|pessimismo|pessimism|realismo|realism|idealismo|idealism|materialismo|materialism|espiritualidade|spirituality|religião|religion|ciência|science|arte|art|literatura|literature|dança|dance|ópera|opera|balé|ballet|fotografia|photography|pintura|painting|escultura|sculpture|arquitetura|architecture|design|design|moda|fashion|gastronomia|gastronomy|culinária|cuisine|receita|recipe|ingrediente|ingredient|tempero|spice|sabor|flavor|aroma|aroma|textura|texture|cor|color|forma|shape|tamanho|size|peso|weight|altura|height|largura|width|profundidade|depth|velocidade|speed|aceleração|acceleration|força|force|energia|energy|potência|power|pressão|pressure|temperatura|temperature|volume|volume|área|area|distância|distance|direção|direction|posição|position|localização|location|movimento|movement|ação|action|reação|reaction|causa|cause|efeito|effect|resultado|result|consequência|consequence|importância|importance|significado|meaning|propósito|purpose|objetivo|objective|meta|goal|plano|plan|estratégia|strategy|tática|tactic|método|method|técnica|technique|habilidade|skill|talento|talent|genialidade|genius|administrador de rede|network administrator|advogado júnior|junior attorney|advogado sênior|senior attorney|assistente de produção|production assistant|analista contábil sênior|senior accounting analyst|analista de crédito|credit analyst|analista de custos|cost analyst|analista de investimentos|investment analyst|analista de laboratório|laboratory analyst|analista de mercado|market analyst|analista de orçamento|budget analyst|analista de recursos humanos|human resources analyst|analista de sistemas|systems analyst|analista financeiro|financial analyst|analista fiscal|fiscal analyst|arquiteto|architect|artista|artist|assistente administrativo|administrative assistant|auxiliar de contabilidade|bookkeeper|assistente de marketing|marketing assistant|assistente de vendas|sales assistant|assistente social|social worker|ator|actor|atriz|actress|auditor interno|internal auditor|auxiliar administrativo|administrative aide|bibliotecário|librarian|bombeiro|firefighter|cabeleireiro|hairdresser|carpinteiro|carpenter|caixa|cashier|chefe de contabilidade|chief of accounting|chefe de pessoal|chief of personnel|cirurgião|surgeon|comprador técnico|technical buyer|consultor técnico|technical consultant|contador|accountant|controlador de produção|production controller|coordenador de projeto|project coordinator|cozinheiro|cook|dançarino|dancer|dentista|dentist|desenhista mecânico|mechanical draftsman|diretor administrativo|administrative director|diretor comercial|commercial director|diretor de marketing|marketing director|diretor de recursos humanos|human resources director|diretor financeiro|financial director|médico|doctor|editor|editor|eletricista|electrician|encanador|plumber|enfermeiro|nurse|engenheiro civil|civil engineer|engenheiro de produção|production engineer|engenheiro de segurança|safety engineer|escritor|writer|fisioterapeuta|physical therapist|garçom|waiter|gerente administrativo|administrative manager|gerente comercial|commercial manager|gerente de contabilidade|accounting manager|gerente de filial|branch manager|gerente de marketing|marketing manager|gerente de produção|production manager|gerente de recursos humanos|human resources manager|gerente financeiro|financial manager|jornalista|journalist|mecânico|mechanic|modelo|model|motorista|driver|nutricionista|nutritionist|padeiro|baker|piloto|pilot|policial|police officer|porteiro|doorman|professor|teacher|programador|programmer|psicólogo|psychologist|químico|chemist|recepcionista|receptionist|representante de vendas|sales representative|secretária bilíngue|bilingual secretary|segurança|security guard|técnico de manutenção|maintenance technician|técnico eletrônico|electronic technician|técnico químico|chemical technician|tradutor|translator|vendedor|salesperson|afilhada|goddaughter|afilhado|godson|avó|grandmother|avô|grandfather|avós|grandparents|bisavô|great-grandfather|bisavó|great-grandmother|bisneto|great-grandson|bisneta|great-granddaughter|cunhada|sister-in-law|cunhado|brother-in-law|enteada|stepdaughter|enteado|stepson|esposa|wife|ex-esposa|ex-wife|ex-marido|ex-husband|filha|daughter|filha adotiva|adopted daughter|filho|son|filho adotivo|adopted son|filhos|children|genro|son-in-law|irmã|sister|irmão|brother|madrasta|stepmother|madrinha|godmother|mãe|mother|marido|husband|meia-irmã|stepsister|meio-irmão|stepbrother|neta|granddaughter|neto|grandson|nora|daughter-in-law|padrasto|stepfather|padrinho|godfather|pai|father|pais|parents|parentes|relatives|primo|cousin|sobrinha|niece|sobrinho|nephew|sogra|mother-in-law|sogro|father-in-law|tia|aunt|tio|uncle|vovô|grandpa|vovó|grandma|aberto|open|admirável|admirable|adorável|adorable|simpático|nice|alegre|happy|amigável|friendly|analítico|analytical|atencioso|considerate|ativo|active|atraente|attractive|autêntico|authentic|aventureiro|adventurous|persuasivo|persuasive|divertido|fun|educado|polite|elegante|elegant|encantador|charming|energético|energetic|especial|special|espontâneo|spontaneous|cálido|warm|compreensivo|understanding|comunicativo|communicative|corajoso|courageous|criativo|creative|dedicado|dedicated|diplomático|diplomatic|disciplinado|disciplined|expressivo|expressive|extrovertido|extroverted|falante|talkative|fiel|faithful|flexível|flexible|honesto|honest|humilde|humble|imaginativo|imaginative|independente|independent|informado|informed|intelectual|intellectual|introspectivo|introspective|justo|fair|lógico|logical|louco|crazy|maduro|mature|meticuloso|meticulous|metódico|methodical|motivado|motivated|observador|observant|organizado|organized|original|original|otimista|optimistic|paciente|patient|perceptivo|perceptive|perfeccionista|perfectionist|persistente|persistent|prático|practical|progressista|progressive|racional|rational|realista|realistic|responsável|responsible|romântico|romantic|sedutor|seductive|sensível|sensitive|sensual|sensual|sexy|sexy|sincero|sincere|sofisticado|sophisticated|sortudo|lucky|hipócrita|hypocritical|immaturo|immature|insensível|insensitive|introvertido|introverted|abusivo|abusive|agressivo|aggressive|arrogante|arrogant|chato|boring|ciumento|jealous|competitivo|competitive|conservador|conservative|controlador|controlling|crítico|critical|cruel|cruel|direto|direct|duro|tough|egoísta|selfish|exigente|demanding|falso|fake|feio|ugly|fraco|weak|frio|cold|ganancioso|greedy|infantil|childish|mulherengo|womanizing|nojento|disgusting|obsessivo|obsessive|oportunista|opportunistic|possessivo|possessive|rígido|strict|sarcástico|sarcastic|superficial|superficial|teimoso|stubborn|tímido|shy|olhos azuis|blue eyes|olhos verdes|green eyes|olhos castanhos|brown eyes|olhos grandes|big eyes|olhos pequenos|small eyes|cabelo loiro|blond hair|cabelo castanho|brown hair|cabelo ruivo|red hair|cabelo preto|black hair|cabelo longo|long hair|cabelo curto|short hair|cabelo cacheado|curly hair|cabelo liso|straight hair|cabelo ondulado|wavy hair|careca|bald|alto|tall|baixo|short|magro|thin|gordo|fat|forte|strong|musculoso|muscular|barba|beard|bigode|mustache|cicatriz|scar|sardas|freckles|rugas|wrinkles|gripe|the flu|febre alta|high fever|febre leve|slight fever|dor de garganta|sore throat|resfriado|cold|asma|asthma|bronquite|bronchitis|dor de estômago|upset stomach|dor nas costas|backache|artrite|arthritis|dor de dente|toothache|dor de cabeça|headache|diarreia|diarrhea|tosse|cough|soluço|hiccups|cólicas|cramps|administração|business administration|administração hoteleira|hotel management|agronomia|agronomy|análise de sistemas|systems analysis|arquitetura|architecture|artes cênicas|drama|artes gráficas|graphic arts|astronomia|astronomy|engenharia automotiva|automotive engineering|biblioteconomia|library science|biologia|biology|cerâmica|ceramics|ciência da computação|computer science|ciências atuariais|actuarial science|ciências biológicas|biological science|biomedicina|biomedicine|contabilidade|accounting|economia|economics|ciências sociais|social science|cinema|film|negócios internacionais|international business|comunicação|communications|artes culinárias|culinary arts|dança|dance|design de interiores|interior design|design gráfico|graphic design|direito|law|ecologia|ecology|economia doméstica|home economics|educação física|physical education|educação infantil|early childhood education|eletrônica|electronics|enfermagem|nursing|engenharia civil|civil engineering|engenharia de computação|computer engineering|engenharia elétrica|electrical engineering|engenharia mecânica|mechanical engineering|engenharia química|chemical engineering|engenharia de produção|production engineering|estatística|statistics|farmácia|pharmacy|filosofia|philosophy|física|physics|fisioterapia|physical therapy|fotografia|photography|geografia|geography|geologia|geology|história|history|história da arte|art history|informática|computers|jornalismo|journalism|linguística|linguistics|literatura|literature|literatura comparada|comparative literature|logística|logistics|marketing|marketing|matemática|mathematics|medicina|medicine|medicina veterinária|veterinary medicine|estudos ambientais|environmental studies|metalurgia|metallurgy|meteorologia|meteorology|microbiologia|microbiology|moda|fashion|museologia|museology|música|music|musicoterapia|music therapy|nutrição|nutrition|oceanografia|oceanography|odontologia|dentistry|pedagogia|pedagogy|processamento de dados|data processing|psicologia|psychology|publicidade|advertising|química|chemistry|rádio e televisão|radio and television|radiologia|radiology|recursos humanos|human resources|relações internacionais|international relations|relações públicas|public relations|serviço social|social service|terapia ocupacional|occupational therapy|tradução|translation";
+
 var fullTranslationPairs = [];
 var tparts = translationStr.split("|");
 for (var i = 0; i < tparts.length - 1; i += 2) {
     fullTranslationPairs.push({ pt: tparts[i], en: tparts[i+1] });
 }
 
-// Antonym compacto: "en|oposto|traducao_en|traducao_oposto|..."
 var antonymStr = 
 "hot|cold|quente|frio|big|small|grande|pequeno|fast|slow|rápido|lento|happy|sad|feliz|triste|strong|weak|forte|fraco|tall|short|alto|baixo|fat|thin|gordo|magro|old|new|velho|novo|light|dark|claro|escuro|clean|dirty|limpo|sujo|full|empty|cheio|vazio|hard|soft|duro|mole|dry|wet|seco|molhado|sweet|bitter|doce|amargo|rich|poor|rico|pobre|beautiful|ugly|bonito|feio|smart|dumb|inteligente|burro|brave|coward|corajoso|covarde|kind|cruel|gentil|cruel|young|old|jovem|velho|wide|narrow|largo|estreito|deep|shallow|fundo|raso|loud|quiet|barulhento|silencioso|rough|smooth|áspero|liso|love|hate|amor|ódio|life|death|vida|morte|truth|lie|verdade|mentira|peace|war|paz|guerra|hope|despair|esperança|desespero|day|night|dia|noite|light|heavy|leve|pesado|white|black|branco|preto|good|evil|bom|mal|right|left|direita|esquerda|front|back|frente|trás|top|bottom|topo|fundo|inside|outside|dentro|fora|open|closed|aberto|fechado|begin|end|começar|terminar|win|lose|ganhar|perder|success|failure|sucesso|fracasso|create|destroy|criar|destruir|build|break|construir|quebrar|save|spend|economizar|gastar|buy|sell|comprar|vender|give|take|dar|pegar|borrow|lend|pegar emprestado|emprestar|remember|forget|lembrar|esquecer|live|die|viver|morrer|arrive|leave|chegar|partir|enter|exit|entrar|sair|push|pull|empurrar|puxar|sit|stand|sentar|levantar|sleep|wake|dormir|acordar|early|late|cedo|tarde|near|far|perto|longe|cheap|expensive|barato|caro|easy|difficult|fácil|difícil|simple|complex|simples|complexo|modern|ancient|moderno|antigo|common|rare|comum|raro|normal|strange|normal|estranho|safe|dangerous|seguro|perigoso|sure|doubtful|certo|duvidoso|clear|vague|claro|vago|serious|funny|sério|engraçado|honest|dishonest|honesto|desonesto|patient|impatient|paciente|impaciente|polite|rude|educado|grosseiro|responsible|irresponsible|responsável|irresponsável|mature|immature|maduro|immaturo|active|passive|ativo|passivo|attractive|ugly|atraente|feio|humble|arrogant|humilde|arrogante|sensitive|insensitive|sensível|insensível|optimistic|pessimistic|otimista|pessimista|extroverted|introverted|extrovertido|introvertido|organized|disorganized|organizado|desorganizado|generous|greedy|generoso|ganancioso";
+
 var fullAntonymPairs = [];
 var aparts = antonymStr.split("|");
 for (var i = 0; i < aparts.length - 3; i += 4) {
@@ -1008,6 +1095,7 @@ for (var i = 0; i < aparts.length - 3; i += 4) {
 const STORAGE_KEY = 'wordGameConfigSettings';
 const PROGRESS_KEY = 'wordGameProgress';
 const MATCH_PROGRESS_KEY = 'wordGameMatchProgress';
+const THEME_KEY = 'wordGameTheme';
 const PAGE_SIZE = 30;
 
 let configSettings = loadSavedConfig();
@@ -1035,11 +1123,14 @@ let matchPageIndex = 0;
 let matchTotalPages = 0;
 let matchCurrentPairs = [];
 let matchAllPairs = [];
+let matchHits = 0;
+let matchErrors = 0;
 
 let availableVoices = [];
 let selectedVoiceGender = 'female';
 let tapCount = 0;
 let tapTimer = null;
+let currentTheme = loadTheme();
 
 // ============================================================
 // FUNÇÕES DE CARREGAMENTO E SALVAMENTO
@@ -1059,6 +1150,17 @@ function loadSavedConfig() {
 }
 function saveConfig() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(configSettings)); } catch (e) {} }
 const defaultConfigSettings = { textHue: 120, bgHue: 0, balloonHue: 0, fontSize: 15, fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", ttsDownloaded: false, voiceGender: 'female' };
+
+function loadTheme() {
+    try {
+        const saved = localStorage.getItem(THEME_KEY);
+        if (saved) return saved;
+    } catch(e) {}
+    return 'dark';
+}
+function saveTheme(theme) {
+    try { localStorage.setItem(THEME_KEY, theme); } catch(e) {}
+}
 
 function loadProgress() {
     try {
@@ -1095,6 +1197,8 @@ function loadMatchProgress() {
         if (saved) {
             const data = JSON.parse(saved);
             matchPageIndex = data.pageIndex || 0;
+            matchHits = data.hits || 0;
+            matchErrors = data.errors || 0;
             return true;
         }
     } catch(e) {}
@@ -1102,12 +1206,32 @@ function loadMatchProgress() {
 }
 function saveMatchProgress() {
     try {
-        localStorage.setItem(MATCH_PROGRESS_KEY, JSON.stringify({ pageIndex: matchPageIndex }));
+        localStorage.setItem(MATCH_PROGRESS_KEY, JSON.stringify({
+            pageIndex: matchPageIndex,
+            hits: matchHits,
+            errors: matchErrors
+        }));
     } catch(e) {}
 }
 function resetMatchProgress() {
     matchPageIndex = 0;
+    matchHits = 0;
+    matchErrors = 0;
     saveMatchProgress();
+}
+
+// ============================================================
+// FUNÇÕES DE TEMA
+// ============================================================
+function setTheme(theme) {
+    currentTheme = theme;
+    document.documentElement.setAttribute('data-theme', theme);
+    saveTheme(theme);
+    document.getElementById('themeDark').classList.toggle('active', theme === 'dark');
+    document.getElementById('themeLight').classList.toggle('active', theme === 'light');
+}
+function toggleTheme() {
+    setTheme(currentTheme === 'dark' ? 'light' : 'dark');
 }
 
 // ============================================================
@@ -1325,6 +1449,9 @@ function toggleConfigModal() {
         document.getElementById('balloonColorSlider').value = configSettings.balloonHue || 0;
         updateFontSizeDisplay();
         document.getElementById('fontFamilySelect').value = configSettings.fontFamily;
+        // Atualizar tema nos botões
+        document.getElementById('themeDark').classList.toggle('active', currentTheme === 'dark');
+        document.getElementById('themeLight').classList.toggle('active', currentTheme === 'light');
         const statusText = document.getElementById('ttsStatusText');
         const btnFemale = document.getElementById('btnVoiceFemale');
         const btnMale = document.getElementById('btnVoiceMale');
@@ -1353,7 +1480,7 @@ function toggleConfigModal() {
 }
 
 // ============================================================
-// TELA DE TÓPICOS (COM LISTA DE TÓPICOS)
+// TELA DE TÓPICOS
 // ============================================================
 function renderTopics() {
     const listContainer = document.getElementById("topics-list");
@@ -1402,8 +1529,10 @@ function showTopicsScreen() {
 }
 
 // ============================================================
-// JOGO DE FRASES
+// JOGO DE FRASES - COM DRAG AND DROP
 // ============================================================
+let dragData = null;
+
 function startTopic(mode) {
     if (mode === "ALL") {
         phrasePairs = [];
@@ -1415,7 +1544,6 @@ function startTopic(mode) {
             phrasePairs.push({ frases: pair });
         }
     } else {
-        // fallback
         phrasePairs = [];
         for (let i = 0; i < allPhrases.length; i += 2) {
             const pair = [];
@@ -1426,7 +1554,7 @@ function startTopic(mode) {
         }
     }
     if (phrasePairs.length === 0) {
-        alert("Nenhuma frase encontrada. Verifique a lista.");
+        alert("Nenhuma frase encontrada.");
         return;
     }
     phrasePairs.sort(() => Math.random() - 0.5);
@@ -1463,6 +1591,7 @@ function loadPhrasePair() {
     document.getElementById("construction-zone").classList.remove("completed");
     document.getElementById("success-text-box").style.display = "none";
     document.getElementById("words-zone").style.display = "flex";
+    document.getElementById("phrase-en-highlight").style.display = "none";
 
     document.getElementById("phrase-pt-1").innerText = pair.frases[0].pt;
     document.getElementById("phrase-pt-1").classList.remove("phrase-hidden");
@@ -1501,14 +1630,56 @@ function renderZones() {
     const currentPhrase = pair.frases[currentPhraseIndex];
     const targetWords = getWordsForPhrase(currentPhraseIndex);
 
+    // Renderizar palavras na zona de construção (com drag & drop)
     selectedWords.forEach((word, index) => {
         const balloon = document.createElement("span");
         balloon.className = "word-balloon";
         balloon.innerText = word;
         balloon.draggable = true;
         balloon.dataset.index = index;
+        balloon.dataset.word = word;
         balloon.style.color = currentTextColor;
         balloon.style.backgroundColor = currentBalloonColor;
+        
+        // Eventos de drag
+        balloon.addEventListener('dragstart', (e) => {
+            dragData = { index: index, word: word };
+            balloon.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', index);
+        });
+        balloon.addEventListener('dragend', () => {
+            balloon.classList.remove('dragging');
+            constructZone.classList.remove('drag-over');
+            document.querySelectorAll('.construction-zone .word-balloon').forEach(el => {
+                el.classList.remove('drag-over-insert');
+            });
+        });
+        // Permitir soltar em cima de outra palavra
+        balloon.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            constructZone.classList.add('drag-over');
+            balloon.classList.add('drag-over-insert');
+        });
+        balloon.addEventListener('dragleave', () => {
+            balloon.classList.remove('drag-over-insert');
+            constructZone.classList.remove('drag-over');
+        });
+        balloon.addEventListener('drop', (e) => {
+            e.preventDefault();
+            constructZone.classList.remove('drag-over');
+            balloon.classList.remove('drag-over-insert');
+            const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+            if (!isNaN(fromIndex) && fromIndex !== index) {
+                // Reordenar: mover palavra de fromIndex para index
+                const wordMoved = selectedWords.splice(fromIndex, 1)[0];
+                selectedWords.splice(index, 0, wordMoved);
+                renderZones();
+            }
+        });
+        
+        // Clique para remover (já existente)
         balloon.onclick = (e) => {
             speakWord(word);
             if (!balloon.classList.contains('dragging')) {
@@ -1516,17 +1687,10 @@ function renderZones() {
                 renderZones();
             }
         };
-        balloon.addEventListener('dragstart', (e) => {
-            balloon.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-        });
-        balloon.addEventListener('dragend', () => {
-            balloon.classList.remove('dragging');
-            renderZones();
-        });
         constructZone.appendChild(balloon);
     });
 
+    // Verificar se a frase está completa
     const selectedClean = selectedWords.map(w => w.toLowerCase().trim());
     const targetClean = targetWords.map(w => w.toLowerCase().trim());
     const isCurrentPhraseComplete = selectedClean.length === targetClean.length && selectedClean.every((w, i) => w === targetClean[i]);
@@ -1553,6 +1717,12 @@ function renderZones() {
         if (idx2 !== -1) completedPhrases.add(idx2);
         saveProgress();
 
+        // Mostrar frase em inglês em destaque
+        const highlightDiv = document.getElementById("phrase-en-highlight");
+        highlightDiv.style.display = "block";
+        highlightDiv.className = "phrase-en-highlight";
+        highlightDiv.innerText = `✅ ${pair.frases[0].en} ✅ ${pair.frases[1].en}`;
+
         document.getElementById("status-message").innerHTML = `<span class="status-correct">🎉 PARABÉNS! Bloco completo!</span>`;
         document.getElementById("construction-zone").classList.add("completed");
         document.getElementById("construction-zone").style.display = "none";
@@ -1561,12 +1731,14 @@ function renderZones() {
         document.getElementById("next-btn").style.display = "block";
         document.getElementById("next-btn").textContent = "➜ Próximo Par";
         const successBox = document.getElementById("success-text-box");
-        successBox.innerText = `✅ ${pair.frases[0].en} ✅ ${pair.frases[1].en}`;
         successBox.style.display = "flex";
+        successBox.innerHTML = `<div style="font-size:clamp(14px,2vh,18px);">${pair.frases[0].en}</div><div style="font-size:clamp(14px,2vh,18px);">${pair.frases[1].en}</div>`;
+        // Áudio automático ao completar a frase
         speak(pair.frases[0].en + ". " + pair.frases[1].en);
         return;
     }
 
+    // Renderizar palavras disponíveis
     let availableWords = [];
     if (currentPhraseIndex === 0) {
         availableWords = targetWords.filter(w => !selectedWords.includes(w));
@@ -1623,7 +1795,7 @@ function nextPhrasePair() {
 }
 
 // ============================================================
-// MATCH GAME
+// MATCH GAME (com contador de acertos/erros)
 // ============================================================
 function setMatchMode(mode) {
     matchMode = mode;
@@ -1755,6 +1927,7 @@ function renderMatchGame() {
 
     const matchedCount = matchWords.filter(item => item.matched).length / 2;
     document.getElementById('matchStats').textContent = `Pares: ${matchedCount} / ${totalMatchPairs} (Rodada ${matchPageIndex + 1} de ${matchTotalPages})`;
+    document.getElementById('matchScore').textContent = `✅ Acertos: ${matchHits}  ❌ Erros: ${matchErrors}`;
 
     const allMatched = matchWords.every(item => item.matched === true);
     if (allMatched && totalMatchPairs > 0) {
@@ -1820,14 +1993,20 @@ function handleMatchWordClick(event, item) {
             return;
         }
         if (firstItem.pairId === item.pairId && firstItem.word !== item.word) {
+            // Acerto
             firstItem.matched = true;
             item.matched = true;
             matchedPairsCount++;
+            matchHits++;
             selectedMatchWord = null;
             isProcessingMatch = false;
+            saveMatchProgress();
             renderMatchGame();
             speakWord(firstItem.word + " " + item.word);
         } else {
+            // Erro
+            matchErrors++;
+            saveMatchProgress();
             isProcessingMatch = true;
             const secondEl = event.currentTarget;
             if (firstEl) firstEl.classList.add('wrong');
@@ -1937,6 +2116,8 @@ function setupDoubleTap() {
 // ============================================================
 function init() {
     requestAudioPermissions();
+    // Carregar tema
+    setTheme(loadTheme());
     loadProgress();
     loadMatchProgress();
     renderTopics();
