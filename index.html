@@ -139,7 +139,7 @@ h2 { text-align:center; font-size:clamp(18px,3vh,28px); font-weight:900; letter-
 .back-link-hidden:hover { background:var(--surface-hover); border-color:var(--accent); }
 .back-link-hidden:active { transform:scale(.95); }
 
-/* ===== TELA MATCH (CORRIGIDA) ===== */
+/* ===== TELA MATCH ===== */
 #match-screen { display:none; flex-direction:column; height:100%; width:100%; position:fixed; top:0; left:0; background:var(--bg); z-index:500; padding:clamp(8px,1.2vh,16px); overflow:hidden; transition:background .4s; }
 #match-screen.active { display:flex; }
 .match-stats { display:block; text-align:center; color:var(--text3); font-size:clamp(12px,1.4vh,16px); padding:6px 0; font-weight:700; }
@@ -1882,11 +1882,14 @@ function nextPhrasePair() {
 }
 
 // ============================================================
-// MATCH GAME (CORRIGIDO: SEPARAÇÃO E SALVAMENTO)
+// MATCH GAME (CORRIGIDO: SEPARAÇÃO E SALVAMENTO, MODO ANTÔNIMOS)
 // ============================================================
 function setMatchMode(mode) {
+    // Salva progresso do modo atual
     saveMatchProgress();
+    // Define o novo modo
     matchMode = mode;
+    // Atualiza botões
     document.querySelectorAll('.match-mode-btn').forEach(btn => btn.classList.remove('active'));
     if (mode === 'translation') {
         document.getElementById('modeTranslation').classList.add('active');
@@ -1895,7 +1898,29 @@ function setMatchMode(mode) {
         document.getElementById('modeAntonyms').classList.add('active');
         matchAllPairs = fullAntonymPairs;
     }
-    loadMatchProgress(); // carrega progresso do modo
+    // Carrega o progresso específico do modo (sem sobrescrever matchMode)
+    const saved = localStorage.getItem(MATCH_PROGRESS_KEY);
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            // Se o modo salvo for o mesmo que o atual, restaura pageIndex, hits, errors
+            if (data.mode === matchMode) {
+                matchPageIndex = data.pageIndex || 0;
+                matchHits = data.hits || 0;
+                matchErrors = data.errors || 0;
+            } else {
+                // Modo diferente: reseta progresso para este modo
+                matchPageIndex = 0;
+                matchHits = 0;
+                matchErrors = 0;
+            }
+        } catch(e) {}
+    } else {
+        matchPageIndex = 0;
+        matchHits = 0;
+        matchErrors = 0;
+    }
+    // Ajusta a página
     const totalPairs = matchAllPairs.length;
     matchTotalPages = Math.ceil(totalPairs / PAGE_SIZE);
     if (matchPageIndex >= matchTotalPages) matchPageIndex = 0;
@@ -1988,11 +2013,12 @@ function resetMatchGame() {
             matchWords.push({ word: pair.pt, pairId: idx, matched: false, traducao: null, lang: 'pt' });
             matchWords.push({ word: pair.en, pairId: idx, matched: false, traducao: null, lang: 'en' });
         } else {
+            // Modo antônimos: ambos em inglês
             matchWords.push({ word: pair.en, pairId: idx, matched: false, traducao: pair.traducao_en, lang: 'en' });
             matchWords.push({ word: pair.oposto, pairId: idx, matched: false, traducao: pair.traducao_oposto, lang: 'oposto' });
         }
     });
-    // Embaralhar as palavras (todas juntas) para variar
+    // Embaralhar tudo
     matchWords.sort(() => Math.random() - 0.5);
     renderMatchGame();
 }
@@ -2007,7 +2033,6 @@ function renderMatchGame() {
     balloon.style.backgroundColor = balloonColor;
     balloon.style.borderColor = 'rgba(255,255,255,0.1)';
 
-    // Separa as palavras não combinadas por idioma
     const unmatched = matchWords.filter(item => !item.matched);
     const matchedItems = matchWords.filter(item => item.matched);
 
@@ -2018,13 +2043,13 @@ function renderMatchGame() {
         topLabel = '🇬🇧 Inglês';
         bottomLabel = '🇧🇷 Português';
     } else {
+        // Modo antônimos: termo em inglês e antônimo em inglês
         topLang = 'en';
         bottomLang = 'oposto';
-        topLabel = '🔤 Termo';
-        bottomLabel = '🔁 Antônimo';
+        topLabel = '🔤 Termo (EN)';
+        bottomLabel = '🔁 Antônimo (EN)';
     }
 
-    // Função auxiliar para criar uma seção com título e palavras
     function createSection(lang, label, words) {
         const section = document.createElement('div');
         section.className = 'match-section';
@@ -2037,7 +2062,6 @@ function renderMatchGame() {
         wordsContainer.className = 'match-section-words';
 
         const filtered = words.filter(item => item.lang === lang);
-        // Embaralha novamente para variar a ordem
         filtered.sort(() => Math.random() - 0.5);
         if (filtered.length === 0) {
             const emptyMsg = document.createElement('span');
@@ -2072,7 +2096,7 @@ function renderMatchGame() {
     const bottomSection = createSection(bottomLang, bottomLabel, unmatched);
     balloon.appendChild(bottomSection);
 
-    // Palavras já combinadas (se houver)
+    // Palavras já combinadas
     if (matchedItems.length > 0) {
         const sep2 = document.createElement('div');
         sep2.style.width = '100%';
@@ -2140,6 +2164,7 @@ function createMatchWordElement(item) {
     if (!item.matched) {
         wordEl.onclick = (e) => handleMatchWordClick(e, item);
     } else {
+        // Para itens já combinados, mostrar tradução ao tocar (apenas no modo antônimos)
         if (matchMode === 'antonyms' && item.traducao) {
             wordEl.onclick = (e) => showAntonymTranslation(e, item);
         }
