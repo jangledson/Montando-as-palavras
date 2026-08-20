@@ -77,7 +77,7 @@ h2 { text-align:center; font-size:clamp(18px,3vh,28px); font-weight:900; letter-
 .btn-show-stats:hover { border-color:var(--accent); background:var(--surface-hover); box-shadow:0 0 30px var(--accent-glow); }
 .stats-report-box { display:none; background:var(--bg2); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--border); padding:clamp(10px,1.4vh,18px); border-radius:var(--radius); margin:8px auto 0; font-size:clamp(12px,1.4vh,16px); color:var(--text2); font-weight:600; text-align:left; line-height:1.7; max-width:550px; }
 
-/* ===== TELA DO JOGO ===== */
+/* ===== TELA DO JOGO (FRASES) ===== */
 #game-screen { display:none; flex-direction:column; height:100%; overflow:hidden; }
 #game-screen.active { display:flex; }
 .game-scrollable-content { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:clamp(8px,1.2vh,14px); padding-bottom:6px; padding-right:2px; }
@@ -115,7 +115,6 @@ h2 { text-align:center; font-size:clamp(18px,3vh,28px); font-weight:900; letter-
 @keyframes statusPop { 0% { transform:scale(.8); opacity:0; } 50% { transform:scale(1.08); } 100% { transform:scale(1); opacity:1; } }
 @keyframes statusShake { 0%,100% { transform:translateX(0); } 20% { transform:translateX(-6px); } 60% { transform:translateX(6px); } }
 
-/* ===== PAINEL CONTROLE ===== */
 .control-panel { display:flex; flex-direction:column; gap:clamp(4px,0.6vh,10px); padding-top:clamp(6px,0.8vh,12px); border-top:1px solid var(--border); align-items:center; width:100%; }
 .action-btn { width:100%; max-width:500px; padding:clamp(10px,1.4vh,16px) clamp(16px,2.2vw,28px); color:#fff; border:none; border-radius:40px; font-size:clamp(13px,1.8vh,17px); font-weight:700; cursor:pointer; text-align:center; box-shadow:0 4px 20px rgba(0,0,0,0.2); display:block; transition:all var(--transition); letter-spacing:.5px; background:var(--accent-gradient); }
 .action-btn:hover { transform:translateY(-2px); box-shadow:0 8px 48px var(--accent-glow); }
@@ -139,13 +138,27 @@ h2 { text-align:center; font-size:clamp(18px,3vh,28px); font-weight:900; letter-
 .back-link-hidden:hover { background:var(--surface-hover); border-color:var(--accent); }
 .back-link-hidden:active { transform:scale(.95); }
 
-/* ===== TELA MATCH ===== */
+/* ===== TELA MATCH (COM BOTÃO DE AJUDA) ===== */
 #match-screen { display:none; flex-direction:column; height:100%; width:100%; position:fixed; top:0; left:0; background:var(--bg); z-index:500; padding:clamp(8px,1.2vh,16px); overflow:hidden; transition:background .4s; }
 #match-screen.active { display:flex; }
-.match-stats { display:block; text-align:center; color:var(--text3); font-size:clamp(12px,1.4vh,16px); padding:6px 0; font-weight:700; }
-.match-score { text-align:center; font-size:clamp(11px,1.2vh,15px); color:var(--text3); padding:2px 0; }
+
+/* Topo do Match com botão de ajuda */
+.match-header { display:flex; justify-content:space-between; align-items:center; padding:4px 0; gap:8px; flex-shrink:0; }
+.match-header-left { display:flex; flex-direction:column; flex:1; }
+.match-stats { text-align:left; color:var(--text3); font-size:clamp(12px,1.4vh,16px); font-weight:700; }
+.match-score { text-align:left; color:var(--text3); font-size:clamp(11px,1.2vh,15px); }
+.match-header-right { display:flex; align-items:center; gap:8px; }
+/* Botão de ajuda (só aparece no modo antônimos) */
+.help-btn { background:var(--surface); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--border); border-radius:50%; width:clamp(40px,5.5vh,52px); height:clamp(40px,5.5vh,52px); font-size:clamp(18px,2.6vh,24px); color:var(--text2); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all var(--transition); box-shadow:0 4px 20px rgba(0,0,0,0.1); position:relative; }
+.help-btn:hover { transform:scale(1.08); background:var(--surface-hover); border-color:var(--accent); box-shadow:0 0 40px var(--accent-glow); }
+.help-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.help-btn .help-count { position:absolute; bottom:-4px; right:-4px; background:var(--bg2); border:1px solid var(--border); border-radius:50%; width:clamp(18px,2.2vh,24px); height:clamp(18px,2.2vh,24px); font-size:clamp(9px,1vh,12px); font-weight:800; color:var(--text2); display:flex; align-items:center; justify-content:center; }
+.help-btn .help-count.zero { color:var(--danger); }
+.help-btn.disabled { opacity:0.4; cursor:not-allowed; pointer-events:none; }
+
 .match-win-message { display:none; text-align:center; color:var(--warning); font-size:clamp(22px,3.4vh,34px); font-weight:900; text-shadow:0 0 60px rgba(251,191,36,0.2); animation:winPulse 1.5s infinite alternate; z-index:10; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--bg2); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); padding:clamp(28px,5vh,56px); border-radius:var(--radius); border:2px solid var(--warning); box-shadow:0 0 80px rgba(251,191,36,0.15); }
 @keyframes winPulse { 0% { transform:translate(-50%,-50%) scale(1); } 100% { transform:translate(-50%,-50%) scale(1.04); } }
+
 .match-grid-wrapper { flex:1; overflow:hidden; display:flex; flex-direction:column; align-items:stretch; justify-content:flex-start; min-height:0; padding:2px 0; width:100%; }
 .match-balloon { width:100%; flex:1; background:var(--surface); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--border); border-radius:var(--radius); padding:clamp(8px,1.2vh,16px); display:flex; flex-direction:column; gap:clamp(6px,0.8vh,12px); overflow-y:auto; transition:background .3s, border-color .3s; box-shadow:inset 0 0 60px rgba(0,0,0,0.1); }
 .match-balloon::-webkit-scrollbar { display:none; }
@@ -163,6 +176,7 @@ h2 { text-align:center; font-size:clamp(18px,3vh,28px); font-weight:900; letter-
 .match-word.wrong { animation:wrongShake .4s ease; border-color:var(--danger); box-shadow:0 0 30px rgba(248,113,113,0.15); }
 @keyframes wrongShake { 0%,100% { transform:translateX(0); } 20% { transform:translateX(-8px); } 60% { transform:translateX(8px); } }
 .match-word.speaking { animation:speakGlow .6s ease; }
+.match-word.help-reveal { color:var(--accent) !important; border-color:var(--accent) !important; box-shadow:0 0 40px var(--accent-glow) !important; transition:all .3s; }
 
 .match-bottom-controls { display:flex; justify-content:space-around; align-items:center; gap:clamp(4px,0.6vw,12px); padding:clamp(6px,0.8vh,14px) clamp(4px,0.6vw,12px); border-top:1px solid var(--border); flex-shrink:0; margin-top:auto; width:100%; flex-wrap:nowrap !important; min-height:48px; background:var(--bg); transition:background .3s; }
 .match-mode-group { display:flex; gap:clamp(4px,0.6vw,10px); align-items:center; flex-shrink:1; min-width:0; }
@@ -219,6 +233,8 @@ h2 { text-align:center; font-size:clamp(18px,3vh,28px); font-weight:900; letter-
   .match-bottom-controls { flex-wrap:nowrap !important; gap:2px !important; padding:4px 2px !important; min-height:36px !important; }
   .match-mode-btn { font-size:8px !important; padding:4px 5px !important; border-radius:16px !important; }
   .match-controls-right button { font-size:8px !important; padding:4px 5px !important; border-radius:16px !important; }
+  .match-header { flex-wrap:wrap; }
+  .help-btn { width:clamp(34px,5vh,44px); height:clamp(34px,5vh,44px); font-size:clamp(15px,2.2vh,20px); }
 }
 @media (max-width:400px) {
   .match-word { font-size:22px !important; padding:5px 8px !important; border-radius:8px !important; min-height:28px !important; }
@@ -278,9 +294,20 @@ h2 { text-align:center; font-size:clamp(18px,3vh,28px); font-weight:900; letter-
 
 <div class="back-link-hidden" id="backLinkHidden" onclick="showTopicsScreen()">⬅ Voltar</div>
 
+<!-- ===== TELA MATCH (COM BOTÃO DE AJUDA) ===== -->
 <div id="match-screen">
-    <div class="match-stats" id="matchStats">Pares: 0 / 30 (Rodada 1 de 22)</div>
-    <div class="match-score" id="matchScore">✅ Acertos: 0  ❌ Erros: 0</div>
+    <div class="match-header">
+        <div class="match-header-left">
+            <div class="match-stats" id="matchStats">Pares: 0 / 30 (Rodada 1 de 22)</div>
+            <div class="match-score" id="matchScore">✅ Acertos: 0  ❌ Erros: 0  ❤️ Vidas: 5</div>
+        </div>
+        <div class="match-header-right">
+            <button class="help-btn" id="helpBtn" onclick="toggleHelpMode()" style="display:none;">
+                💡
+                <span class="help-count" id="helpCount">5</span>
+            </button>
+        </div>
+    </div>
     <div id="matchWinMessage" class="match-win-message">🎉 PARABÉNS! Você combinou todas! 🎉</div>
     <div class="match-grid-wrapper">
         <div class="match-balloon" id="matchBalloon"></div>
@@ -1081,6 +1108,8 @@ const PROGRESS_KEY = 'wordGameProgress';
 const MATCH_PROGRESS_KEY = 'wordGameMatchProgress';
 const THEME_KEY = 'wordGameTheme';
 const PAGE_SIZE = 30;
+const MAX_LIVES = 5;
+const MAX_HELP_USES = 5;
 
 let configSettings = loadSavedConfig();
 let currentPhrasePairIndex = 0;
@@ -1096,7 +1125,7 @@ let phraseCycle = [];
 let currentCycleIndex = 0;
 
 let matchMode = 'translation';
-let matchWords = [];
+let matchWords = [];            // array com {word, pairId, matched, traducao, lang}
 let matchPairs = [];
 let selectedMatchWord = null;
 let matchedPairsCount = 0;
@@ -1109,6 +1138,9 @@ let matchCurrentPairs = [];
 let matchAllPairs = [];
 let matchHits = 0;
 let matchErrors = 0;
+let lives = MAX_LIVES;
+let helpUses = MAX_HELP_USES;
+let helpActive = false;
 
 let availableVoices = [];
 let selectedVoiceGender = 'female';
@@ -1118,7 +1150,7 @@ let currentTheme = loadTheme();
 let dragData = null;
 
 // ============================================================
-// FUNÇÕES DE CARREGAMENTO E SALVAMENTO
+// FUNÇÕES DE CARREGAMENTO E SALVAMENTO (MODIFICADAS PARA INCLUIR VIDA E AJUDA)
 // ============================================================
 function loadSavedConfig() {
     try {
@@ -1178,12 +1210,19 @@ function resetProgress() {
 
 function saveMatchProgress() {
     try {
-        localStorage.setItem(MATCH_PROGRESS_KEY, JSON.stringify({
+        const data = {
             mode: matchMode,
             pageIndex: matchPageIndex,
             hits: matchHits,
-            errors: matchErrors
-        }));
+            errors: matchErrors,
+            lives: lives,
+            helpUses: helpUses,
+            helpActive: helpActive,
+            matchWords: matchWords, // salva estado completo das palavras
+            totalMatchPairs: totalMatchPairs,
+            matchedPairsCount: matchedPairsCount
+        };
+        localStorage.setItem(MATCH_PROGRESS_KEY, JSON.stringify(data));
     } catch(e) {}
 }
 function loadMatchProgress() {
@@ -1195,7 +1234,15 @@ function loadMatchProgress() {
             matchPageIndex = data.pageIndex || 0;
             matchHits = data.hits || 0;
             matchErrors = data.errors || 0;
-            return true;
+            lives = data.lives !== undefined ? data.lives : MAX_LIVES;
+            helpUses = data.helpUses !== undefined ? data.helpUses : MAX_HELP_USES;
+            helpActive = data.helpActive || false;
+            if (data.matchWords && data.matchWords.length > 0) {
+                matchWords = data.matchWords;
+                totalMatchPairs = data.totalMatchPairs || 0;
+                matchedPairsCount = data.matchedPairsCount || 0;
+                return true;
+            }
         }
     } catch(e) {}
     return false;
@@ -1204,6 +1251,12 @@ function resetMatchProgress() {
     matchPageIndex = 0;
     matchHits = 0;
     matchErrors = 0;
+    lives = MAX_LIVES;
+    helpUses = MAX_HELP_USES;
+    helpActive = false;
+    matchWords = [];
+    totalMatchPairs = 0;
+    matchedPairsCount = 0;
     saveMatchProgress();
 }
 
@@ -1882,7 +1935,7 @@ function nextPhrasePair() {
 }
 
 // ============================================================
-// MATCH GAME (CORRIGIDO: SEPARAÇÃO E SALVAMENTO, MODO ANTÔNIMOS)
+// MATCH GAME (COM NOVAS FUNCIONALIDADES: VIDA, AJUDA, SALVAMENTO)
 // ============================================================
 function setMatchMode(mode) {
     // Salva progresso do modo atual
@@ -1894,38 +1947,119 @@ function setMatchMode(mode) {
     if (mode === 'translation') {
         document.getElementById('modeTranslation').classList.add('active');
         matchAllPairs = fullTranslationPairs;
+        // Esconde botão de ajuda no modo tradução
+        document.getElementById('helpBtn').style.display = 'none';
+        helpActive = false;
     } else {
         document.getElementById('modeAntonyms').classList.add('active');
         matchAllPairs = fullAntonymPairs;
+        // Mostra botão de ajuda no modo antônimos
+        document.getElementById('helpBtn').style.display = 'flex';
+        // Reseta ajuda ao mudar para antônimos
+        helpUses = MAX_HELP_USES;
+        helpActive = false;
     }
-    // Carrega o progresso específico do modo (sem sobrescrever matchMode)
+    // Carrega o progresso específico do modo
     const saved = localStorage.getItem(MATCH_PROGRESS_KEY);
     if (saved) {
         try {
             const data = JSON.parse(saved);
-            // Se o modo salvo for o mesmo que o atual, restaura pageIndex, hits, errors
             if (data.mode === matchMode) {
                 matchPageIndex = data.pageIndex || 0;
                 matchHits = data.hits || 0;
                 matchErrors = data.errors || 0;
+                lives = data.lives !== undefined ? data.lives : MAX_LIVES;
+                helpUses = data.helpUses !== undefined ? data.helpUses : MAX_HELP_USES;
+                helpActive = data.helpActive || false;
+                if (data.matchWords && data.matchWords.length > 0) {
+                    matchWords = data.matchWords;
+                    totalMatchPairs = data.totalMatchPairs || 0;
+                    matchedPairsCount = data.matchedPairsCount || 0;
+                } else {
+                    matchWords = [];
+                    totalMatchPairs = 0;
+                    matchedPairsCount = 0;
+                }
             } else {
-                // Modo diferente: reseta progresso para este modo
+                // Modo diferente: reseta
                 matchPageIndex = 0;
                 matchHits = 0;
                 matchErrors = 0;
+                lives = MAX_LIVES;
+                helpUses = MAX_HELP_USES;
+                helpActive = false;
+                matchWords = [];
+                totalMatchPairs = 0;
+                matchedPairsCount = 0;
             }
-        } catch(e) {}
+        } catch(e) {
+            matchPageIndex = 0;
+            matchHits = 0;
+            matchErrors = 0;
+            lives = MAX_LIVES;
+            helpUses = MAX_HELP_USES;
+            helpActive = false;
+            matchWords = [];
+            totalMatchPairs = 0;
+            matchedPairsCount = 0;
+        }
     } else {
         matchPageIndex = 0;
         matchHits = 0;
         matchErrors = 0;
+        lives = MAX_LIVES;
+        helpUses = MAX_HELP_USES;
+        helpActive = false;
+        matchWords = [];
+        totalMatchPairs = 0;
+        matchedPairsCount = 0;
     }
     // Ajusta a página
     const totalPairs = matchAllPairs.length;
     matchTotalPages = Math.ceil(totalPairs / PAGE_SIZE);
     if (matchPageIndex >= matchTotalPages) matchPageIndex = 0;
+    // Se não há palavras carregadas, carrega a página atual
+    if (matchWords.length === 0) {
+        loadMatchPage(matchPageIndex);
+    }
     saveMatchProgress();
-    resetMatchGame();
+    renderMatchGame();
+}
+
+function loadMatchPage(pageIndex) {
+    const totalPairs = matchAllPairs.length;
+    matchTotalPages = Math.ceil(totalPairs / PAGE_SIZE);
+    if (pageIndex >= matchTotalPages) pageIndex = 0;
+    const start = pageIndex * PAGE_SIZE;
+    const end = Math.min(start + PAGE_SIZE, totalPairs);
+    const pagePairs = matchAllPairs.slice(start, end);
+    if (pagePairs.length === 0) {
+        pageIndex = 0;
+        return loadMatchPage(0);
+    }
+    matchCurrentPairs = pagePairs;
+    totalMatchPairs = matchCurrentPairs.length;
+    // Cria matchWords a partir dos pares
+    matchWords = [];
+    matchPairs = [...matchCurrentPairs].sort(() => Math.random() - 0.5);
+    matchPairs.forEach((pair, idx) => {
+        if (matchMode === 'translation') {
+            matchWords.push({ word: pair.pt, pairId: idx, matched: false, traducao: null, lang: 'pt' });
+            matchWords.push({ word: pair.en, pairId: idx, matched: false, traducao: null, lang: 'en' });
+        } else {
+            matchWords.push({ word: pair.en, pairId: idx, matched: false, traducao: pair.traducao_en, lang: 'en' });
+            matchWords.push({ word: pair.oposto, pairId: idx, matched: false, traducao: pair.traducao_oposto, lang: 'oposto' });
+        }
+    });
+    matchWords.sort(() => Math.random() - 0.5);
+    matchedPairsCount = 0;
+    matchHits = 0;
+    matchErrors = 0;
+    lives = MAX_LIVES;
+    helpUses = MAX_HELP_USES;
+    helpActive = false;
+    matchPageIndex = pageIndex;
+    saveMatchProgress();
 }
 
 function openMatchGame() {
@@ -1936,13 +2070,24 @@ function openMatchGame() {
     if (matchMode === 'translation') {
         document.getElementById('modeTranslation').classList.add('active');
         matchAllPairs = fullTranslationPairs;
+        document.getElementById('helpBtn').style.display = 'none';
+        helpActive = false;
     } else {
         document.getElementById('modeAntonyms').classList.add('active');
         matchAllPairs = fullAntonymPairs;
+        document.getElementById('helpBtn').style.display = 'flex';
+        // Se não houver palavras, carrega a página
+        if (matchWords.length === 0) {
+            loadMatchPage(matchPageIndex);
+        }
     }
     const totalPairs = matchAllPairs.length;
     matchTotalPages = Math.ceil(totalPairs / PAGE_SIZE);
     if (matchPageIndex >= matchTotalPages) matchPageIndex = 0;
+    // Se não há palavras, carrega
+    if (matchWords.length === 0) {
+        loadMatchPage(matchPageIndex);
+    }
     saveMatchProgress();
 
     const textColor = hslToHex(configSettings.textHue, 100, 55);
@@ -1952,7 +2097,10 @@ function openMatchGame() {
     applyBgColor(bgColor);
     applyBalloonColor(balloonColor);
     applyFontToAllElements();
-    resetMatchGame();
+
+    // Atualiza contadores da ajuda
+    updateHelpUI();
+    renderMatchGame();
 }
 
 function closeMatchGame() {
@@ -1982,45 +2130,77 @@ function resetMatchGame() {
     });
     selectedMatchWord = null;
     isProcessingMatch = false;
-    matchedPairsCount = 0;
 
-    // Garantir que matchAllPairs está preenchido
+    // Recarrega a página atual com as mesmas palavras, mas embaralhadas
     if (matchAllPairs.length === 0) {
         if (matchMode === 'translation') matchAllPairs = fullTranslationPairs;
         else matchAllPairs = fullAntonymPairs;
     }
-
     const totalPairs = matchAllPairs.length;
     matchTotalPages = Math.ceil(totalPairs / PAGE_SIZE);
     if (matchPageIndex >= matchTotalPages) matchPageIndex = 0;
-    saveMatchProgress();
-
     const start = matchPageIndex * PAGE_SIZE;
     const end = Math.min(start + PAGE_SIZE, totalPairs);
     const pagePairs = matchAllPairs.slice(start, end);
     if (pagePairs.length === 0) {
         matchPageIndex = 0;
-        saveMatchProgress();
         return resetMatchGame();
     }
     matchCurrentPairs = pagePairs;
     totalMatchPairs = matchCurrentPairs.length;
-    let shuffled = [...matchCurrentPairs].sort(() => Math.random() - 0.5);
-    matchPairs = shuffled;
+    // Embaralha os pares e as palavras
+    matchPairs = [...matchCurrentPairs].sort(() => Math.random() - 0.5);
     matchWords = [];
     matchPairs.forEach((pair, idx) => {
         if (matchMode === 'translation') {
             matchWords.push({ word: pair.pt, pairId: idx, matched: false, traducao: null, lang: 'pt' });
             matchWords.push({ word: pair.en, pairId: idx, matched: false, traducao: null, lang: 'en' });
         } else {
-            // Modo antônimos: ambos em inglês
             matchWords.push({ word: pair.en, pairId: idx, matched: false, traducao: pair.traducao_en, lang: 'en' });
             matchWords.push({ word: pair.oposto, pairId: idx, matched: false, traducao: pair.traducao_oposto, lang: 'oposto' });
         }
     });
-    // Embaralhar tudo
     matchWords.sort(() => Math.random() - 0.5);
+    matchedPairsCount = 0;
+    matchHits = 0;
+    matchErrors = 0;
+    lives = MAX_LIVES;
+    helpUses = MAX_HELP_USES;
+    helpActive = false;
+    saveMatchProgress();
     renderMatchGame();
+}
+
+function toggleHelpMode() {
+    if (matchMode !== 'antonyms') return;
+    if (helpUses <= 0) {
+        // Botão já desativado, não faz nada
+        return;
+    }
+    helpActive = !helpActive;
+    document.getElementById('helpBtn').classList.toggle('active', helpActive);
+    updateHelpUI();
+    saveMatchProgress();
+}
+
+function updateHelpUI() {
+    const btn = document.getElementById('helpBtn');
+    const count = document.getElementById('helpCount');
+    if (matchMode === 'antonyms') {
+        btn.style.display = 'flex';
+        count.textContent = helpUses;
+        count.classList.toggle('zero', helpUses <= 0);
+        if (helpUses <= 0) {
+            btn.classList.add('disabled');
+            btn.classList.remove('active');
+            helpActive = false;
+        } else {
+            btn.classList.remove('disabled');
+        }
+        btn.classList.toggle('active', helpActive);
+    } else {
+        btn.style.display = 'none';
+    }
 }
 
 function renderMatchGame() {
@@ -2043,7 +2223,6 @@ function renderMatchGame() {
         topLabel = '🇬🇧 Inglês';
         bottomLabel = '🇧🇷 Português';
     } else {
-        // Modo antônimos: termo em inglês e antônimo em inglês
         topLang = 'en';
         bottomLang = 'oposto';
         topLabel = '🔤 Termo (EN)';
@@ -2079,11 +2258,9 @@ function renderMatchGame() {
         return section;
     }
 
-    // Seção superior
     const topSection = createSection(topLang, topLabel, unmatched);
     balloon.appendChild(topSection);
 
-    // Separador
     const sep = document.createElement('div');
     sep.style.width = '100%';
     sep.style.height = '2px';
@@ -2092,11 +2269,9 @@ function renderMatchGame() {
     sep.style.borderRadius = '2px';
     balloon.appendChild(sep);
 
-    // Seção inferior
     const bottomSection = createSection(bottomLang, bottomLabel, unmatched);
     balloon.appendChild(bottomSection);
 
-    // Palavras já combinadas
     if (matchedItems.length > 0) {
         const sep2 = document.createElement('div');
         sep2.style.width = '100%';
@@ -2116,20 +2291,32 @@ function renderMatchGame() {
     }
 
     const matchedCount = matchWords.filter(item => item.matched).length / 2;
-    document.getElementById('matchStats').textContent = `Pares: ${matchedCount} / ${totalMatchPairs} (Rodada ${matchPageIndex + 1} de ${matchTotalPages})`;
-    document.getElementById('matchScore').textContent = `✅ Acertos: ${matchHits}  ❌ Erros: ${matchErrors}`;
+    const totalPairsDisplay = totalMatchPairs || matchCurrentPairs.length || 0;
+    document.getElementById('matchStats').textContent = `Pares: ${matchedCount} / ${totalPairsDisplay} (Rodada ${matchPageIndex + 1} de ${matchTotalPages})`;
+    document.getElementById('matchScore').textContent = `✅ Acertos: ${matchHits}  ❌ Erros: ${matchErrors}  ❤️ Vidas: ${lives}`;
+
+    // Atualiza contador de ajuda
+    updateHelpUI();
 
     const allMatched = matchWords.every(item => item.matched === true);
-    if (allMatched && totalMatchPairs > 0) {
+    if (allMatched && totalPairsDisplay > 0) {
         if (matchPageIndex + 1 < matchTotalPages) {
             document.getElementById('matchWinMessage').style.display = 'block';
             document.getElementById('matchWinMessage').textContent = `🎉 Rodada ${matchPageIndex + 1} concluída! Carregando próxima...`;
             speak("Congratulations! You completed this round!");
+            // Aguarda e carrega próxima página
             setTimeout(() => {
                 document.getElementById('matchWinMessage').style.display = 'none';
                 matchPageIndex++;
+                // Reseta acertos/erros/vidas/ajuda para a nova página
+                matchHits = 0;
+                matchErrors = 0;
+                lives = MAX_LIVES;
+                helpUses = MAX_HELP_USES;
+                helpActive = false;
+                loadMatchPage(matchPageIndex);
                 saveMatchProgress();
-                resetMatchGame();
+                renderMatchGame();
             }, 2500);
         } else {
             document.getElementById('matchWinMessage').style.display = 'block';
@@ -2138,8 +2325,14 @@ function renderMatchGame() {
             setTimeout(() => {
                 document.getElementById('matchWinMessage').style.display = 'none';
                 matchPageIndex = 0;
+                matchHits = 0;
+                matchErrors = 0;
+                lives = MAX_LIVES;
+                helpUses = MAX_HELP_USES;
+                helpActive = false;
+                loadMatchPage(0);
                 saveMatchProgress();
-                resetMatchGame();
+                renderMatchGame();
             }, 3500);
         }
     }
@@ -2164,7 +2357,6 @@ function createMatchWordElement(item) {
     if (!item.matched) {
         wordEl.onclick = (e) => handleMatchWordClick(e, item);
     } else {
-        // Para itens já combinados, mostrar tradução ao tocar (apenas no modo antônimos)
         if (matchMode === 'antonyms' && item.traducao) {
             wordEl.onclick = (e) => showAntonymTranslation(e, item);
         }
@@ -2175,6 +2367,39 @@ function createMatchWordElement(item) {
 function handleMatchWordClick(event, item) {
     if (isProcessingMatch) return;
     if (item.matched) return;
+
+    // Verifica se está em modo ajuda e se há usos disponíveis
+    if (helpActive && matchMode === 'antonyms' && helpUses > 0) {
+        // Mostra a tradução da palavra (substitui o texto por 3 segundos)
+        const el = event.currentTarget;
+        const originalText = item.word;
+        let traducao = '';
+        if (matchMode === 'antonyms') {
+            // No modo antônimos, a tradução é a que está em item.traducao (já preenchida)
+            traducao = item.traducao || '';
+        }
+        if (traducao) {
+            // Consome 1 uso
+            helpUses--;
+            el.textContent = traducao;
+            el.classList.add('help-reveal');
+            setTimeout(() => {
+                el.textContent = originalText;
+                el.classList.remove('help-reveal');
+            }, 3000);
+            updateHelpUI();
+            saveMatchProgress();
+            return;
+        } else {
+            // Se não tiver tradução, apenas desativa a ajuda momentaneamente?
+            helpActive = false;
+            document.getElementById('helpBtn').classList.remove('active');
+            updateHelpUI();
+            return;
+        }
+    }
+
+    // --- Lógica normal de matching ---
     const clickedEl = event.currentTarget;
 
     if (selectedMatchWord !== null) {
@@ -2187,6 +2412,7 @@ function handleMatchWordClick(event, item) {
         }
         // Verifica se são de línguas diferentes e mesmo pairId
         if (firstItem.pairId === item.pairId && firstItem.lang !== item.lang) {
+            // Combinação correta
             firstItem.matched = true;
             item.matched = true;
             matchedPairsCount++;
@@ -2197,12 +2423,42 @@ function handleMatchWordClick(event, item) {
             renderMatchGame();
             speakWord(firstItem.word + " " + item.word);
         } else {
+            // Erro: decrementa vidas
             matchErrors++;
+            lives--;
             saveMatchProgress();
             isProcessingMatch = true;
             const secondEl = event.currentTarget;
             if (firstEl) firstEl.classList.add('wrong');
             secondEl.classList.add('wrong');
+
+            // Verifica se vidas chegaram a 0
+            if (lives <= 0) {
+                // Reinicia o bloco com as mesmas palavras embaralhadas
+                setTimeout(() => {
+                    // Reseta tudo
+                    matchHits = 0;
+                    matchErrors = 0;
+                    lives = MAX_LIVES;
+                    helpUses = MAX_HELP_USES;
+                    helpActive = false;
+                    // Embaralha as palavras atuais
+                    matchWords.sort(() => Math.random() - 0.5);
+                    // Reseta matched de todas
+                    matchWords.forEach(w => w.matched = false);
+                    matchedPairsCount = 0;
+                    saveMatchProgress();
+                    renderMatchGame();
+                    // Mostra mensagem breve
+                    const statusMsg = document.getElementById('status-message');
+                    if (statusMsg) {
+                        statusMsg.innerHTML = '<span class="status-wrong">💔 Vidas zeradas! Bloco reiniciado com palavras embaralhadas.</span>';
+                        setTimeout(() => { statusMsg.innerHTML = ''; }, 3000);
+                    }
+                }, 500);
+                return;
+            }
+
             setTimeout(() => {
                 if (firstEl) firstEl.classList.remove('wrong', 'selected');
                 secondEl.classList.remove('wrong');
@@ -2314,12 +2570,18 @@ function init() {
 
     if (matchMode === 'translation') {
         matchAllPairs = fullTranslationPairs;
+        document.getElementById('helpBtn').style.display = 'none';
+        helpActive = false;
     } else {
         matchAllPairs = fullAntonymPairs;
+        document.getElementById('helpBtn').style.display = 'flex';
     }
     const totalPairs = matchAllPairs.length;
     matchTotalPages = Math.ceil(totalPairs / PAGE_SIZE);
     if (matchPageIndex >= matchTotalPages) matchPageIndex = 0;
+    if (matchWords.length === 0) {
+        loadMatchPage(matchPageIndex);
+    }
     saveMatchProgress();
 
     renderTopics();
@@ -2335,6 +2597,9 @@ function init() {
         document.getElementById('modeTranslation').classList.add('active');
     } else {
         document.getElementById('modeAntonyms').classList.add('active');
+        // Garante que o botão de ajuda apareça
+        document.getElementById('helpBtn').style.display = 'flex';
+        updateHelpUI();
     }
 
     setupDoubleTap();
