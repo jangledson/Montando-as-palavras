@@ -9,7 +9,7 @@
 <title>Formando as Frases - Inglês</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <style>
-/* ===== RESET E VARIÁVEIS ===== */
+/* ===== RESET E VARIÁVEIS (MANTIDOS) ===== */
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 :root {
   --bg: #0b0e14;
@@ -138,17 +138,16 @@ h2 { text-align:center; font-size:clamp(18px,3vh,28px); font-weight:900; letter-
 .back-link-hidden:hover { background:var(--surface-hover); border-color:var(--accent); }
 .back-link-hidden:active { transform:scale(.95); }
 
-/* ===== TELA MATCH (COM BOTÃO DE AJUDA) ===== */
+/* ===== TELA MATCH (COM BOTÃO DE AJUDA EM AMBOS OS MODOS) ===== */
 #match-screen { display:none; flex-direction:column; height:100%; width:100%; position:fixed; top:0; left:0; background:var(--bg); z-index:500; padding:clamp(8px,1.2vh,16px); overflow:hidden; transition:background .4s; }
 #match-screen.active { display:flex; }
 
-/* Topo do Match com botão de ajuda */
 .match-header { display:flex; justify-content:space-between; align-items:center; padding:4px 0; gap:8px; flex-shrink:0; }
 .match-header-left { display:flex; flex-direction:column; flex:1; }
 .match-stats { text-align:left; color:var(--text3); font-size:clamp(12px,1.4vh,16px); font-weight:700; }
 .match-score { text-align:left; color:var(--text3); font-size:clamp(11px,1.2vh,15px); }
 .match-header-right { display:flex; align-items:center; gap:8px; }
-/* Botão de ajuda (só aparece no modo antônimos) */
+/* Botão de ajuda (agora aparece em ambos os modos) */
 .help-btn { background:var(--surface); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid var(--border); border-radius:50%; width:clamp(40px,5.5vh,52px); height:clamp(40px,5.5vh,52px); font-size:clamp(18px,2.6vh,24px); color:var(--text2); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all var(--transition); box-shadow:0 4px 20px rgba(0,0,0,0.1); position:relative; }
 .help-btn:hover { transform:scale(1.08); background:var(--surface-hover); border-color:var(--accent); box-shadow:0 0 40px var(--accent-glow); }
 .help-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
@@ -294,7 +293,7 @@ h2 { text-align:center; font-size:clamp(18px,3vh,28px); font-weight:900; letter-
 
 <div class="back-link-hidden" id="backLinkHidden" onclick="showTopicsScreen()">⬅ Voltar</div>
 
-<!-- ===== TELA MATCH (COM BOTÃO DE AJUDA) ===== -->
+<!-- ===== TELA MATCH (COM BOTÃO DE AJUDA EM AMBOS OS MODOS) ===== -->
 <div id="match-screen">
     <div class="match-header">
         <div class="match-header-left">
@@ -302,7 +301,8 @@ h2 { text-align:center; font-size:clamp(18px,3vh,28px); font-weight:900; letter-
             <div class="match-score" id="matchScore">✅ Acertos: 0  ❌ Erros: 0  ❤️ Vidas: 5</div>
         </div>
         <div class="match-header-right">
-            <button class="help-btn" id="helpBtn" onclick="toggleHelpMode()" style="display:none;">
+            <!-- Botão de ajuda aparece em ambos os modos -->
+            <button class="help-btn" id="helpBtn" onclick="toggleHelpMode()">
                 💡
                 <span class="help-count" id="helpCount">5</span>
             </button>
@@ -1125,7 +1125,7 @@ let phraseCycle = [];
 let currentCycleIndex = 0;
 
 let matchMode = 'translation';
-let matchWords = [];            // array com {word, pairId, matched, traducao, lang}
+let matchWords = [];
 let matchPairs = [];
 let selectedMatchWord = null;
 let matchedPairsCount = 0;
@@ -1218,7 +1218,7 @@ function saveMatchProgress() {
             lives: lives,
             helpUses: helpUses,
             helpActive: helpActive,
-            matchWords: matchWords, // salva estado completo das palavras
+            matchWords: matchWords,
             totalMatchPairs: totalMatchPairs,
             matchedPairsCount: matchedPairsCount
         };
@@ -1935,31 +1935,22 @@ function nextPhrasePair() {
 }
 
 // ============================================================
-// MATCH GAME (COM NOVAS FUNCIONALIDADES: VIDA, AJUDA, SALVAMENTO)
+// MATCH GAME (COM NOVAS FUNCIONALIDADES: VIDA, AJUDA EM AMBOS OS MODOS, SALVAMENTO)
 // ============================================================
 function setMatchMode(mode) {
-    // Salva progresso do modo atual
     saveMatchProgress();
-    // Define o novo modo
     matchMode = mode;
-    // Atualiza botões
     document.querySelectorAll('.match-mode-btn').forEach(btn => btn.classList.remove('active'));
     if (mode === 'translation') {
         document.getElementById('modeTranslation').classList.add('active');
         matchAllPairs = fullTranslationPairs;
-        // Esconde botão de ajuda no modo tradução
-        document.getElementById('helpBtn').style.display = 'none';
-        helpActive = false;
     } else {
         document.getElementById('modeAntonyms').classList.add('active');
         matchAllPairs = fullAntonymPairs;
-        // Mostra botão de ajuda no modo antônimos
-        document.getElementById('helpBtn').style.display = 'flex';
-        // Reseta ajuda ao mudar para antônimos
-        helpUses = MAX_HELP_USES;
-        helpActive = false;
     }
-    // Carrega o progresso específico do modo
+    // O botão de ajuda agora é mostrado em ambos os modos
+    document.getElementById('helpBtn').style.display = 'flex';
+    // Carrega progresso do modo
     const saved = localStorage.getItem(MATCH_PROGRESS_KEY);
     if (saved) {
         try {
@@ -1981,7 +1972,6 @@ function setMatchMode(mode) {
                     matchedPairsCount = 0;
                 }
             } else {
-                // Modo diferente: reseta
                 matchPageIndex = 0;
                 matchHits = 0;
                 matchErrors = 0;
@@ -2014,11 +2004,9 @@ function setMatchMode(mode) {
         totalMatchPairs = 0;
         matchedPairsCount = 0;
     }
-    // Ajusta a página
     const totalPairs = matchAllPairs.length;
     matchTotalPages = Math.ceil(totalPairs / PAGE_SIZE);
     if (matchPageIndex >= matchTotalPages) matchPageIndex = 0;
-    // Se não há palavras carregadas, carrega a página atual
     if (matchWords.length === 0) {
         loadMatchPage(matchPageIndex);
     }
@@ -2039,9 +2027,8 @@ function loadMatchPage(pageIndex) {
     }
     matchCurrentPairs = pagePairs;
     totalMatchPairs = matchCurrentPairs.length;
-    // Cria matchWords a partir dos pares
-    matchWords = [];
     matchPairs = [...matchCurrentPairs].sort(() => Math.random() - 0.5);
+    matchWords = [];
     matchPairs.forEach((pair, idx) => {
         if (matchMode === 'translation') {
             matchWords.push({ word: pair.pt, pairId: idx, matched: false, traducao: null, lang: 'pt' });
@@ -2070,21 +2057,14 @@ function openMatchGame() {
     if (matchMode === 'translation') {
         document.getElementById('modeTranslation').classList.add('active');
         matchAllPairs = fullTranslationPairs;
-        document.getElementById('helpBtn').style.display = 'none';
-        helpActive = false;
     } else {
         document.getElementById('modeAntonyms').classList.add('active');
         matchAllPairs = fullAntonymPairs;
-        document.getElementById('helpBtn').style.display = 'flex';
-        // Se não houver palavras, carrega a página
-        if (matchWords.length === 0) {
-            loadMatchPage(matchPageIndex);
-        }
     }
+    document.getElementById('helpBtn').style.display = 'flex';
     const totalPairs = matchAllPairs.length;
     matchTotalPages = Math.ceil(totalPairs / PAGE_SIZE);
     if (matchPageIndex >= matchTotalPages) matchPageIndex = 0;
-    // Se não há palavras, carrega
     if (matchWords.length === 0) {
         loadMatchPage(matchPageIndex);
     }
@@ -2098,7 +2078,6 @@ function openMatchGame() {
     applyBalloonColor(balloonColor);
     applyFontToAllElements();
 
-    // Atualiza contadores da ajuda
     updateHelpUI();
     renderMatchGame();
 }
@@ -2131,7 +2110,6 @@ function resetMatchGame() {
     selectedMatchWord = null;
     isProcessingMatch = false;
 
-    // Recarrega a página atual com as mesmas palavras, mas embaralhadas
     if (matchAllPairs.length === 0) {
         if (matchMode === 'translation') matchAllPairs = fullTranslationPairs;
         else matchAllPairs = fullAntonymPairs;
@@ -2148,7 +2126,6 @@ function resetMatchGame() {
     }
     matchCurrentPairs = pagePairs;
     totalMatchPairs = matchCurrentPairs.length;
-    // Embaralha os pares e as palavras
     matchPairs = [...matchCurrentPairs].sort(() => Math.random() - 0.5);
     matchWords = [];
     matchPairs.forEach((pair, idx) => {
@@ -2172,11 +2149,7 @@ function resetMatchGame() {
 }
 
 function toggleHelpMode() {
-    if (matchMode !== 'antonyms') return;
-    if (helpUses <= 0) {
-        // Botão já desativado, não faz nada
-        return;
-    }
+    if (helpUses <= 0) return;
     helpActive = !helpActive;
     document.getElementById('helpBtn').classList.toggle('active', helpActive);
     updateHelpUI();
@@ -2186,21 +2159,17 @@ function toggleHelpMode() {
 function updateHelpUI() {
     const btn = document.getElementById('helpBtn');
     const count = document.getElementById('helpCount');
-    if (matchMode === 'antonyms') {
-        btn.style.display = 'flex';
-        count.textContent = helpUses;
-        count.classList.toggle('zero', helpUses <= 0);
-        if (helpUses <= 0) {
-            btn.classList.add('disabled');
-            btn.classList.remove('active');
-            helpActive = false;
-        } else {
-            btn.classList.remove('disabled');
-        }
-        btn.classList.toggle('active', helpActive);
+    btn.style.display = 'flex';
+    count.textContent = helpUses;
+    count.classList.toggle('zero', helpUses <= 0);
+    if (helpUses <= 0) {
+        btn.classList.add('disabled');
+        btn.classList.remove('active');
+        helpActive = false;
     } else {
-        btn.style.display = 'none';
+        btn.classList.remove('disabled');
     }
+    btn.classList.toggle('active', helpActive);
 }
 
 function renderMatchGame() {
@@ -2295,7 +2264,6 @@ function renderMatchGame() {
     document.getElementById('matchStats').textContent = `Pares: ${matchedCount} / ${totalPairsDisplay} (Rodada ${matchPageIndex + 1} de ${matchTotalPages})`;
     document.getElementById('matchScore').textContent = `✅ Acertos: ${matchHits}  ❌ Erros: ${matchErrors}  ❤️ Vidas: ${lives}`;
 
-    // Atualiza contador de ajuda
     updateHelpUI();
 
     const allMatched = matchWords.every(item => item.matched === true);
@@ -2304,11 +2272,9 @@ function renderMatchGame() {
             document.getElementById('matchWinMessage').style.display = 'block';
             document.getElementById('matchWinMessage').textContent = `🎉 Rodada ${matchPageIndex + 1} concluída! Carregando próxima...`;
             speak("Congratulations! You completed this round!");
-            // Aguarda e carrega próxima página
             setTimeout(() => {
                 document.getElementById('matchWinMessage').style.display = 'none';
                 matchPageIndex++;
-                // Reseta acertos/erros/vidas/ajuda para a nova página
                 matchHits = 0;
                 matchErrors = 0;
                 lives = MAX_LIVES;
@@ -2368,18 +2334,20 @@ function handleMatchWordClick(event, item) {
     if (isProcessingMatch) return;
     if (item.matched) return;
 
-    // Verifica se está em modo ajuda e se há usos disponíveis
-    if (helpActive && matchMode === 'antonyms' && helpUses > 0) {
-        // Mostra a tradução da palavra (substitui o texto por 3 segundos)
+    // --- MODO AJUDA (funciona em ambos os modos) ---
+    if (helpActive && helpUses > 0) {
         const el = event.currentTarget;
         const originalText = item.word;
         let traducao = '';
-        if (matchMode === 'antonyms') {
-            // No modo antônimos, a tradução é a que está em item.traducao (já preenchida)
+        if (matchMode === 'translation') {
+            // Busca a palavra correspondente no mesmo pairId com lang diferente
+            const partner = matchWords.find(w => w.pairId === item.pairId && w.lang !== item.lang && !w.matched);
+            if (partner) traducao = partner.word;
+        } else {
+            // Antônimos: usa a tradução armazenada
             traducao = item.traducao || '';
         }
         if (traducao) {
-            // Consome 1 uso
             helpUses--;
             el.textContent = traducao;
             el.classList.add('help-reveal');
@@ -2391,7 +2359,7 @@ function handleMatchWordClick(event, item) {
             saveMatchProgress();
             return;
         } else {
-            // Se não tiver tradução, apenas desativa a ajuda momentaneamente?
+            // Se não encontrar, desativa ajuda temporariamente
             helpActive = false;
             document.getElementById('helpBtn').classList.remove('active');
             updateHelpUI();
@@ -2399,7 +2367,7 @@ function handleMatchWordClick(event, item) {
         }
     }
 
-    // --- Lógica normal de matching ---
+    // --- LÓGICA NORMAL DE MATCHING ---
     const clickedEl = event.currentTarget;
 
     if (selectedMatchWord !== null) {
@@ -2410,9 +2378,7 @@ function handleMatchWordClick(event, item) {
             selectedMatchWord = null;
             return;
         }
-        // Verifica se são de línguas diferentes e mesmo pairId
         if (firstItem.pairId === item.pairId && firstItem.lang !== item.lang) {
-            // Combinação correta
             firstItem.matched = true;
             item.matched = true;
             matchedPairsCount++;
@@ -2423,7 +2389,6 @@ function handleMatchWordClick(event, item) {
             renderMatchGame();
             speakWord(firstItem.word + " " + item.word);
         } else {
-            // Erro: decrementa vidas
             matchErrors++;
             lives--;
             saveMatchProgress();
@@ -2432,24 +2397,18 @@ function handleMatchWordClick(event, item) {
             if (firstEl) firstEl.classList.add('wrong');
             secondEl.classList.add('wrong');
 
-            // Verifica se vidas chegaram a 0
             if (lives <= 0) {
-                // Reinicia o bloco com as mesmas palavras embaralhadas
                 setTimeout(() => {
-                    // Reseta tudo
                     matchHits = 0;
                     matchErrors = 0;
                     lives = MAX_LIVES;
                     helpUses = MAX_HELP_USES;
                     helpActive = false;
-                    // Embaralha as palavras atuais
                     matchWords.sort(() => Math.random() - 0.5);
-                    // Reseta matched de todas
                     matchWords.forEach(w => w.matched = false);
                     matchedPairsCount = 0;
                     saveMatchProgress();
                     renderMatchGame();
-                    // Mostra mensagem breve
                     const statusMsg = document.getElementById('status-message');
                     if (statusMsg) {
                         statusMsg.innerHTML = '<span class="status-wrong">💔 Vidas zeradas! Bloco reiniciado com palavras embaralhadas.</span>';
@@ -2570,12 +2529,10 @@ function init() {
 
     if (matchMode === 'translation') {
         matchAllPairs = fullTranslationPairs;
-        document.getElementById('helpBtn').style.display = 'none';
-        helpActive = false;
     } else {
         matchAllPairs = fullAntonymPairs;
-        document.getElementById('helpBtn').style.display = 'flex';
     }
+    document.getElementById('helpBtn').style.display = 'flex';
     const totalPairs = matchAllPairs.length;
     matchTotalPages = Math.ceil(totalPairs / PAGE_SIZE);
     if (matchPageIndex >= matchTotalPages) matchPageIndex = 0;
@@ -2597,10 +2554,8 @@ function init() {
         document.getElementById('modeTranslation').classList.add('active');
     } else {
         document.getElementById('modeAntonyms').classList.add('active');
-        // Garante que o botão de ajuda apareça
-        document.getElementById('helpBtn').style.display = 'flex';
-        updateHelpUI();
     }
+    updateHelpUI();
 
     setupDoubleTap();
 
